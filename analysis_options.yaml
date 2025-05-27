@@ -1,0 +1,18 @@
+include: package:flutter_lints/flutter.yaml # This line is correct
+
+linter:
+  # The linter rules applied to this project are specified in the
+  # corresponding .yaml files located in the `flutter_lints` package.
+  #
+  # To see the documentation for the linter rules, click on the link below:
+  # https://pub.dev/packages/flutter_lints
+
+  rules:
+    # ADD your custom linter rules here.
+    # For example, to enable a rule:
+    # avoid_print: true
+    # no_leading_underscores_for_local_identifiers: false
+
+analyzer:
+  # exclude:
+  #   - path/to/excluded/files/
