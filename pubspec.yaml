@@ -25,6 +25,16 @@ flutter:
 
   assets:
     - assets/animations/dappr_logo_wrapped.json # Your Lottie logo file
+    - assets/nasi_goreng.jpg.jpg
+    - assets/Mee_goreng _mamak.jpg.jpg
+    - assets/roti_jala.jpg
+    - assets/spaghetti_aglio_olio.jpg.jpg
+    - assets/tomyam_thai.jpg.jpg
+    - assets/ayam_masak_merah.jpg.jpg
+    - assets/ikan_bakar.jpg.jpg
+    - assets/sambal_udang_simple.jpg.jpg
+    - assets/sup_ayam_simple.jpg.jpg
+    - assets/cooking_app_display_stockcake.jpg.jpg
 
   # Optional: If you want to use custom fonts like Montserrat or Roboto, uncomment and configure:
   # fonts:
