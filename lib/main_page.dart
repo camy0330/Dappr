@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
 import 'pages/recipe_list_page.dart';
+import 'pages/shopping_list_page.dart';
+import 'pages/meal_planner_page.dart';
+import 'pages/favourite_page.dart';
+import 'pages/timer_cooking_page.dart';
+import 'pages/setting_page.dart';
+import 'pages/about_page.dart';
+import 'pages/recipe_search_page.dart'; // Pastikan import ini betul
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -14,6 +21,7 @@ class _MainPageState extends State<MainPage> {
   final List<Widget> _pages = [
     const RecipeListPage(),
     const ShoppingListPage(),
+    const RecipeSearchPage(), // Tambah di sini
     const MealPlannerPage(),
     const FavouritePage(),
     const TimerCookingPage(),
@@ -66,38 +74,43 @@ class _MainPageState extends State<MainPage> {
               onTap: () => _onSelectDrawerItem(1),
             ),
             ListTile(
+              leading: const Icon(Icons.search),
+              title: const Text('Search'),
+              onTap: () => _onSelectDrawerItem(2),
+            ),
+            ListTile(
               leading: const Icon(Icons.food_bank),
               title: const Text('Meal Planner'),
-              onTap: () => _onSelectDrawerItem(2),
+              onTap: () => _onSelectDrawerItem(3),
             ),
             ListTile(
               leading: const Icon(Icons.favorite),
               title: const Text('Favourite'),
-              onTap: () => _onSelectDrawerItem(3),
+              onTap: () => _onSelectDrawerItem(4),
             ),
             ListTile(
               leading: const Icon(Icons.timer),
               title: const Text('Timer Cooking'),
-              onTap: () => _onSelectDrawerItem(4),
+              onTap: () => _onSelectDrawerItem(5),
             ),
             ListTile(
               leading: const Icon(Icons.settings),
               title: const Text('Setting'),
-              onTap: () => _onSelectDrawerItem(5),
+              onTap: () => _onSelectDrawerItem(6),
             ),
             ListTile(
               leading: const Icon(Icons.info),
               title: const Text('About'),
-              onTap: () => _onSelectDrawerItem(6),
+              onTap: () => _onSelectDrawerItem(7),
             ),
           ],
         ),
       ),
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex > 1 ? 0 : _selectedIndex,
+        currentIndex: _selectedIndex > 2 ? 0 : _selectedIndex,
         onTap: (index) {
-          if (index < 2) _onItemTapped(index);
+          if (index < 3) _onItemTapped(index);
         },
         selectedItemColor: primaryColor,
         unselectedItemColor: Colors.grey,
@@ -108,53 +121,14 @@ class _MainPageState extends State<MainPage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.shopping_cart),
-            label: 'Shopping List',
+            label: 'Shopping',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: 'Search',
           ),
         ],
       ),
     );
   }
-}
-
-// Placeholder Pages
-class ShoppingListPage extends StatelessWidget {
-  const ShoppingListPage({super.key});
-  @override
-  Widget build(BuildContext context) =>
-      const Center(child: Text("This is Shopping List Page"));
-}
-
-class MealPlannerPage extends StatelessWidget {
-  const MealPlannerPage({super.key});
-  @override
-  Widget build(BuildContext context) =>
-      const Center(child: Text("This is Meal Planner Page"));
-}
-
-class FavouritePage extends StatelessWidget {
-  const FavouritePage({super.key});
-  @override
-  Widget build(BuildContext context) =>
-      const Center(child: Text("This is Favourite Page"));
-}
-
-class TimerCookingPage extends StatelessWidget {
-  const TimerCookingPage({super.key});
-  @override
-  Widget build(BuildContext context) =>
-      const Center(child: Text("This is Timer Cooking Page"));
-}
-
-class SettingPage extends StatelessWidget {
-  const SettingPage({super.key});
-  @override
-  Widget build(BuildContext context) =>
-      const Center(child: Text("This is Setting Page"));
-}
-
-class AboutPage extends StatelessWidget {
-  const AboutPage({super.key});
-  @override
-  Widget build(BuildContext context) =>
-      const Center(child: Text("This is About Page"));
 }
