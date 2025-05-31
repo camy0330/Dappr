@@ -9,7 +9,7 @@ class RecipeDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: const Color(0xFFFFF3E0), // light warm background
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
@@ -20,12 +20,12 @@ class RecipeDetailPage extends StatelessWidget {
               Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(28),
+                  borderRadius: BorderRadius.circular(24),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black12,
-                      blurRadius: 12,
-                      offset: const Offset(0, 6),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
                     ),
                   ],
                 ),
@@ -36,12 +36,23 @@ class RecipeDetailPage extends StatelessWidget {
                     Stack(
                       children: [
                         ClipRRect(
-                          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-                          child: Image.network(
-                            recipe.imageUrl,
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(24),
+                            topRight: Radius.circular(24),
+                          ),
+                          child: SizedBox(
+                            height: 220, // Adjusted height
                             width: double.infinity,
-                            height: 240,
-                            fit: BoxFit.contain,  // <-- changed here
+                            child: Image.network(
+                              recipe.imageUrl,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) => Container(
+                                color: Colors.grey[300],
+                                child: const Center(
+                                  child: Icon(Icons.image_not_supported, size: 50),
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                         Positioned(
@@ -66,21 +77,17 @@ class RecipeDetailPage extends StatelessWidget {
                         children: [
                           Text(
                             recipe.title,
-                            textAlign: TextAlign.left,
                             style: const TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: 0.5,
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                           const SizedBox(height: 6),
                           Text(
                             'ID: ${recipe.id}',
-                            textAlign: TextAlign.left,
                             style: TextStyle(
                               fontSize: 14,
                               color: Colors.grey[600],
-                              fontWeight: FontWeight.normal,
                             ),
                           ),
                         ],
@@ -90,17 +97,15 @@ class RecipeDetailPage extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: 24),
+              const SizedBox(height: 28),
 
               // INGREDIENTS TITLE
               Text(
                 'Ingredients',
-                textAlign: TextAlign.left,
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w700,
                   color: Colors.deepOrange[400],
-                  letterSpacing: 0.7,
                 ),
               ),
               const SizedBox(height: 12),
@@ -112,19 +117,13 @@ class RecipeDetailPage extends StatelessWidget {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('• ',
-                          style: TextStyle(
-                            fontSize: 18,
-                            height: 1.4,
-                          )),
+                      const Text('• ', style: TextStyle(fontSize: 18)),
                       Expanded(
                         child: Text(
                           item,
-                          textAlign: TextAlign.left,
                           style: const TextStyle(
                             fontSize: 16,
                             height: 1.4,
-                            fontWeight: FontWeight.normal,
                           ),
                         ),
                       ),
@@ -140,12 +139,10 @@ class RecipeDetailPage extends StatelessWidget {
               // COOKING STEPS TITLE
               Text(
                 'Cooking Steps',
-                textAlign: TextAlign.left,
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w700,
                   color: Colors.deepOrange[400],
-                  letterSpacing: 0.7,
                 ),
               ),
               const SizedBox(height: 12),
@@ -159,11 +156,9 @@ class RecipeDetailPage extends StatelessWidget {
                     padding: const EdgeInsets.only(bottom: 16),
                     child: Text(
                       '$idx. $step',
-                      textAlign: TextAlign.left,
                       style: const TextStyle(
                         fontSize: 16,
                         height: 1.5,
-                        fontWeight: FontWeight.normal,
                       ),
                     ),
                   );
