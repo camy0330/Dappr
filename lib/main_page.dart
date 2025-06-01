@@ -1,14 +1,14 @@
 // lib/main_page.dart
-import 'package:flutter/material.dart'; // Place 'dart:' imports before others
-import 'package:dappr/pages/about_page.dart';
-import 'package:dappr/pages/favourite_page.dart';
-import 'package:dappr/pages/home_page.dart'; // Assuming home_page.dart is now in lib/pages/
-import 'package:dappr/pages/meal_planner_page.dart';
-import 'package:dappr/pages/recipe_list_page.dart';
-import 'package:dappr/pages/setting_page.dart';
-import 'package:dappr/pages/shopping_list_page.dart';
-import 'package:dappr/pages/timer_cooking_page.dart'; // Corrected import path and class name
-import 'package:dappr/welcome_page/welcome_page.dart'; // Correct import path
+import 'package:dappr/homepage/auth_page.dart'; // Correct path for AuthPage
+import 'package:dappr/pages/about_page.dart'; // Correct path
+import 'package:dappr/pages/favourite_page.dart'; // Correct path
+import 'package:dappr/pages/home_page.dart'; // Corrected import for home_page.dart
+import 'package:dappr/pages/meal_planner_page.dart'; // Correct path
+import 'package:dappr/pages/recipe_list_page.dart'; // Correct path
+import 'package:dappr/pages/setting_page.dart'; // Correct path
+import 'package:dappr/pages/shopping_list_page.dart'; // Correct path
+import 'package:dappr/pages/timer_cooking_page.dart'; // Corrected import for timer_cooking_page.dart
+import 'package:flutter/material.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -18,13 +18,13 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  int _selectedIndex = 0;
+  int _selectedIndex = 1; // Starting on Recipes page
 
   final List<Widget> _bottomNavPages = [
-    const HomePage(), // Using HomePage for the "Home" tab
-    const RecipeListPage(), // Recipes can be a separate tab or part of Home
+    const HomePage(),
+    const RecipeListPage(),
     const MealPlannerPage(),
-    const TimerCookingPage(), // Corrected class name
+    const TimerCookingPage(),
   ];
 
   void _onItemTapped(int index) {
@@ -106,9 +106,10 @@ class _MainPageState extends State<MainPage> {
               leading: const Icon(Icons.logout, color: Colors.grey),
               title: const Text('Logout', style: TextStyle(fontFamily: 'Montserrat')),
               onTap: () {
+                // Navigate to AuthPage and clear navigation stack
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (context) => const WelcomePage()),
+                  MaterialPageRoute(builder: (context) => const AuthPage()),
                   (Route<dynamic> route) => false,
                 );
               },
@@ -123,7 +124,7 @@ class _MainPageState extends State<MainPage> {
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.restaurant_menu), // Changed to something relevant for recipes
+            icon: Icon(Icons.restaurant_menu),
             label: 'Recipes',
           ),
           BottomNavigationBarItem(

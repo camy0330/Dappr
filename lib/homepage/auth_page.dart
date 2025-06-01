@@ -1,6 +1,7 @@
 // lib/homepage/auth_page.dart
+import 'package:dappr/main_page.dart'; // Assuming navigation to MainPage after auth
 import 'package:flutter/material.dart';
-import 'package:dappr/main_page.dart';
+import 'package:lottie/lottie.dart'; // Assuming you use Lottie animations
 
 class AuthPage extends StatefulWidget {
   const AuthPage({super.key});
@@ -9,280 +10,247 @@ class AuthPage extends StatefulWidget {
   State<AuthPage> createState() => _AuthPageState();
 }
 
-class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
-
-  void _handleLogin() {
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (context) => const MainPage()),
-      (Route<dynamic> route) => false,
-    );
-  }
-
-  void _handleSignUp() {
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (context) => const MainPage()),
-      (Route<dynamic> route) => false,
-    );
-  }
+class _AuthPageState extends State<AuthPage> {
+  bool isLogin = true;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 255, 140, 25), // Changed to solid deep orange for consistency with WelcomePage
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
-      extendBodyBehindAppBar: true,
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.deepOrange, Colors.orangeAccent],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
+        backgroundColor: Colors.transparent, // Make AppBar transparent
+        elevation: 0, // Remove AppBar shadow
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white), // White back arrow
+          onPressed: () {
+            Navigator.pop(context); // Go back to WelcomePage
+          },
         ),
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(
-                  Icons.fastfood,
-                  size: 100,
-                  color: Colors.white,
-                ),
-                const SizedBox(height: 20),
-                const Text(
-                  'Dappr',
-                  style: TextStyle(
-                    fontSize: 38,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    fontFamily: 'Montserrat',
-                  ),
-                ),
-                const SizedBox(height: 10),
-                const Text(
-                  'Your Culinary Journey Starts Here',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.white70,
-                    fontFamily: 'Montserrat',
-                  ),
-                ),
-                const SizedBox(height: 40),
-
-                Container(
-                  // FIX: Replaced .withOpacity with .withAlpha for deprecated warning
-                  decoration: BoxDecoration(
-                    color: Colors.white.withAlpha((255 * 0.3).round()), // Use withAlpha or Color.fromRGBO
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: TabBar(
-                    controller: _tabController,
-                    indicator: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(30),
+        // Adding a title here if you want "Dappr" in the AppBar for AuthPage
+        // title: const Text('Dappr', style: TextStyle(color: Colors.white, fontFamily: 'Montserrat')),
+      ),
+      body: Center(
+        child: SingleChildScrollView(
+          // Padding for the entire scrollable area, adjusted for top space due to transparent AppBar
+          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Lottie animation at the top, outside the white card
+              Lottie.asset(
+                'assets/animations/dappr_logo_wrapped.json', // Your Lottie file path
+                width: 150,
+                height: 150,
+                fit: BoxFit.contain,
+                // Add errorBuilder for debugging if Lottie fails to load
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    width: 150,
+                    height: 150,
+                    color: Colors.red.shade900, // Strong red for error visibility
+                    alignment: Alignment.center,
+                    child: const Text(
+                      'Lottie asset failed to load. Check pubspec.yaml and path.',
+                      style: TextStyle(color: Colors.white, fontSize: 8),
+                      textAlign: TextAlign.center,
                     ),
-                    labelColor: Colors.deepOrange,
-                    unselectedLabelColor: Colors.white,
-                    labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontFamily: 'Montserrat'),
-                    tabs: const [
-                      Tab(text: 'Login'),
-                      Tab(text: 'Sign Up'),
-                    ],
-                  ),
+                  );
+                },
+              ),
+              const SizedBox(height: 20),
+              // Dappr Text
+              const Text(
+                'Dappr',
+                style: TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  color: Color.fromARGB(255, 247, 247, 247), // Your custom white color
+                  fontFamily: 'Montserrat',
                 ),
-                const SizedBox(height: 30),
-
-                Container(
-                  height: 350,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 10,
-                        offset: const Offset(0, 5),
+              ),
+              const SizedBox(height: 10),
+              // Subtitle Text
+              Text(
+                'Your Culinary Journey Starts Here',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.white70, // Changed to white70 to contrast with deep orange background
+                  fontFamily: 'Montserrat',
+                ),
+              ),
+              const SizedBox(height: 30),
+              // The white "card" container for login/signup form
+              Container(
+                padding: const EdgeInsets.all(24.0),
+                decoration: BoxDecoration(
+                  color: Colors.white, // White background for the form
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 10,
+                      offset: const Offset(0, 5),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    // Login/SignUp Toggle Buttons
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                isLogin = true;
+                              });
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: isLogin ? Colors.deepOrange : Colors.orange.withAlpha(26),
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              elevation: 0, // Remove elevation for a flatter look
+                            ),
+                            child: Text(
+                              'Login',
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: isLogin ? Colors.white : Colors.deepOrange, // White text when selected, DeepOrange when not
+                                fontFamily: 'Montserrat',
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                isLogin = false;
+                              });
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: isLogin ? Colors.orange.withAlpha(26) : Colors.deepOrange,
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              elevation: 0, // Remove elevation for a flatter look
+                            ),
+                            child: Text(
+                              'Sign Up',
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: isLogin ? Colors.deepOrange : Colors.white, // DeepOrange text when selected, White when not
+                                fontFamily: 'Montserrat',
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 30),
+                    // "Login" / "Sign Up" Heading within the card
+                    Text(
+                      isLogin ? 'Login' : 'Sign Up',
+                      style: const TextStyle(
+                        fontSize: 28, // Adjusted font size for the heading
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87, // Dark text color for heading on white background
+                        fontFamily: 'Montserrat',
                       ),
-                    ],
-                  ),
-                  child: TabBarView(
-                    controller: _tabController,
-                    children: [
-                      _buildLoginForm(),
-                      _buildSignUpForm(),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 20),
+                    // Email Input
+                    TextField(
+                      decoration: InputDecoration(
+                        labelText: 'Email',
+                        prefixIcon: const Icon(Icons.email, color: Colors.deepOrange),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide.none,
+                        ),
+                        filled: true,
+                        fillColor: Colors.grey[200],
+                        floatingLabelBehavior: FloatingLabelBehavior.never, // Keeps label inside the input field
+                      ),
+                      keyboardType: TextInputType.emailAddress,
+                    ),
+                    const SizedBox(height: 16),
+                    // Password Input
+                    TextField(
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        labelText: 'Password',
+                        prefixIcon: const Icon(Icons.lock, color: Colors.deepOrange),
+                        suffixIcon: IconButton(
+                          icon: const Icon(Icons.visibility_off, color: Colors.grey),
+                          onPressed: () {
+                            // Toggle password visibility - functionality not changed
+                          },
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide.none,
+                        ),
+                        filled: true,
+                        fillColor: Colors.grey[200],
+                        floatingLabelBehavior: FloatingLabelBehavior.never, // Keeps label inside the input field
+                      ),
+                    ),
+                    const SizedBox(height: 30),
+                    // Login/Sign Up Button (main action button)
+                    ElevatedButton(
+                      onPressed: () {
+                        // Simulate successful login/signup and navigate to main page
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (context) => const MainPage()),
+                          (Route<dynamic> route) => false,
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.deepOrange, // Solid deep orange button
+                        padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      child: Text(
+                        isLogin ? 'Login' : 'Sign Up',
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          fontFamily: 'Montserrat',
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    // Toggle Text Button
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          isLogin = !isLogin; // Toggle form
+                        });
+                      },
+                      child: Text(
+                        isLogin ? "Don't have an account? Sign Up" : "Already have an account? Login",
+                        style: const TextStyle(
+                          color: Colors.deepOrange, // Deep orange text
+                          fontFamily: 'Montserrat',
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildLoginForm() {
-    return Padding(
-      padding: const EdgeInsets.all(20.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text(
-            'Login',
-            style: TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-              color: Colors.deepOrange,
-              fontFamily: 'Montserrat',
-            ),
-          ),
-          const SizedBox(height: 20),
-          TextField(
-            controller: _emailController,
-            decoration: InputDecoration(
-              labelText: 'Email',
-              hintText: 'Enter your email',
-              prefixIcon: const Icon(Icons.email, color: Colors.deepOrange),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-              filled: true,
-              fillColor: Colors.grey[100],
-            ),
-            keyboardType: TextInputType.emailAddress,
-            style: const TextStyle(fontFamily: 'Montserrat'),
-          ),
-          const SizedBox(height: 15),
-          TextField(
-            controller: _passwordController,
-            decoration: InputDecoration(
-              labelText: 'Password',
-              hintText: 'Enter your password',
-              prefixIcon: const Icon(Icons.lock, color: Colors.deepOrange),
-              suffixIcon: const Icon(Icons.visibility_off, color: Colors.grey),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-              filled: true,
-              fillColor: Colors.grey[100],
-            ),
-            obscureText: true,
-            style: const TextStyle(fontFamily: 'Montserrat'),
-          ),
-          const SizedBox(height: 25),
-          ElevatedButton(
-            onPressed: _handleLogin,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.deepOrange,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              elevation: 5,
-            ),
-            child: const Text(
-              'Login',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'Montserrat'),
-            ),
-          ),
-          const SizedBox(height: 20),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSignUpForm() {
-    return Padding(
-      padding: const EdgeInsets.all(20.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text(
-            'Sign Up',
-            style: TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-              color: Colors.deepOrange,
-              fontFamily: 'Montserrat',
-            ),
-          ),
-          const SizedBox(height: 20),
-          TextField(
-            decoration: InputDecoration(
-              labelText: 'Email',
-              hintText: 'Enter your email',
-              prefixIcon: const Icon(Icons.email, color: Colors.deepOrange),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-              filled: true,
-              fillColor: Colors.grey[100],
-            ),
-            keyboardType: TextInputType.emailAddress,
-            style: const TextStyle(fontFamily: 'Montserrat'),
-          ),
-          const SizedBox(height: 15),
-          TextField(
-            decoration: InputDecoration(
-              labelText: 'Password',
-              hintText: 'Create a password',
-              prefixIcon: const Icon(Icons.lock, color: Colors.deepOrange),
-              suffixIcon: const Icon(Icons.visibility_off, color: Colors.grey),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-              filled: true,
-              fillColor: Colors.grey[100],
-            ),
-            obscureText: true,
-            style: const TextStyle(fontFamily: 'Montserrat'),
-          ),
-          const SizedBox(height: 15),
-          TextField(
-            decoration: InputDecoration(
-              labelText: 'Confirm Password',
-              hintText: 'Re-enter your password',
-              prefixIcon: const Icon(Icons.lock, color: Colors.deepOrange),
-              suffixIcon: const Icon(Icons.visibility_off, color: Colors.grey),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-              filled: true,
-              fillColor: Colors.grey[100],
-            ),
-            obscureText: true,
-            style: const TextStyle(fontFamily: 'Montserrat'),
-          ),
-          const SizedBox(height: 25),
-          ElevatedButton(
-            onPressed: _handleSignUp,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.deepOrange,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              elevation: 5,
-            ),
-            child: const Text(
-              'Sign Up',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, fontFamily: 'Montserrat'),
-            ),
-          ),
-        ],
       ),
     );
   }

@@ -1,9 +1,16 @@
 // lib/main.dart
-import 'package:flutter/material.dart'; // Place 'dart:' imports before others
-import 'package:dappr/welcome_page/welcome_page.dart'; // Correct path to welcome_page.dart
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:dappr/welcome_page/welcome_page.dart'; // Corrected import path for welcome_page.dart
+import 'package:dappr/providers/favorite_provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => FavoriteProvider(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -15,14 +22,14 @@ class MyApp extends StatelessWidget {
       title: 'Dappr Recipe App',
       theme: ThemeData(
         primarySwatch: Colors.deepOrange,
-        fontFamily: 'Montserrat',
+        fontFamily: 'Montserrat', // Ensure this font is correctly loaded in pubspec.yaml
         visualDensity: VisualDensity.adaptivePlatformDensity,
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.deepOrange,
           foregroundColor: Colors.white,
         ),
       ),
-      home: const WelcomePage(), // Start with WelcomePage
+      home: const WelcomePage(), // Using WelcomePage as the initial route
       debugShowCheckedModeBanner: false,
     );
   }

@@ -5,18 +5,18 @@ class Recipe {
   final String description;
   final String imageUrl;
   final List<String> ingredients;
-  final List<String> steps;
-  final String category;
-  final int durationMinutes;
+  final String instructions;
+  final String prepTime;
+  final String cookTime;
 
-  const Recipe({
+  Recipe({
     required this.id,
     required this.title,
     required this.description,
     required this.imageUrl,
     required this.ingredients,
-    required this.steps,
-    required this.category,
-    required this.durationMinutes,
+    required this.instructions,
+    required this.prepTime,
+    required this.cookTime,
   });
 }

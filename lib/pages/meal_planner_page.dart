@@ -44,7 +44,7 @@ class MealPlannerPage extends StatelessWidget {
             const SizedBox(height: 40),
             ElevatedButton.icon(
               onPressed: () {
-                // TODO: Implement "Add Meal" functionality
+                
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Add Meal button tapped!')),
                 );

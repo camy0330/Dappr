@@ -1,7 +1,7 @@
 // lib/welcome_page/welcome_page.dart
-import 'package:flutter/material.dart'; // Place 'dart:' imports before others
-import 'package:dappr/homepage/auth_page.dart'; // Import the new AuthPage
-// import 'package:lottie/lottie.dart'; // Uncomment if you use a Lottie animation for the taco
+import 'package:flutter/material.dart';
+import 'package:dappr/homepage/auth_page.dart';
+import 'package:lottie/lottie.dart'; // Import Lottie
 
 class WelcomePage extends StatelessWidget {
   const WelcomePage({super.key});
@@ -23,22 +23,16 @@ class WelcomePage extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // If you have a Lottie animation for the taco, use this:
-                // Lottie.asset(
-                //   'assets/animations/dappr_logo_wrapped.json', // Ensure this path is correct
-                //   width: 150,
-                //   height: 150,
-                //   fit: BoxFit.contain,
-                // ),
-                // Otherwise, use a placeholder icon:
-                const Icon(
-                  Icons.restaurant_menu, // Placeholder icon for the taco
-                  size: 120,
-                  color: Colors.white,
+                // Use Lottie animation here
+                Lottie.asset(
+                  'assets/animations/dappr_logo_wrapped.json', // Your Lottie file path
+                  width: 150,
+                  height: 150,
+                  fit: BoxFit.contain,
                 ),
                 const SizedBox(height: 20),
                 const Text(
-                  'Dappr', // Main title as in screenshot
+                  'Dappr',
                   style: TextStyle(
                     fontSize: 38,
                     fontWeight: FontWeight.bold,
@@ -48,7 +42,7 @@ class WelcomePage extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
                 const Text(
-                  'Your Culinary Journey Starts Here', // Subtitle as in screenshot
+                  'Your Culinary Journey Starts Here',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 18,
@@ -59,7 +53,6 @@ class WelcomePage extends StatelessWidget {
                 const SizedBox(height: 50),
                 ElevatedButton(
                   onPressed: () {
-                    // Navigate to the AuthPage (Login/Sign Up)
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => const AuthPage()),
@@ -74,11 +67,11 @@ class WelcomePage extends StatelessWidget {
                     ),
                     elevation: 5,
                   ),
-                  child: const Row( // Using a Row to include the arrow icon
+                  child: const Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        'Click to Discover Recipes', // Button text as in screenshot
+                        'Click to Discover Recipes',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -86,7 +79,7 @@ class WelcomePage extends StatelessWidget {
                         ),
                       ),
                       SizedBox(width: 10),
-                      Icon(Icons.arrow_forward), // Arrow icon
+                      Icon(Icons.arrow_forward),
                     ],
                   ),
                 ),
