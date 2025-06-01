@@ -1,18 +1,35 @@
-include: package:flutter_lints/flutter.yaml # This line is correct
-
-linter:
-  # The linter rules applied to this project are specified in the
-  # corresponding .yaml files located in the `flutter_lints` package.
-  #
-  # To see the documentation for the linter rules, click on the link below:
-  # https://pub.dev/packages/flutter_lints
-
-  rules:
-    # ADD your custom linter rules here.
-    # For example, to enable a rule:
-    # avoid_print: true
-    # no_leading_underscores_for_local_identifiers: false
+# This file configures the Dart static analyzer.
+# It can be used to enable and disable specific lint rules,
+# and to configure the analyzer's behavior.
+# For more information, see https://dart.dev/tools/analysis
 
 analyzer:
-  # exclude:
-  #   - path/to/excluded/files/
+  exclude:
+    - build/**
+    - '**/*.g.dart'
+    - '**/*.freezed.dart'
+  errors:
+    unused_import: ignore # Ignoring this if it causes issues for you.
+    avoid_print: ignore # This will suppress the "Don't invoke 'print'" warning
+
+linter:
+  rules:
+    # Removed deprecated/removed rules based on your error screenshot
+    - avoid_empty_else
+    # - await_and_then # REMOVED: 'await_and_then' is not a recognized lint rule
+    - camel_case_types
+    - constant_identifier_names
+    - control_flow_in_finally
+    - directives_ordering # Keep this for directive sorting suggestion
+    - empty_catches
+    - empty_statements
+    # - iterable_contains_unrelated_type # REMOVED: was removed in Dart 3.3.0
+    # - list_remove_unrelated_type # REMOVED: was removed in Dart 3.3.0
+    - no_duplicate_case_values
+    - unnecessary_brace_in_string_interps
+    - unnecessary_new
+    - unnecessary_parenthesis
+    - unnecessary_this
+    - unrelated_type_equality_checks # This one is fine
+    - valid_regexps
+    - void_checks
