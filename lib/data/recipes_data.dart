@@ -5,7 +5,7 @@ final List<Recipe> recipes = [
   id: 'R1',
   title: 'Village Fried Rice',
   description: 'Spicy and delicious menu, suitable for dinner or lunch .',
-  imageUrl: 'assets/nasi_goreng.jpg.jpg',
+  imageUrl: 'assets/images/nasi_goreng.jpg',
   ingredients: [
     '4 cups cold cooked rice',
     '3 cloves garlic',
@@ -43,7 +43,7 @@ Recipe(
   id: 'R2',
   title: 'Mamak Fried Noodles',
   description: 'A robust Mamak fried noodle, rich in spices and flavor.',
-  imageUrl: 'assets/Mee_goreng _mamak.jpg.jpg',
+  imageUrl: 'assets/images/Mee_goreng _mamak.jpg',
   ingredients: [
     '3 small shallots',
     '3 cloves garlic',
@@ -90,7 +90,7 @@ Recipe(
   id: 'R3',
   title: 'Lace Pancakes',
   description: 'Easy lace pancake recipe, suitable to eat with chicken or fish curry. Traditional Malay dish, popular during Ramadan.',
-  imageUrl: 'assets/roti_jala.jpg',
+  imageUrl: 'assets/images/roti_jala.jpg',
   ingredients: [
     '2 cups wheat flour',
     '2 eggs',
@@ -114,7 +114,7 @@ Recipe(
   id: 'R4',
   title: 'Spaghetti Aglio Olio Seafood',
   description: 'Italian-style spaghetti with a seafood touch. Suitable for a special dinner.',
-  imageUrl: 'assets/spaghetti_aglio_olio.jpg.jpg',
+  imageUrl: 'assets/images/spaghetti_aglio_olio.jpg',
   ingredients: [
     '500 grams spaghetti (1 pack)',
     '1/2 small bowl olive oil',
@@ -145,7 +145,7 @@ Recipe(
   id: 'R5',
   title: 'Thai Tomyam',
   description: 'Authentic Thai Tomyam, spicy, sour and very appetizing.',
-  imageUrl: 'assets/tomyam_thai.jpg.jpg',
+  imageUrl: 'assets/images/tomyam_thai.jpg',
   ingredients: [
     '--- Ingredients for Tomyam Paste ---',
     '15-20 dried chilies, seeds removed and boiled',
@@ -200,7 +200,7 @@ Recipe(
   id: 'R6',
   title: 'Spiced Red Chicken',
   description: 'Spiced chicken in thick sambal sauce that is sweet and spicy.',
-  imageUrl: 'assets/ayam_masak_merah.jpg.jpg',
+  imageUrl: 'assets/images/ayam_masak_merah.jpg',
   ingredients: [
     '1 whole chicken – cut into pieces',
     '1 big onion – sliced',
@@ -229,7 +229,7 @@ Recipe(
   id: 'R7',
   title: 'Petai Prawn Sambal',
   description: 'Fresh prawns cooked with spicy sambal and fragrant petai beans.',
-  imageUrl: 'assets/sambal_udang_simple.jpg.jpg',
+  imageUrl: 'assets/images/sambal_udang_simple.jpg',
   ingredients: [
     '300g prawns – cleaned and heads removed',
     '2 petai bean pods – split in half',
@@ -253,7 +253,7 @@ Recipe(
   id: 'R8',
   title: 'Simple Chicken Soup',
   description: 'Light chicken soup suitable for a healthy meal.',
-  imageUrl: 'assets/sup_ayam_simple.jpg.jpg',
+  imageUrl: 'assets/images/sup_ayam_simple.jpg',
   ingredients: [
     '1/2 chicken – cut into pieces',
     '1 potato – diced',
@@ -278,7 +278,7 @@ Recipe(
   id: 'R9',
   title: 'Grilled Fish with Sambal',
   description: 'Grilled fish with spicy sambal, delicious when eaten with hot rice.',
-  imageUrl: 'assets/ikan_bakar.jpg.jpg',
+  imageUrl: 'assets/images/ikan_bakar.jpg',
   ingredients: [
     '1 whole fish (mackerel/stingray)',
     '2 tbsp tamarind juice',
