@@ -48,15 +48,6 @@ flutter:
           weight: 300
         - asset: assets/fonts/Montserrat/Montserrat-Medium.ttf
           weight: 500
-        # Add other specific static fonts if you use them by name, e.g.:
-        # - asset: assets/fonts/Montserrat/Montserrat-SemiBold.ttf
-        #   weight: 600
-        # - asset: assets/fonts/Montserrat/Montserrat-Black.ttf
-        #   weight: 900
-        # - asset: assets/fonts/Montserrat/Montserrat-Thin.ttf
-        #   weight: 100
-
-        # Declare the variable fonts
         - asset: assets/fonts/Montserrat/Montserrat-VariableFont_wght.ttf # <--- Corrected path for variable font
         - asset: assets/fonts/Montserrat/Montserrat-Italic-VariableFont_wght.ttf # <--- Corrected path for italic variable font
           style: italic # Specify style for italic variable font
