@@ -40,7 +40,7 @@ final List<Recipe> recipes = [
   ],
 ),
 Recipe(
-  id: 'r2',
+  id: 'R2',
   title: 'Mamak Fried Noodles',
   description: 'A robust Mamak fried noodle, rich in spices and flavor.',
   imageUrl: 'assets/Mee_goreng _mamak.jpg.jpg',
