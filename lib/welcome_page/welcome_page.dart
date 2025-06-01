@@ -1,8 +1,9 @@
 // lib/welcome_page/welcome_page.dart
 import 'package:flutter/material.dart'; // Place 'dart:' imports before others
-import 'package:dappr/main_page.dart';
+import 'package:dappr/homepage/auth_page.dart'; // Import the new AuthPage
+// import 'package:lottie/lottie.dart'; // Uncomment if you use a Lottie animation for the taco
 
-class WelcomePage extends StatelessWidget { // Ensure this class is correctly defined
+class WelcomePage extends StatelessWidget {
   const WelcomePage({super.key});
 
   @override
@@ -22,14 +23,22 @@ class WelcomePage extends StatelessWidget { // Ensure this class is correctly de
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                // If you have a Lottie animation for the taco, use this:
+                // Lottie.asset(
+                //   'assets/animations/dappr_logo_wrapped.json', // Ensure this path is correct
+                //   width: 150,
+                //   height: 150,
+                //   fit: BoxFit.contain,
+                // ),
+                // Otherwise, use a placeholder icon:
                 const Icon(
-                  Icons.restaurant_menu, // You can replace with an actual image if you have one
+                  Icons.restaurant_menu, // Placeholder icon for the taco
                   size: 120,
                   color: Colors.white,
                 ),
                 const SizedBox(height: 20),
                 const Text(
-                  'Dappr Recipes',
+                  'Dappr', // Main title as in screenshot
                   style: TextStyle(
                     fontSize: 38,
                     fontWeight: FontWeight.bold,
@@ -39,7 +48,7 @@ class WelcomePage extends StatelessWidget { // Ensure this class is correctly de
                 ),
                 const SizedBox(height: 10),
                 const Text(
-                  'Your Daily Dose of Deliciousness!',
+                  'Your Culinary Journey Starts Here', // Subtitle as in screenshot
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 18,
@@ -50,10 +59,10 @@ class WelcomePage extends StatelessWidget { // Ensure this class is correctly de
                 const SizedBox(height: 50),
                 ElevatedButton(
                   onPressed: () {
-                    Navigator.pushAndRemoveUntil(
+                    // Navigate to the AuthPage (Login/Sign Up)
+                    Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const MainPage()), // Correct usage of MainPage
-                      (Route<dynamic> route) => false,
+                      MaterialPageRoute(builder: (context) => const AuthPage()),
                     );
                   },
                   style: ElevatedButton.styleFrom(
@@ -65,13 +74,20 @@ class WelcomePage extends StatelessWidget { // Ensure this class is correctly de
                     ),
                     elevation: 5,
                   ),
-                  child: const Text(
-                    'Get Started',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: 'Montserrat',
-                    ),
+                  child: const Row( // Using a Row to include the arrow icon
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Click to Discover Recipes', // Button text as in screenshot
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Montserrat',
+                        ),
+                      ),
+                      SizedBox(width: 10),
+                      Icon(Icons.arrow_forward), // Arrow icon
+                    ],
                   ),
                 ),
               ],
