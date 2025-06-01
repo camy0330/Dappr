@@ -1,7 +1,7 @@
+# pubspec.yaml
 name: dappr
 description: A new Flutter project.
-
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: 'none'
 
 version: 1.0.0+1
 
@@ -11,40 +11,52 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  lottie: ^3.1.0 # Your Lottie dependency
-
   cupertino_icons: ^1.0.2
+  logger: ^2.0.2
+  lottie: ^2.0.0
+  audioplayers: ^6.0.0 # Make sure this is still here and correctly indented
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.0 # Make sure this line exists and is uncommented
+  flutter_lints: ^2.0.0
 
 flutter:
   uses-material-design: true
-
   assets:
-    - assets/animations/dappr_logo_wrapped.json # Your Lottie logo file
-    - assets/nasi_goreng.jpg.jpg
-    - assets/Mee_goreng _mamak.jpg.jpg
-    - assets/roti_jala.jpg
-    - assets/spaghetti_aglio_olio.jpg.jpg
-    - assets/tomyam_thai.jpg.jpg
-    - assets/ayam_masak_merah.jpg.jpg
-    - assets/ikan_bakar.jpg.jpg
-    - assets/sambal_udang_simple.jpg.jpg
-    - assets/sup_ayam_simple.jpg.jpg
-    - assets/cooking_app_display_stockcake.jpg.jpg
+    - assets/animations/dappr_logo_wrapped.json
+    - assets/images/nasi_goreng.jpg
+    - assets/images/Mee_goreng _mamak.jpg # Ensure this filename with space is exactly as in your file system
+    - assets/images/roti_jala.jpg
+    - assets/images/spaghetti_aglio_olio.jpg
+    - assets/images/tomyam_thai.jpg
+    - assets/images/ayam_masak_merah.jpg
+    - assets/images/ikan_bakar.jpg
+    - assets/images/sambal_udang_simple.jpg
+    - assets/images/sup_ayam_simple.jpg
+    - assets/images/cooking_app_display_stockcake.jpg
+    - assets/sounds/timer_alarm.mp3
 
-  # Optional: If you want to use custom fonts like Montserrat or Roboto, uncomment and configure:
-  # fonts:
-  #   - family: Montserrat
-  #     fonts:
-  #       - asset: assets/fonts/Montserrat-Regular.ttf
-  #       - asset: assets/fonts/Montserrat-Bold.ttf
-  #         weight: 700
-  #   - family: Roboto
-  #     fonts:
-  #       - asset: assets/fonts/Roboto-Regular.ttf
-  #       - asset: assets/fonts/Roboto-Italic.ttf
-  #         style: italic
+  fonts:
+    - family: Montserrat # This is the name you'll use in your code
+      fonts:
+        # Declare all the static fonts you want to use
+        - asset: assets/fonts/Montserrat/Montserrat-Regular.ttf
+        - asset: assets/fonts/Montserrat/Montserrat-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Montserrat/Montserrat-Light.ttf
+          weight: 300
+        - asset: assets/fonts/Montserrat/Montserrat-Medium.ttf
+          weight: 500
+        # Add other specific static fonts if you use them by name, e.g.:
+        # - asset: assets/fonts/Montserrat/Montserrat-SemiBold.ttf
+        #   weight: 600
+        # - asset: assets/fonts/Montserrat/Montserrat-Black.ttf
+        #   weight: 900
+        # - asset: assets/fonts/Montserrat/Montserrat-Thin.ttf
+        #   weight: 100
+
+        # Declare the variable fonts
+        - asset: assets/fonts/Montserrat/Montserrat-VariableFont_wght.ttf # <--- Corrected path for variable font
+        - asset: assets/fonts/Montserrat/Montserrat-Italic-VariableFont_wght.ttf # <--- Corrected path for italic variable font
+          style: italic # Specify style for italic variable font

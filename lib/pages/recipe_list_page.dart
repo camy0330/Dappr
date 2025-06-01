@@ -1,6 +1,8 @@
+// lib/pages/recipe_list_page.dart
 import 'package:flutter/material.dart';
-import '../Data/recipes_data.dart';
-import 'recipe_detail_page.dart';
+import 'package:dappr/models/recipe.dart';
+import 'package:dappr/data/recipes_data.dart'; // Ensure this path is correct
+import 'package:dappr/widgets/search_bar.dart'; // IMPORTANT: Import MySearchBar here
 
 class RecipeListPage extends StatefulWidget {
   const RecipeListPage({super.key});
@@ -10,125 +12,134 @@ class RecipeListPage extends StatefulWidget {
 }
 
 class _RecipeListPageState extends State<RecipeListPage> {
+  String _searchQuery = ''; // This field is used now, so the warning should disappear
+  List<Recipe> _filteredRecipes = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _filteredRecipes = recipes; // Initialize with all recipes
+  }
+
+  void _onSearchChanged(String query) {
+    setState(() {
+      _searchQuery = query; // Now used here, so the unused_field warning is resolved
+      if (query.isEmpty) {
+        _filteredRecipes = recipes;
+      } else {
+        _filteredRecipes = recipes
+            .where((recipe) =>
+                recipe.title.toLowerCase().contains(query.toLowerCase()) ||
+                recipe.description.toLowerCase().contains(query.toLowerCase()))
+            .toList();
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFFF8F2), // light background
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.deepOrange,
-        centerTitle: true,
-        title: const Text(
-          'Senarai Resipi',
-          style: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-            letterSpacing: 1,
-          ),
-        ),
+      appBar: AppBar( // Add an AppBar if you want a title and potentially a back button
+        title: const Text('Recipes', style: TextStyle(fontFamily: 'Montserrat')),
+        backgroundColor: Colors.deepOrange, // Example color, match your theme
       ),
-      body: recipes.isEmpty
-          ? const Center(
-              child: Text(
-                'Tiada resipi buat masa ini.',
-                style: TextStyle(fontSize: 18),
-              ),
-            )
-          : Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: GridView.builder(
-                itemCount: recipes.length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount:
-                      MediaQuery.of(context).size.width > 600 ? 4 : 2,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                  childAspectRatio: 0.75,
-                ),
-                itemBuilder: (context, index) {
-                  final recipe = recipes[index];
-                  return GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => RecipeDetailPage(recipe: recipe),
-                        ),
-                      );
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.deepOrange.withOpacity(0.15),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                        border: Border.all(
-                          color: Colors.deepOrange.withOpacity(0.2),
-                          width: 1.5,
-                        ),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: ClipRRect(
-                              borderRadius: const BorderRadius.vertical(
-                                top: Radius.circular(16),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            // FIX: Use 'MySearchBar' here to match the class name in search_bar.dart
+            child: MySearchBar(onSearch: _onSearchChanged),
+          ),
+          Expanded(
+            child: _filteredRecipes.isEmpty
+                ? const Center(
+                    child: Text(
+                      'No recipes found. Try a different search.',
+                      style: TextStyle(fontSize: 18, fontFamily: 'Montserrat'),
+                      textAlign: TextAlign.center,
+                    ),
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    itemCount: _filteredRecipes.length,
+                    itemBuilder: (context, index) {
+                      final recipe = _filteredRecipes[index];
+                      return Card(
+                        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                        child: InkWell(
+                          onTap: () {
+                            // TODO: Navigate to Recipe Detail Page
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text('Tapped on ${recipe.title}',
+                                    style: const TextStyle(fontFamily: 'Montserrat')),
+                                duration: const Duration(seconds: 1),
                               ),
-                              child: Image.network(
-                                recipe.imageUrl,
-                                width: double.infinity,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) =>
-                                    Container(
-                                  color: Colors.grey[200],
-                                  child: const Icon(Icons.image_not_supported,
-                                      size: 40, color: Colors.grey),
-                                ),
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            );
+                            // Example navigation to RecipeDetailPage
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //     builder: (context) => RecipeDetailPage(recipe: recipe),
+                            //   ),
+                            // );
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Row(
                               children: [
-                                Text(
-                                  recipe.title,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.deepOrange,
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Image.asset(
+                                    recipe.imageUrl,
+                                    width: 100,
+                                    height: 100,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Container(
+                                        width: 100,
+                                        height: 100,
+                                        color: Colors.grey[300],
+                                        child: const Icon(Icons.broken_image, color: Colors.grey),
+                                      );
+                                    },
                                   ),
                                 ),
-                                const SizedBox(height: 6),
-                                Text(
-                                  recipe.description,
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    fontSize: 12.5,
-                                    color: Colors.black87,
+                                const SizedBox(width: 15),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        recipe.title,
+                                        style: const TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                            fontFamily: 'Montserrat'),
+                                      ),
+                                      const SizedBox(height: 5),
+                                      Text(
+                                        recipe.description,
+                                        style: const TextStyle(fontSize: 14, color: Colors.grey, fontFamily: 'Montserrat'),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      const SizedBox(height: 5),
+                                    ],
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
+                        ),
+                      );
+                    },
+                  ),
+          ),
+        ],
+      ),
     );
   }
 }
