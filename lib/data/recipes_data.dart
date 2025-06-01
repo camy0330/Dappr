@@ -298,7 +298,7 @@ Recipe(
     'Grill the fish on a grill or non-stick pan without oil until cooked.',
     'Serve with extra sambal as a dipping sauce.',
   ],
-)
+),
 Recipe(
   id: 'R10',
   title: 'Nasi Lemak',
