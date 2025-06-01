@@ -36,6 +36,13 @@ flutter:
     - assets/images/sup_ayam_simple.jpg
     - assets/images/cooking_app_display_stockcake.jpg
     - assets/sounds/timer_alarm.mp3
+    - assets/images/laksa.jpg
+    - assets/images/ayam_goreng.jpg
+    - assets/images/kuih_lapis.jpg
+    - assets/images/teh_tarik.jpg
+    - assets/images/carrot_susu.jpg
+    - assets/images/sup_ikan.jpg
+    - assets/images/nasi_lemak.jpg
 
   fonts:
     - family: Montserrat # This is the name you'll use in your code
