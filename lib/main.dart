@@ -1,5 +1,6 @@
+// lib/main.dart
+import 'package:dappr/welcome_page/welcome_page.dart'; // Correct path to welcome_page.dart
 import 'package:flutter/material.dart';
-import 'main_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,9 +11,19 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
+      title: 'Dappr Recipe App',
+      theme: ThemeData(
+        primarySwatch: Colors.deepOrange,
+        fontFamily: 'Montserrat',
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.deepOrange,
+          foregroundColor: Colors.white,
+        ),
+      ),
+      home: const WelcomePage(), // Start with WelcomePage
       debugShowCheckedModeBanner: false,
-      home: MainPage(),
     );
   }
 }

@@ -37,10 +37,10 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar( // <--- ADDED AppBar for back button and title
+      appBar: AppBar(
         title: const Text('Shopping List', style: TextStyle(fontFamily: 'Montserrat', color: Colors.white)),
-        backgroundColor: Colors.deepOrange, // Consistent theme color
-        iconTheme: const IconThemeData(color: Colors.white), // For the back arrow icon
+        backgroundColor: Colors.deepOrange,
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: Column(
         children: [
@@ -61,7 +61,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
                       contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
                     ),
                     onSubmitted: (value) => _addItem(),
-                    style: const TextStyle(fontFamily: 'Montserrat'), // Apply font
+                    style: const TextStyle(fontFamily: 'Montserrat'),
                   ),
                 ),
                 const SizedBox(width: 10),
@@ -90,11 +90,11 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
                         SizedBox(height: 10),
                         Text(
                           'Your shopping list is empty!',
-                          style: TextStyle(fontSize: 18, color: Colors.grey, fontFamily: 'Montserrat'), // Apply font
+                          style: TextStyle(fontSize: 18, color: Colors.grey, fontFamily: 'Montserrat'),
                         ),
                         Text(
                           'Add items to start your grocery list.',
-                          style: TextStyle(fontSize: 14, color: Colors.grey, fontFamily: 'Montserrat'), // Apply font
+                          style: TextStyle(fontSize: 14, color: Colors.grey, fontFamily: 'Montserrat'),
                         ),
                       ],
                     ),
@@ -111,7 +111,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
                         child: ListTile(
                           title: Text(
                             _shoppingItems[index],
-                            style: const TextStyle(fontSize: 16.0, fontFamily: 'Montserrat'), // Apply font
+                            style: const TextStyle(fontSize: 16.0, fontFamily: 'Montserrat'),
                           ),
                           trailing: IconButton(
                             icon: const Icon(Icons.delete, color: Colors.red),
@@ -120,7 +120,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
                           leading: const Icon(Icons.drag_indicator),
                           onTap: () {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('${_shoppingItems[index]} tapped!', style: const TextStyle(fontFamily: 'Montserrat'))), // Apply font
+                              SnackBar(content: Text('${_shoppingItems[index]} tapped!', style: const TextStyle(fontFamily: 'Montserrat'))),
                             );
                           },
                         ),

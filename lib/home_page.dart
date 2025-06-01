@@ -1,3 +1,4 @@
+// lib/pages/home_page.dart
 import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
@@ -5,16 +6,23 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Dappr Home'),
-        backgroundColor: Colors.deepOrange,
-      ),
-      body: const Center(
-        child: Text(
-          'Welcome to your Dappr recipes!',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-        ),
+    return const Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.home, size: 80, color: Colors.deepOrange),
+          SizedBox(height: 20),
+          Text(
+            "Welcome to the Home Page!",
+            style: TextStyle(fontSize: 24, fontFamily: 'Montserrat'),
+            textAlign: TextAlign.center,
+          ),
+          Text(
+            "This is where you can put your main content.",
+            style: TextStyle(fontSize: 16, fontFamily: 'Montserrat', color: Colors.grey),
+            textAlign: TextAlign.center,
+          ),
+        ],
       ),
     );
   }

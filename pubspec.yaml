@@ -38,9 +38,9 @@ flutter:
     - assets/sounds/timer_alarm.mp3
 
   fonts:
-    - family: Montserrat # This is the name you'll use in your code
+    - family: Montserrat 
       fonts:
-        # Declare all the static fonts you want to use
+       
         - asset: assets/fonts/Montserrat/Montserrat-Regular.ttf
         - asset: assets/fonts/Montserrat/Montserrat-Bold.ttf
           weight: 700

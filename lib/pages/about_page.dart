@@ -7,15 +7,15 @@ class AboutPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar( // <--- ADDED AppBar for back button and title
+      appBar: AppBar(
         title: const Text('About', style: TextStyle(fontFamily: 'Montserrat', color: Colors.white)),
-        backgroundColor: Colors.deepOrange, // Consistent theme color
-        iconTheme: const IconThemeData(color: Colors.white), // For the back arrow icon
+        backgroundColor: Colors.deepOrange,
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: const Center(
         child: Text(
           "About Page (Under Construction)",
-          style: TextStyle(fontSize: 24, fontFamily: 'Montserrat'), // Apply font
+          style: TextStyle(fontSize: 24, fontFamily: 'Montserrat'),
         ),
       ),
     );
