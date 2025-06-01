@@ -6,19 +6,8 @@ class FavouritePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Favorite Recipes', style: TextStyle(fontFamily: 'Montserrat', color: Colors.white)),
-        backgroundColor: Colors.deepOrange,
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
-      body: const Center(
-        child: Text(
-          "Favorite Recipes Page (Under Construction)",
-          style: TextStyle(fontSize: 20, fontFamily: 'Montserrat'),
-          textAlign: TextAlign.center,
-        ),
-      ),
+    return const Center(
+      child: Text('Favorite Recipes Page Content', style: TextStyle(fontFamily: 'Montserrat')),
     );
   }
 }

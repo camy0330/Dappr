@@ -15,7 +15,7 @@ class MySearchBar extends StatelessWidget { // Class name updated
         boxShadow: [
           BoxShadow(
             // Replaced deprecated withOpacity
-            color: Color.fromARGB(38, 255, 87, 34), // Represents Colors.deepOrange.withOpacity(0.15)
+            color: const Color.fromARGB(38, 255, 87, 34), // Represents Colors.deepOrange.withOpacity(0.15)
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),

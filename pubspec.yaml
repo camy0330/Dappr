@@ -25,8 +25,9 @@ flutter:
   uses-material-design: true
   assets:
     - assets/animations/dappr_logo_wrapped.json
+    # ... (ensure ALL your other images and sounds are listed here with correct paths)
     - assets/images/nasi_goreng.jpg
-    - assets/images/Mee_goreng _mamak.jpg # Ensure this filename with space is exactly as in your file system
+    - assets/images/Mee_goreng _mamak.jpg # Ensure this name matches disk exactly
     - assets/images/roti_jala.jpg
     - assets/images/spaghetti_aglio_olio.jpg
     - assets/images/tomyam_thai.jpg
@@ -35,19 +36,41 @@ flutter:
     - assets/images/sambal_udang_simple.jpg
     - assets/images/sup_ayam_simple.jpg
     - assets/images/cooking_app_display_stockcake.jpg
-    - assets/sounds/timer_alarm.mp3
+    - assets/sounds/timer_alarm.mp3 # Make sure this is present and correct
 
-  fonts:
-    - family: Montserrat 
-      fonts:
-       
-        - asset: assets/fonts/Montserrat/Montserrat-Regular.ttf
-        - asset: assets/fonts/Montserrat/Montserrat-Bold.ttf
+  fonts: # This 'fonts:' must be directly under 'flutter:' (2 spaces indentation)
+    - family: Montserrat # This '- family:' must be directly under 'fonts:' (4 spaces indentation)
+      fonts: # This 'fonts:' must be directly under '- family:' (6 spaces indentation)
+        - asset: assets/fonts/Montserrat-Regular.ttf # This '- asset:' must be directly under 'fonts:' (8 spaces indentation)
+        - asset: assets/fonts/Montserrat-Bold.ttf
           weight: 700
-        - asset: assets/fonts/Montserrat/Montserrat-Light.ttf
+        - asset: assets/fonts/Montserrat-Light.ttf
           weight: 300
-        - asset: assets/fonts/Montserrat/Montserrat-Medium.ttf
+        - asset: assets/fonts/Montserrat-Medium.ttf
           weight: 500
-        - asset: assets/fonts/Montserrat/Montserrat-VariableFont_wght.ttf # <--- Corrected path for variable font
-        - asset: assets/fonts/Montserrat/Montserrat-Italic-VariableFont_wght.ttf # <--- Corrected path for italic variable font
-          style: italic # Specify style for italic variable font
+        - asset: assets/fonts/Montserrat-VariableFont_wght.ttf # As per your screenshot
+        - asset: assets/fonts/Montserrat-Italic-VariableFont_wght.ttf # As per your screenshot
+          style: italic
+        - asset: assets/fonts/Montserrat-Black.ttf # Add this if you use it and it's missing
+        - asset: assets/fonts/Montserrat-BlackItalic.ttf # Add this if you use it and it's missing
+          style: italic
+        - asset: assets/fonts/Montserrat-BoldItalic.ttf # Add this if you use it and it's missing
+          style: italic
+        - asset: assets/fonts/Montserrat-ExtraBold.ttf # Add this if you use it and it's missing
+        - asset: assets/fonts/Montserrat-ExtraBoldItalic.ttf # Add this if you use it and it's missing
+          style: italic
+        - asset: assets/fonts/Montserrat-ExtraLight.ttf # Add this if you use it and it's missing
+        - asset: assets/fonts/Montserrat-ExtraLightItalic.ttf # Add this if you use it and it's missing
+          style: italic
+        - asset: assets/fonts/Montserrat-Italic.ttf # Add this if you use it and it's missing
+          style: italic
+        - asset: assets/fonts/Montserrat-LightItalic.ttf # Add this if you use it and it's missing
+          style: italic
+        - asset: assets/fonts/Montserrat-MediumItalic.ttf # Add this if you use it and it's missing
+          style: italic
+        - asset: assets/fonts/Montserrat-SemiBold.ttf # Add this if you use it and it's missing
+        - asset: assets/fonts/Montserrat-SemiBoldItalic.ttf # Add this if you use it and it's missing
+          style: italic
+        - asset: assets/fonts/Montserrat-Thin.ttf # Add this if you use it and it's missing
+        - asset: assets/fonts/Montserrat-ThinItalic.ttf # Add this if you use it and it's missing
+          style: italic

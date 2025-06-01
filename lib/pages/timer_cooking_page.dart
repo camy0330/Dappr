@@ -76,9 +76,8 @@ class _TimerCookingPageState extends State<TimerCookingPage> {
 
   // Helper to format the time for display
   String _formatDuration(int seconds) {
-    int minutes = (seconds ~/ 60);
-    int remainingSeconds = (seconds % 60);
-    // Removed unnecessary parentheses as per lint suggestion
+    int minutes = seconds ~/ 60; // Removed unnecessary parentheses
+    int remainingSeconds = seconds % 60; // Removed unnecessary parentheses
     return '${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
   }
 

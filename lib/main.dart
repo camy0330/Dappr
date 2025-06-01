@@ -1,6 +1,6 @@
 // lib/main.dart
+import 'package:flutter/material.dart'; // Place 'dart:' imports before others
 import 'package:dappr/welcome_page/welcome_page.dart'; // Correct path to welcome_page.dart
-import 'package:flutter/material.dart';
 
 void main() {
   runApp(const MyApp());
