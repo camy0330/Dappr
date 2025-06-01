@@ -1,6 +1,6 @@
 // lib/homepage/auth_page.dart
-import 'package:flutter/material.dart'; // Place 'dart:' imports before others
-import 'package:dappr/main_page.dart'; // Import MainPage for navigation after login
+import 'package:flutter/material.dart';
+import 'package:dappr/main_page.dart';
 
 class AuthPage extends StatefulWidget {
   const AuthPage({super.key});
@@ -29,8 +29,6 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
   }
 
   void _handleLogin() {
-    // Implement your login logic here
-    // For now, just navigate to MainPage
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => const MainPage()),
@@ -39,8 +37,6 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
   }
 
   void _handleSignUp() {
-    // Implement your sign-up logic here
-    // For now, just navigate to MainPage
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => const MainPage()),
@@ -52,11 +48,11 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.transparent, // Transparent AppBar
-        elevation: 0, // No shadow
-        iconTheme: const IconThemeData(color: Colors.white), // Back arrow color
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
-      extendBodyBehindAppBar: true, // Extend body behind AppBar for full background
+      extendBodyBehindAppBar: true,
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -71,9 +67,8 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Taco image/icon
                 const Icon(
-                  Icons.fastfood, // Placeholder icon for the taco
+                  Icons.fastfood,
                   size: 100,
                   color: Colors.white,
                 ),
@@ -99,10 +94,10 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
                 ),
                 const SizedBox(height: 40),
 
-                // Login/Sign Up Tabs
                 Container(
+                  // FIX: Replaced .withOpacity with .withAlpha for deprecated warning
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.3),
+                    color: Colors.white.withAlpha((255 * 0.3).round()), // Use withAlpha or Color.fromRGBO
                     borderRadius: BorderRadius.circular(30),
                   ),
                   child: TabBar(
@@ -122,9 +117,8 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
                 ),
                 const SizedBox(height: 30),
 
-                // TabBarView for Login/Sign Up forms
                 Container(
-                  height: 350, // Adjust height as needed
+                  height: 350,
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(20),
@@ -188,7 +182,7 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
               labelText: 'Password',
               hintText: 'Enter your password',
               prefixIcon: const Icon(Icons.lock, color: Colors.deepOrange),
-              suffixIcon: const Icon(Icons.visibility_off, color: Colors.grey), // Eye icon
+              suffixIcon: const Icon(Icons.visibility_off, color: Colors.grey),
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               filled: true,
               fillColor: Colors.grey[100],
@@ -212,7 +206,6 @@ class _AuthPageState extends State<AuthPage> with SingleTickerProviderStateMixin
             ),
           ),
           const SizedBox(height: 20),
-          // "Don't have an account? Sign Up" is handled by the TabBar
         ],
       ),
     );

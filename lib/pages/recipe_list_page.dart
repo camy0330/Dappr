@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart'; // Place 'dart:' imports before others
 import 'package:dappr/data/recipes_data.dart';
 import 'package:dappr/models/recipe.dart';
-import 'package:dappr/widgets/search_bar.dart'; // Correct import and widget name
+import 'package:dappr/widgets/search_bar.dart';
 
 class RecipeListPage extends StatefulWidget {
   const RecipeListPage({super.key});
@@ -12,15 +12,15 @@ class RecipeListPage extends StatefulWidget {
 }
 
 class _RecipeListPageState extends State<RecipeListPage> {
-  // ignore: unused_field // This field is used for filtering logic
   String _searchQuery = '';
-
   List<Recipe> _filteredRecipes = [];
+  Set<String> _favoriteRecipeIds = {}; // Set to store IDs of favorite recipes
 
   @override
   void initState() {
     super.initState();
     _filteredRecipes = recipes; // Initialize with all recipes
+    // In a real app, load _favoriteRecipeIds from persistent storage here
   }
 
   void _onSearchChanged(String query) {
@@ -38,13 +38,35 @@ class _RecipeListPageState extends State<RecipeListPage> {
     });
   }
 
+  void _toggleFavorite(String recipeId) {
+    setState(() {
+      if (_favoriteRecipeIds.contains(recipeId)) {
+        _favoriteRecipeIds.remove(recipeId);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text('Removed from favorites', style: TextStyle(fontFamily: 'Montserrat')),
+              duration: Duration(seconds: 1)),
+        );
+      } else {
+        _favoriteRecipeIds.add(recipeId);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text('Added to favorites', style: TextStyle(fontFamily: 'Montserrat')),
+              duration: Duration(seconds: 1)),
+        );
+      }
+    });
+    // In a real app, save _favoriteRecipeIds to persistent storage here
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Column( // No Scaffold here as it's part of MainPage's body
+    return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: MySearchBar(onSearch: _onSearchChanged), // Correct widget name
+          // Cursor at edge: Adjusted padding for the search bar
+          padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 8.0),
+          child: MySearchBar(onSearch: _onSearchChanged),
         ),
         Expanded(
           child: _filteredRecipes.isEmpty
@@ -55,15 +77,23 @@ class _RecipeListPageState extends State<RecipeListPage> {
                     textAlign: TextAlign.center,
                   ),
                 )
-              : ListView.builder(
-                  padding: const EdgeInsets.only(top: 8.0),
+              : GridView.builder( // Changed to GridView.builder for square layout
+                  padding: const EdgeInsets.all(8.0), // Padding around the grid
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2, // 2 items per row
+                    crossAxisSpacing: 10.0, // Spacing between columns
+                    mainAxisSpacing: 10.0, // Spacing between rows
+                    childAspectRatio: 0.8, // Aspect ratio to make cards more square/taller
+                  ),
                   itemCount: _filteredRecipes.length,
                   itemBuilder: (context, index) {
                     final recipe = _filteredRecipes[index];
+                    final bool isFavorite = _favoriteRecipeIds.contains(recipe.id);
+
                     return Card(
-                      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                       elevation: 4,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                      clipBehavior: Clip.antiAlias, // Clip children to the card's shape
                       child: InkWell(
                         onTap: () {
                           ScaffoldMessenger.of(context).showSnackBar(
@@ -81,52 +111,62 @@ class _RecipeListPageState extends State<RecipeListPage> {
                           //   ),
                           // );
                         },
-                        child: Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: Row(
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch, // Stretch children horizontally
+                          children: [
+                            // Image at the top, occupying available width
+                            Expanded( // Use Expanded to give image remaining vertical space
+                              child: ClipRRect(
+                                borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
                                 child: Image.asset(
                                   recipe.imageUrl,
-                                  width: 100,
-                                  height: 100,
                                   fit: BoxFit.cover,
                                   errorBuilder: (context, error, stackTrace) {
                                     return Container(
-                                      width: 100,
-                                      height: 100,
                                       color: Colors.grey[300],
                                       child: const Icon(Icons.broken_image, color: Colors.grey),
                                     );
                                   },
                                 ),
                               ),
-                              const SizedBox(width: 15),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      recipe.title,
-                                      style: const TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.bold,
-                                          fontFamily: 'Montserrat'),
-                                    ),
-                                    const SizedBox(height: 5),
-                                    Text(
-                                      recipe.description,
-                                      style: const TextStyle(fontSize: 14, color: Colors.grey, fontFamily: 'Montserrat'),
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    const SizedBox(height: 5),
-                                  ],
-                                ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0), // Padding for text content
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    recipe.title,
+                                    style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily: 'Montserrat'),
+                                    maxLines: 1, // Limit title to one line
+                                    overflow: TextOverflow.ellipsis, // Add ellipsis if too long
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    recipe.description,
+                                    style: const TextStyle(fontSize: 12, color: Colors.grey, fontFamily: 'Montserrat'),
+                                    maxLines: 2, // Limit description to two lines
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
+                            ),
+                            // Favorite Button at the bottom right
+                            Align(
+                              alignment: Alignment.bottomRight,
+                              child: IconButton(
+                                icon: Icon(
+                                  isFavorite ? Icons.favorite : Icons.favorite_border,
+                                  color: isFavorite ? Colors.red : Colors.grey,
+                                  size: 28,
+                                ),
+                                onPressed: () => _toggleFavorite(recipe.id),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     );
