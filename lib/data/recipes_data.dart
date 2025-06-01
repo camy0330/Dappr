@@ -352,7 +352,7 @@ Recipe(
 
 Recipe(
   id: 'R12',
-  title: 'Ayam Goreng',
+  title: 'Fried Chicken',
   description: 'Crispy fried chicken with fragrant spices.',
   imageUrl: 'assets/images/ayam_goreng.jpg',
   ingredients: [
@@ -372,7 +372,7 @@ Recipe(
 
 Recipe(
   id: 'R13',
-  title: 'Kuih Lapis',
+  title: 'Layered Cake',
   description: 'Colorful layered steamed cake made from rice flour and coconut milk.',
   imageUrl: 'assets/images/kuih_lapis.jpg',
   ingredients: [
@@ -429,7 +429,7 @@ Recipe(
 
 Recipe(
   id: 'R16',
-  title: 'Fish Soup (Sup Ikan)',
+  title: 'Fish Soup ',
   description: 'Light and flavorful fish soup with vegetables and herbs.',
   imageUrl: 'assets/images/sup_ikan.jpg',
   ingredients: [
