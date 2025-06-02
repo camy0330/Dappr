@@ -1,8 +1,8 @@
 // lib/providers/favorite_provider.dart
+import 'package:dappr/data/recipes_data.dart'; // To access the full list of recipes
+import 'package:dappr/models/recipe.dart'; // Make sure this import is correct
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:dappr/models/recipe.dart'; // Make sure this import is correct
-import 'package:dappr/data/recipes_data.dart'; // To access the full list of recipes
 
 class FavoriteProvider with ChangeNotifier {
   Set<String> _favoriteRecipeIds = {}; // Stores only IDs for persistence

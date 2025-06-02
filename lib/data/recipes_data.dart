@@ -36,7 +36,7 @@ final List<Recipe> recipes = [
     id: 'r4',
     title: 'Mee Goreng Mamak',
     description: 'Spicy stir-fried noodles, a popular street food in Malaysia, often with seafood and tofu.',
-    imageUrl: 'assets/images/Mee_goreng_mamak.jpg',
+    imageUrl: 'assets/images/Mee_goreng _mamak.jpg',
     ingredients: ['Yellow Noodles', 'Prawns', 'Tofu', 'Eggs', 'Bean Sprouts', 'Chili Paste', 'Soy Sauce'],
     instructions: 'Stir-fry aromatics. Add prawns and tofu. Stir in noodles and sauces. Add vegetables and eggs.',
     prepTime: '15 mins',
@@ -64,7 +64,7 @@ final List<Recipe> recipes = [
   ),
   Recipe(
     id: 'r7',
-    title: 'Sambal Udang Simple',
+    title: 'Sambal Udang',
     description: 'Simple and spicy shrimp sambal, a staple in Malaysian cuisine.',
     imageUrl: 'assets/images/sambal_udang_simple.jpg',
     ingredients: ['Shrimp', 'Chili Paste', 'Onions', 'Garlic', 'Tamarind Paste', 'Sugar', 'Salt'],
@@ -84,7 +84,7 @@ final List<Recipe> recipes = [
   ),
   Recipe(
     id: 'r9',
-    title: 'Sup Ayam Simple',
+    title: 'Sup Ayam',
     description: 'A comforting and easy-to-make chicken soup, perfect for any weather.',
     imageUrl: 'assets/images/sup_ayam_simple.jpg',
     ingredients: ['Chicken Pieces', 'Potatoes', 'Carrots', 'Onions', 'Garlic', 'Ginger', 'Chicken Broth'],

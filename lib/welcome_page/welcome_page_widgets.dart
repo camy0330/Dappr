@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:dappr/welcome_page/welcome_page_styles.dart';
+import 'package:flutter/material.dart';
 
 // AnimatedSlideToReveal class and its state class have been removed,
 // as the functionality is now directly handled in welcome_page.dart.

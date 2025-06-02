@@ -1,6 +1,6 @@
 // lib/welcome_page/welcome_page.dart
-import 'package:flutter/material.dart';
 import 'package:dappr/homepage/auth_page.dart';
+import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart'; // Import Lottie
 
 class WelcomePage extends StatelessWidget {

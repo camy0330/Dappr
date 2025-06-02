@@ -1,7 +1,6 @@
+import 'package:dappr/main.dart'; // Import your main app file to test it
 import 'package:flutter/material.dart'; // Crucial for Widgets like MyApp, Icons
 import 'package:flutter_test/flutter_test.dart'; // Crucial for expect, find, findsOneWidget, findsNothing
-
-import 'package:dappr/main.dart'; // Import your main app file to test it
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {

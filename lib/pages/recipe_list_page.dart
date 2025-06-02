@@ -1,7 +1,7 @@
 // lib/pages/recipe_list_page.dart
 import 'package:dappr/data/recipes_data.dart';
 import 'package:dappr/models/recipe.dart';
-import 'package:dappr/pages/recipe_detail_page.dart'; // Add this for navigation TODO
+import 'package:dappr/pages/recipe_detail_page.dart'; 
 import 'package:dappr/providers/favorite_provider.dart';
 import 'package:dappr/widgets/search_bar.dart'; // Corrected import for search_bar.dart
 import 'package:flutter/material.dart';
@@ -78,7 +78,7 @@ class _RecipeListPageState extends State<RecipeListPage> {
                       clipBehavior: Clip.antiAlias,
                       child: InkWell(
                         onTap: () {
-                          // TODO: Implement navigation to RecipeDetailPage
+                          
                           Navigator.push(
                             context,
                             MaterialPageRoute(
