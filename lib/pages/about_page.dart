@@ -1,6 +1,6 @@
 // lib/pages/about_page.dart
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart'; 
+import 'package:lottie/lottie.dart';
 import 'package:url_launcher/url_launcher.dart'; // Import url_launcher
 
 class AboutPage extends StatelessWidget {
@@ -20,8 +20,8 @@ class AboutPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('About Dappr', style: TextStyle(fontFamily: 'Montserrat', color: Colors.black87)), // Changed title color to black87
-        backgroundColor: Colors.white, // Changed AppBar background to white
+        title: const Text('About Dappr', style: TextStyle(fontFamily: 'Montserrat', color: Colors.black87)),
+        backgroundColor: Colors.deepOrange, // Changed AppBar background to white
         iconTheme: const IconThemeData(color: Colors.black87), // Changed icon color to black87
       ),
       body: SingleChildScrollView(
@@ -29,27 +29,31 @@ class AboutPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // App Logo/Icon (reusing a placeholder icon or Lottie if applicable)
-            Lottie.asset(
-                  'assets/animations/dappr_logo_wrapped.json', // Your Lottie file path
-                  width: 150,
-                  height: 150,
-                  fit: BoxFit.contain,
-                ),
-            const SizedBox(height: 20),
-            // App Name
-            const Center(
-              child: Text(
-                'Dappr',
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Montserrat',
-                  color: Colors.deepOrange,
-                ),
+            // Combined Lottie and App Name into a single centered column
+            Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min, // Ensure column takes minimum space
+                children: [
+                  Lottie.asset(
+                    'assets/animations/dappr_logo_wrapped.json', // Your Lottie file path
+                    width: 160,
+                    height: 150,
+                    fit: BoxFit.contain,
+                  ),
+                  // Removed SizedBox here as it's now within the combined column
+                  const Text(
+                    'Dappr',
+                    style: TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Montserrat',
+                      color: Colors.deepOrange,
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 10), // This SizedBox now separates the logo/name block from description
             // App Description
             const Text(
               'Dappr is your ultimate culinary companion, designed to simplify your cooking journey. '
@@ -115,7 +119,7 @@ class AboutPage extends StatelessWidget {
             Center(
               child: ElevatedButton.icon(
                 onPressed: () {
-                  // 
+                  //
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('Thank you for rating Dappr!', style: TextStyle(fontFamily: 'Montserrat')),

@@ -8,7 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart'; // Import shared_pr
 
 // // For local notifications (mobile specific, conceptual for now)
 // final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-//     FlutterLocalNotificationsPlugin();
+//     FlutterLocalNotificationsPlugin();
 
 class TimerCookingPage extends StatefulWidget {
   const TimerCookingPage({super.key});
@@ -27,6 +27,7 @@ class _TimerCookingPageState extends State<TimerCookingPage> {
   bool _isRunning = false;
   final AudioPlayer _audioPlayer = AudioPlayer();
   final TextEditingController _minutesController = TextEditingController();
+  final TextEditingController _secondsController = TextEditingController(); // New controller for seconds
 
   // Variables to store timer state for persistence
   DateTime? _timerEndTime;
@@ -38,11 +39,11 @@ class _TimerCookingPageState extends State<TimerCookingPage> {
     _loadTimerState();
     // Initialize local notifications (mobile specific, conceptual)
     // const AndroidInitializationSettings initializationSettingsAndroid =
-    //     AndroidInitializationSettings('app_icon'); // Replace with your app icon name
+    //     AndroidInitializationSettings('app_icon'); // Replace with your app icon name
     // const DarwinInitializationSettings initializationSettingsIOS =
-    //     DarwinInitializationSettings();
+    //     DarwinInitializationSettings();
     // const InitializationSettings initializationSettings = InitializationSettings(
-    //     android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
+    //     android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
     // flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
 
@@ -61,6 +62,7 @@ class _TimerCookingPageState extends State<TimerCookingPage> {
           _currentDuration = remainingDuration;
           _initialSetDuration = savedDuration;
           _minutesController.text = (remainingDuration ~/ 60).toString();
+          _secondsController.text = (remainingDuration % 60).toString(); // Set seconds as well
           _isRunning = true;
         });
         _startTimerTick(); // Resume ticking from saved state
@@ -71,7 +73,7 @@ class _TimerCookingPageState extends State<TimerCookingPage> {
       }
     } else {
       // No saved timer or it was paused/reset
-      _resetTimer(); // Set to default state (e.g., 5 minutes)
+      _resetTimer(); // Set to default state (e.g., 5 minutes 0 seconds)
     }
   }
 
@@ -91,14 +93,18 @@ class _TimerCookingPageState extends State<TimerCookingPage> {
 
   void _startTimer() {
     int minutes = int.tryParse(_minutesController.text) ?? 0;
-    if (minutes <= 0) {
+    int seconds = int.tryParse(_secondsController.text) ?? 0; // Get seconds value
+
+    int totalDuration = (minutes * 60) + seconds; // Calculate total seconds
+
+    if (totalDuration <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please set a valid duration in minutes.', style: TextStyle(fontFamily: 'Montserrat'))),
+        const SnackBar(content: Text('Please set a valid duration in minutes or seconds.', style: TextStyle(fontFamily: 'Montserrat'))),
       );
       return;
     }
 
-    _initialSetDuration = minutes * 60;
+    _initialSetDuration = totalDuration; // Use totalDuration
     _currentDuration = _initialSetDuration;
     _timerEndTime = DateTime.now().add(Duration(seconds: _currentDuration));
 
@@ -141,14 +147,15 @@ class _TimerCookingPageState extends State<TimerCookingPage> {
       _isRunning = false;
     });
     _audioPlayer.stop();
-    _resetTimerStateInPrefs(); // Clear saved state on pause
+    _saveTimerState(); // Save current remaining duration on pause
   }
 
   void _resetTimer() {
     _timer?.cancel();
     setState(() {
       _currentDuration = 5 * 60; // Default to 5 minutes on reset
-      _minutesController.text = '5'; // Set text field to 5 minutes
+      _minutesController.text = '5'; // Set minutes text field to 5
+      _secondsController.text = '0'; // Set seconds text field to 0
       _isRunning = false;
     });
     _audioPlayer.stop();
@@ -187,25 +194,25 @@ class _TimerCookingPageState extends State<TimerCookingPage> {
 
     // // Example for flutter_local_notifications (mobile specific, uncomment for full setup)
     // const AndroidNotificationDetails androidPlatformChannelSpecifics =
-    //     AndroidNotificationDetails(
-    //   'timer_channel', // id
-    //   'Timer Notifications', // name
-    //   channelDescription: 'Notifications for cooking timers',
-    //   importance: Importance.max,
-    //   priority: Priority.high,
-    //   showWhen: false,
+    //     AndroidNotificationDetails(
+    //   'timer_channel', // id
+    //   'Timer Notifications', // name
+    //   channelDescription: 'Notifications for cooking timers',
+    //   importance: Importance.max,
+    //   priority: Priority.high,
+    //   showWhen: false,
     // );
     // const DarwinNotificationDetails iOSPlatformChannelSpecifics =
-    //     DarwinNotificationDetails();
+    //     DarwinNotificationDetails();
     // const NotificationDetails platformChannelSpecifics = NotificationDetails(
-    //     android: androidPlatformChannelSpecifics,
-    //     iOS: iOSPlatformChannelSpecifics);
+    //     android: androidPlatformChannelSpecifics,
+    //     iOS: iOSPlatformChannelSpecifics);
     // flutterLocalNotificationsPlugin.show(
-    //   0, // notification id
-    //   'Dappr Timer',
-    //   'Your cooking timer has finished!',
-    //   platformChannelSpecifics,
-    //   payload: 'timer_finished',
+    //   0, // notification id
+    //   'Dappr Timer',
+    //   'Your cooking timer has finished!',
+    //   platformChannelSpecifics,
+    //   payload: 'timer_finished',
     // );
   }
 
@@ -222,12 +229,18 @@ class _TimerCookingPageState extends State<TimerCookingPage> {
     _timer?.cancel();
     _audioPlayer.dispose();
     _minutesController.dispose();
+    _secondsController.dispose(); // Dispose the new controller
     _saveTimerState(); // Save state when leaving the page
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    // Determine if the current theme is dark
+    final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+    // Set the color based on the theme
+    final Color timerTextColor = isDarkMode ? Colors.white : Colors.black87;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Cooking Timer', style: TextStyle(fontFamily: 'Montserrat', color: Colors.white)),
@@ -241,11 +254,11 @@ class _TimerCookingPageState extends State<TimerCookingPage> {
             child: Center(
               child: Text(
                 _formatDuration(_currentDuration),
-                style: const TextStyle(
+                style: TextStyle( // Use TextStyle directly
                   fontSize: 80,
                   fontWeight: FontWeight.bold,
                   fontFamily: 'Montserrat',
-                  color: Colors.black87,
+                  color: timerTextColor, // Apply the determined color here
                 ),
               ),
             ),
@@ -290,20 +303,52 @@ class _TimerCookingPageState extends State<TimerCookingPage> {
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
-            child: TextField(
-              controller: _minutesController,
-              keyboardType: TextInputType.number,
-              enabled: !_isRunning, // Disable text field when timer is running
-              decoration: InputDecoration(
-                labelText: 'Set Minutes',
-                hintText: 'e.g., 5',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.0),
+            child: Row( // Use a Row to place minute and second input fields side by side
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _minutesController,
+                    keyboardType: TextInputType.number,
+                    enabled: !_isRunning, // Disable text field when timer is running
+                    decoration: InputDecoration(
+                      labelText: 'Minutes', // Changed label
+                      hintText: 'e.g., 5',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                      labelStyle: TextStyle(color: isDarkMode ? Colors.white70 : Colors.black54), // Label color
+                      hintStyle: TextStyle(color: isDarkMode ? Colors.white54 : Colors.grey), // Hint color
+                      fillColor: isDarkMode ? Colors.grey[800] : Colors.white, // Background color
+                      filled: true,
+                    ),
+                    style: TextStyle(fontFamily: 'Montserrat', color: isDarkMode ? Colors.white : Colors.black87), // Input text color
+                    onSubmitted: (value) => _startTimer(),
+                  ),
                 ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-              ),
-              style: const TextStyle(fontFamily: 'Montserrat'),
-              onSubmitted: (value) => _startTimer(),
+                const SizedBox(width: 10), // Space between minute and second fields
+                Expanded(
+                  child: TextField(
+                    controller: _secondsController, // New controller for seconds
+                    keyboardType: TextInputType.number,
+                    enabled: !_isRunning, // Disable text field when timer is running
+                    decoration: InputDecoration(
+                      labelText: 'Seconds', // New label for seconds
+                      hintText: 'e.g., 30',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                      labelStyle: TextStyle(color: isDarkMode ? Colors.white70 : Colors.black54), // Label color
+                      hintStyle: TextStyle(color: isDarkMode ? Colors.white54 : Colors.grey), // Hint color
+                      fillColor: isDarkMode ? Colors.grey[800] : Colors.white, // Background color
+                      filled: true,
+                    ),
+                    style: TextStyle(fontFamily: 'Montserrat', color: isDarkMode ? Colors.white : Colors.black87), // Input text color
+                    onSubmitted: (value) => _startTimer(),
+                  ),
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 50),
