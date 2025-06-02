@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 // lib/pages/meal_planner_page.dart
 import 'package:flutter/material.dart';
 
@@ -66,4 +67,58 @@ class MealPlannerPage extends StatelessWidget {
       ),
     );
   }
+=======
+// lib/pages/meal_planner_page.dart
+import 'package:flutter/material.dart';
+
+class MealPlannerPage extends StatelessWidget {
+  const MealPlannerPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.calendar_today,
+              size: 80,
+              color: Colors.deepOrange,
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'Meal Planner',
+              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            const Text(
+              'Plan your delicious meals for the week!',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 16, color: Colors.grey),
+            ),
+            const SizedBox(height: 30),
+            ElevatedButton.icon(
+              onPressed: () {
+                // Future: Implement meal planning functionality
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Meal Planning feature coming soon!')),
+                );
+              },
+              icon: const Icon(Icons.add, color: Colors.white),
+              label: const Text('Add Meal', style: TextStyle(color: Colors.white)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepOrange,
+                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+>>>>>>> Stashed changes
 }

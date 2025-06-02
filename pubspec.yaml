@@ -13,6 +13,7 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^1.0.2
   logger: ^2.0.2
+<<<<<<< Updated upstream
   lottie: ^3.1.0
   audioplayers: ^6.0.0 # Make sure this is still here and correctly indented
   shared_preferences: ^2.2.3 
@@ -20,6 +21,10 @@ dependencies:
   flutter_local_notifications: ^17.1.2
   url_launcher: ^6.2.6
 
+=======
+  lottie: ^2.0.0
+  audioplayers: ^6.0.0 # Make sure this is still here and correctly indented
+>>>>>>> Stashed changes
 
 dev_dependencies:
   flutter_test:
@@ -30,9 +35,14 @@ flutter:
   uses-material-design: true
   assets:
     - assets/animations/dappr_logo_wrapped.json
+<<<<<<< Updated upstream
     # ... (ensure ALL your other images and sounds are listed here with correct paths)
     - assets/images/nasi_goreng.jpg
     - assets/images/Mee_goreng _mamak.jpg 
+=======
+    - assets/images/nasi_goreng.jpg
+    - assets/images/Mee_goreng _mamak.jpg # Ensure this filename with space is exactly as in your file system
+>>>>>>> Stashed changes
     - assets/images/roti_jala.jpg
     - assets/images/spaghetti_aglio_olio.jpg
     - assets/images/tomyam_thai.jpg
@@ -41,6 +51,7 @@ flutter:
     - assets/images/sambal_udang_simple.jpg
     - assets/images/sup_ayam_simple.jpg
     - assets/images/cooking_app_display_stockcake.jpg
+<<<<<<< Updated upstream
     - assets/sounds/timer_alarm.mp3 # Make sure this is present and correct
 
   fonts: # This 'fonts:' must be directly under 'flutter:' (2 spaces indentation)
@@ -79,3 +90,30 @@ flutter:
         - asset: assets/fonts/Montserrat-Thin.ttf # Add this if you use it and it's missing
         - asset: assets/fonts/Montserrat-ThinItalic.ttf # Add this if you use it and it's missing
           style: italic
+=======
+    - assets/sounds/timer_alarm.mp3
+
+  fonts:
+    - family: Montserrat # This is the name you'll use in your code
+      fonts:
+        # Declare all the static fonts you want to use
+        - asset: assets/fonts/Montserrat/Montserrat-Regular.ttf
+        - asset: assets/fonts/Montserrat/Montserrat-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Montserrat/Montserrat-Light.ttf
+          weight: 300
+        - asset: assets/fonts/Montserrat/Montserrat-Medium.ttf
+          weight: 500
+        # Add other specific static fonts if you use them by name, e.g.:
+        # - asset: assets/fonts/Montserrat/Montserrat-SemiBold.ttf
+        #   weight: 600
+        # - asset: assets/fonts/Montserrat/Montserrat-Black.ttf
+        #   weight: 900
+        # - asset: assets/fonts/Montserrat/Montserrat-Thin.ttf
+        #   weight: 100
+
+        # Declare the variable fonts
+        - asset: assets/fonts/Montserrat/Montserrat-VariableFont_wght.ttf # <--- Corrected path for variable font
+        - asset: assets/fonts/Montserrat/Montserrat-Italic-VariableFont_wght.ttf # <--- Corrected path for italic variable font
+          style: italic # Specify style for italic variable font
+>>>>>>> Stashed changes

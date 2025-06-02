@@ -1,4 +1,5 @@
 // lib/main.dart
+<<<<<<< Updated upstream
 import 'package:dappr/providers/favorite_provider.dart';
 import 'package:dappr/welcome_page/welcome_page.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,13 @@ import 'package:dappr/theme_notifier.dart'; // Import your ThemeNotifier
 import 'package:dappr/pages/about_page.dart';
 import 'package:dappr/pages/timer_cooking_page.dart';
 import 'package:dappr/pages/setting_page.dart';
+=======
+import 'package:flutter/material.dart';
+import 'package:logger/logger.dart'; // Ensure logger is imported if used
+import 'welcome_page/welcome_page.dart'; // This is your starting page
+
+var logger = Logger();
+>>>>>>> Stashed changes
 
 void main() {
   runApp(
@@ -27,6 +35,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< Updated upstream
     // Consumer listens to changes in ThemeNotifier and rebuilds MaterialApp when themeMode changes
     return Consumer<ThemeNotifier>(
       builder: (context, themeNotifier, child) {
@@ -76,6 +85,17 @@ class MyApp extends StatelessWidget {
           },
         );
       },
+=======
+    return MaterialApp(
+      title: 'Dappr',
+      debugShowCheckedModeBanner: false, // Set to false to remove debug banner
+      theme: ThemeData(
+        primarySwatch: Colors.deepOrange, // Example theme color
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+      ),
+      home:
+          const WelcomePage(), // This sets your WelcomePage as the initial route
+>>>>>>> Stashed changes
     );
   }
 }

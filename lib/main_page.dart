@@ -1,4 +1,5 @@
 // lib/main_page.dart
+<<<<<<< Updated upstream
 import 'package:dappr/homepage/auth_page.dart'; // Correct path for AuthPage
 import 'package:dappr/pages/about_page.dart'; // Correct path
 import 'package:dappr/pages/favourite_page.dart'; // Correct path
@@ -9,6 +10,21 @@ import 'package:dappr/pages/setting_page.dart'; // Correct path
 import 'package:dappr/pages/shopping_list_page.dart'; // Correct path
 import 'package:dappr/pages/timer_cooking_page.dart'; // Corrected import for timer_cooking_page.dart
 import 'package:flutter/material.dart';
+=======
+import 'package:flutter/material.dart';
+// Pages for Bottom Navigation Bar
+import 'package:dappr/pages/recipe_list_page.dart';
+import 'package:dappr/pages/meal_planner_page.dart';
+import 'package:dappr/pages/cooking_timer_page.dart';
+
+// Pages for Drawer (Sidebar Navigation)
+import 'package:dappr/pages/shopping_list_page.dart';
+import 'package:dappr/pages/favourite_page.dart';
+import 'package:dappr/pages/setting_page.dart';
+import 'package:dappr/pages/about_page.dart';
+import 'package:dappr/welcome_page/welcome_page.dart'; // <--- THIS IMPORT IS CRUCIAL
+// Based on image_bfd3d5.png, welcome_page.dart is directly under lib/welcome_page/
+>>>>>>> Stashed changes
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -21,10 +37,16 @@ class _MainPageState extends State<MainPage> {
   int _selectedIndex = 1; // Starting on Recipes page
 
   final List<Widget> _bottomNavPages = [
+<<<<<<< Updated upstream
     const HomePage(),
     const RecipeListPage(),
     const MealPlannerPage(),
     const TimerCookingPage(),
+=======
+    const RecipeListPage(),
+    const MealPlannerPage(),
+    const CookingTimerPage(),
+>>>>>>> Stashed changes
   ];
 
   void _onItemTapped(int index) {
@@ -106,10 +128,17 @@ class _MainPageState extends State<MainPage> {
               leading: const Icon(Icons.logout, color: Colors.grey),
               title: const Text('Logout', style: TextStyle(fontFamily: 'Montserrat')),
               onTap: () {
+<<<<<<< Updated upstream
                 // Navigate to AuthPage and clear navigation stack
                 Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(builder: (context) => const AuthPage()),
+=======
+                // This is the line causing the error:
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => const WelcomePage()), // <--- Check this line
+>>>>>>> Stashed changes
                   (Route<dynamic> route) => false,
                 );
               },
@@ -119,13 +148,16 @@ class _MainPageState extends State<MainPage> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
+<<<<<<< Updated upstream
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
           ),
+=======
+>>>>>>> Stashed changes
           BottomNavigationBarItem(
-            icon: Icon(Icons.restaurant_menu),
-            label: 'Recipes',
+            icon: Icon(Icons.home),
+            label: 'Home',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.calendar_today),
