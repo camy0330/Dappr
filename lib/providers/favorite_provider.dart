@@ -29,7 +29,7 @@ class FavoriteProvider with ChangeNotifier {
     notifyListeners(); // Notify listeners (UI widgets) that state has changed
   }
 
-  // Load favorite recipe IDs from shared preferences
+  // Load favorite recipe IDs from shared preferences (private helper)
   Future<void> _loadFavorites() async {
     final prefs = await SharedPreferences.getInstance();
     final savedIds = prefs.getStringList('favoriteRecipeIds');
@@ -40,16 +40,29 @@ class FavoriteProvider with ChangeNotifier {
     notifyListeners(); // Notify after initial load
   }
 
-  // Save favorite recipe IDs to shared preferences
+  // Save favorite recipe IDs to shared preferences (private helper)
   Future<void> _saveFavorites() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setStringList('favoriteRecipeIds', _favoriteRecipeIds.toList());
   }
 
-  // Helper to update the list of actual Recipe objects based on IDs
+  // Helper to update the list of actual Recipe objects based on IDs (private helper)
   void _updateFavoriteRecipes() {
     _favoriteRecipes = recipes // 'recipes' is your global list from recipes_data.dart
         .where((recipe) => _favoriteRecipeIds.contains(recipe.id))
         .toList();
   }
+
+  // Public method to clear all favorites
+  Future<void> clearAllFavorites() async { // <--- NEW PUBLIC METHOD
+    _favoriteRecipeIds.clear(); // Clear the in-memory set
+    await _saveFavorites(); // Save the empty set to SharedPreferences
+    _updateFavoriteRecipes(); // Update the UI list to be empty
+    notifyListeners(); // Notify widgets that favorites have changed
+  }
+
+  // You could also add a public load method if needed elsewhere, e.g.:
+  // Future<void> loadFavoritesPublic() async {
+  //   await _loadFavorites();
+  // }
 }
