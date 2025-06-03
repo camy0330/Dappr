@@ -1,5 +1,3 @@
-<<<<<<< Updated upstream
-// lib/pages/shopping_list_page.dart
 import 'package:flutter/material.dart';
 
 class ShoppingListPage extends StatefulWidget {
@@ -9,264 +7,284 @@ class ShoppingListPage extends StatefulWidget {
   State<ShoppingListPage> createState() => _ShoppingListPageState();
 }
 
-class _ShoppingListPageState extends State<ShoppingListPage> {
-  final List<String> _shoppingItems = [];
-  final TextEditingController _itemController = TextEditingController();
+class GroceryItem {
+  String name;
+  int quantity;
+  bool isBought;
 
-  void _addItem() {
-    final newItem = _itemController.text.trim();
-    if (newItem.isNotEmpty) {
+  GroceryItem({
+    required this.name,
+    required this.quantity,
+    this.isBought = false,
+  });
+}
+
+class _ShoppingListPageState extends State<ShoppingListPage> {
+  final TextEditingController _storeController = TextEditingController();
+  final TextEditingController _itemNameController = TextEditingController();
+  final TextEditingController _itemQtyController = TextEditingController();
+
+  // Key: Store name, Value: List of grocery items
+  final Map<String, List<GroceryItem>> _storeItems = {};
+
+  String? _selectedStore;
+
+  void _addStore() {
+    final storeName = _storeController.text.trim();
+    if (storeName.isNotEmpty && !_storeItems.containsKey(storeName)) {
       setState(() {
-        _shoppingItems.add(newItem);
+        _storeItems[storeName] = [];
+        _selectedStore = storeName;
       });
-      _itemController.clear();
+      _storeController.clear();
     }
   }
 
-  void _removeItem(int index) {
+  void _addItemToSelectedStore() {
+    if (_selectedStore == null) return;
+    final name = _itemNameController.text.trim();
+    final qty = int.tryParse(_itemQtyController.text.trim()) ?? 1;
+
+    if (name.isEmpty) return;
+
     setState(() {
-      _shoppingItems.removeAt(index);
+      _storeItems[_selectedStore]!.add(GroceryItem(name: name, quantity: qty));
+    });
+
+    _itemNameController.clear();
+    _itemQtyController.clear();
+  }
+
+  void _toggleBought(String store, int index) {
+    setState(() {
+      _storeItems[store]![index].isBought =
+          !_storeItems[store]![index].isBought;
+    });
+  }
+
+  void _removeItem(String store, int index) {
+    setState(() {
+      _storeItems[store]!.removeAt(index);
     });
   }
 
   @override
   void dispose() {
-    _itemController.dispose();
+    _storeController.dispose();
+    _itemNameController.dispose();
+    _itemQtyController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final primaryColor = Colors.deepOrange;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Shopping List', style: TextStyle(fontFamily: 'Montserrat', color: Colors.white)),
-        backgroundColor: Colors.deepOrange,
-        iconTheme: const IconThemeData(color: Colors.white),
+        title: const Text('Store Shopping List',
+            style: TextStyle(fontFamily: 'Montserrat')),
+        backgroundColor: primaryColor,
+        centerTitle: true,
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            // Add Store Section
+            Row(
               children: [
                 Expanded(
                   child: TextField(
-                    controller: _itemController,
+                    controller: _storeController,
                     decoration: InputDecoration(
-                      labelText: 'Add new grocery item',
-                      hintText: 'e.g., Milk, Eggs, Bread',
+                      labelText: 'Add Grocery Store',
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
-                      prefixIcon: const Icon(Icons.add_shopping_cart),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                          borderRadius: BorderRadius.circular(12)),
+                      prefixIcon: const Icon(Icons.store),
                     ),
-                    onSubmitted: (value) => _addItem(),
                     style: const TextStyle(fontFamily: 'Montserrat'),
+                    onSubmitted: (_) => _addStore(),
                   ),
                 ),
                 const SizedBox(width: 10),
                 ElevatedButton(
-                  onPressed: _addItem,
+                  onPressed: _addStore,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepOrange,
-                    foregroundColor: Colors.white,
+                    backgroundColor: primaryColor,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                    ),
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                        borderRadius: BorderRadius.circular(12)),
                   ),
                   child: const Icon(Icons.add),
                 ),
               ],
             ),
-          ),
-          Expanded(
-            child: _shoppingItems.isEmpty
-                ? const Center(
+
+            const SizedBox(height: 20),
+
+            // List of Stores and Items
+            if (_storeItems.isEmpty)
+              const Center(
+                child: Padding(
+                  padding: EdgeInsets.only(top: 40),
+                  child: Text(
+                    'No stores added yet.',
+                    style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.grey,
+                        fontFamily: 'Montserrat'),
+                  ),
+                ),
+              )
+            else
+              ..._storeItems.entries.map((entry) {
+                final storeName = entry.key;
+                final items = entry.value;
+
+                return Card(
+                  margin: const EdgeInsets.symmetric(vertical: 10),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                  elevation: 4,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(Icons.shopping_basket_outlined, size: 80, color: Colors.grey),
-                        SizedBox(height: 10),
-                        Text(
-                          'Your shopping list is empty!',
-                          style: TextStyle(fontSize: 18, color: Colors.grey, fontFamily: 'Montserrat'),
+                        // Store name
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              storeName,
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Montserrat',
+                                color: Color.fromARGB(255, 87, 82, 81),
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.close, color: Colors.red),
+                              onPressed: () {
+                                setState(() {
+                                  _storeItems.remove(storeName);
+                                  if (_selectedStore == storeName)
+                                    _selectedStore = null;
+                                });
+                              },
+                            ),
+                          ],
                         ),
-                        Text(
-                          'Add items to start your grocery list.',
-                          style: TextStyle(fontSize: 14, color: Colors.grey, fontFamily: 'Montserrat'),
-                        ),
+                        const SizedBox(height: 10),
+
+                        // Add item form for this store
+                        if (_selectedStore == storeName)
+                          Row(
+                            children: [
+                              Expanded(
+                                flex: 5,
+                                child: TextField(
+                                  controller: _itemNameController,
+                                  decoration: InputDecoration(
+                                    labelText: 'Item name',
+                                    border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(12)),
+                                  ),
+                                  onSubmitted: (_) => _addItemToSelectedStore(),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                flex: 2,
+                                child: TextField(
+                                  controller: _itemQtyController,
+                                  decoration: InputDecoration(
+                                    labelText: 'Qty',
+                                    border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(12)),
+                                  ),
+                                  keyboardType: TextInputType.number,
+                                  onSubmitted: (_) => _addItemToSelectedStore(),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              ElevatedButton(
+                                onPressed: _addItemToSelectedStore,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: primaryColor,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12)),
+                                ),
+                                child: const Icon(Icons.add),
+                              ),
+                            ],
+                          )
+                        else
+                          TextButton(
+                            onPressed: () {
+                              setState(() {
+                                _selectedStore = storeName;
+                                _itemNameController.clear();
+                                _itemQtyController.clear();
+                              });
+                            },
+                            child: const Text('Add Items',
+                                style: TextStyle(fontFamily: 'Montserrat')),
+                          ),
+
+                        const SizedBox(height: 10),
+
+                        // Items list
+                        if (items.isEmpty)
+                          const Text(
+                            'No items yet.',
+                            style: TextStyle(
+                                color: Colors.grey, fontFamily: 'Montserrat'),
+                          )
+                        else
+                          ...items.asMap().entries.map((entry) {
+                            final index = entry.key;
+                            final item = entry.value;
+
+                            return ListTile(
+                              leading: Checkbox(
+                                value: item.isBought,
+                                onChanged: (_) =>
+                                    _toggleBought(storeName, index),
+                                activeColor: primaryColor,
+                              ),
+                              title: Text(
+                                item.name,
+                                style: TextStyle(
+                                  decoration: item.isBought
+                                      ? TextDecoration.lineThrough
+                                      : null,
+                                  fontFamily: 'Montserrat',
+                                ),
+                              ),
+                              subtitle: Text(
+                                'Quantity: ${item.quantity}',
+                                style:
+                                    const TextStyle(fontFamily: 'Montserrat'),
+                              ),
+                              trailing: IconButton(
+                                icon:
+                                    const Icon(Icons.delete, color: Colors.red),
+                                onPressed: () => _removeItem(storeName, index),
+                              ),
+                            );
+                          }).toList(),
                       ],
                     ),
-                  )
-                : ListView.builder(
-                    itemCount: _shoppingItems.length,
-                    itemBuilder: (context, index) {
-                      return Card(
-                        margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
-                        elevation: 2,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        child: ListTile(
-                          title: Text(
-                            _shoppingItems[index],
-                            style: const TextStyle(fontSize: 16.0, fontFamily: 'Montserrat'),
-                          ),
-                          trailing: IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
-                            onPressed: () => _removeItem(index),
-                          ),
-                          leading: const Icon(Icons.drag_indicator),
-                          onTap: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('${_shoppingItems[index]} tapped!', style: const TextStyle(fontFamily: 'Montserrat'))),
-                            );
-                          },
-                        ),
-                      );
-                    },
                   ),
-          ),
-        ],
+                );
+              }).toList(),
+          ],
+        ),
       ),
     );
   }
-=======
-// lib/pages/shopping_list_page.dart
-import 'package:flutter/material.dart';
-
-class ShoppingListPage extends StatefulWidget {
-  const ShoppingListPage({super.key});
-
-  @override
-  State<ShoppingListPage> createState() => _ShoppingListPageState();
-}
-
-class _ShoppingListPageState extends State<ShoppingListPage> {
-  final List<String> _shoppingItems = [];
-  final TextEditingController _itemController = TextEditingController();
-
-  void _addItem() {
-    final newItem = _itemController.text.trim();
-    if (newItem.isNotEmpty) {
-      setState(() {
-        _shoppingItems.add(newItem);
-      });
-      _itemController.clear();
-    }
-  }
-
-  void _removeItem(int index) {
-    setState(() {
-      _shoppingItems.removeAt(index);
-    });
-  }
-
-  @override
-  void dispose() {
-    _itemController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar( // <--- ADDED AppBar for back button and title
-        title: const Text('Shopping List', style: TextStyle(fontFamily: 'Montserrat', color: Colors.white)),
-        backgroundColor: Colors.deepOrange, // Consistent theme color
-        iconTheme: const IconThemeData(color: Colors.white), // For the back arrow icon
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _itemController,
-                    decoration: InputDecoration(
-                      labelText: 'Add new grocery item',
-                      hintText: 'e.g., Milk, Eggs, Bread',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
-                      prefixIcon: const Icon(Icons.add_shopping_cart),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-                    ),
-                    onSubmitted: (value) => _addItem(),
-                    style: const TextStyle(fontFamily: 'Montserrat'), // Apply font
-                  ),
-                ),
-                const SizedBox(width: 10),
-                ElevatedButton(
-                  onPressed: _addItem,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepOrange,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.0),
-                    ),
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                  ),
-                  child: const Icon(Icons.add),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: _shoppingItems.isEmpty
-                ? const Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.shopping_basket_outlined, size: 80, color: Colors.grey),
-                        SizedBox(height: 10),
-                        Text(
-                          'Your shopping list is empty!',
-                          style: TextStyle(fontSize: 18, color: Colors.grey, fontFamily: 'Montserrat'), // Apply font
-                        ),
-                        Text(
-                          'Add items to start your grocery list.',
-                          style: TextStyle(fontSize: 14, color: Colors.grey, fontFamily: 'Montserrat'), // Apply font
-                        ),
-                      ],
-                    ),
-                  )
-                : ListView.builder(
-                    itemCount: _shoppingItems.length,
-                    itemBuilder: (context, index) {
-                      return Card(
-                        margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
-                        elevation: 2,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        child: ListTile(
-                          title: Text(
-                            _shoppingItems[index],
-                            style: const TextStyle(fontSize: 16.0, fontFamily: 'Montserrat'), // Apply font
-                          ),
-                          trailing: IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
-                            onPressed: () => _removeItem(index),
-                          ),
-                          leading: const Icon(Icons.drag_indicator),
-                          onTap: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('${_shoppingItems[index]} tapped!', style: const TextStyle(fontFamily: 'Montserrat'))), // Apply font
-                            );
-                          },
-                        ),
-                      );
-                    },
-                  ),
-          ),
-        ],
-      ),
-    );
-  }
->>>>>>> Stashed changes
 }
