@@ -38,13 +38,16 @@ class FavouritePage extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 16,
-                    // CORRECTED: Using normalized .a, .r, .g, .b and converting to int
                     color: Theme.of(context).textTheme.bodyMedium?.color != null
                         ? Color.fromARGB(
-                            (Theme.of(context).textTheme.bodyMedium!.color!.a * 0.6 * 255.0).round().clamp(0, 255), // New alpha with clamp
-                            (Theme.of(context).textTheme.bodyMedium!.color!.r * 255.0).round().clamp(0, 255), // Original red
-                            (Theme.of(context).textTheme.bodyMedium!.color!.g * 255.0).round().clamp(0, 255), // Original green
-                            (Theme.of(context).textTheme.bodyMedium!.color!.b * 255.0).round().clamp(0, 255), // Original blue
+                            // Corrected: Use .a for alpha, multiply by 255.0, round, and bitwise AND 0xff
+                            (Theme.of(context).textTheme.bodyMedium!.color!.a * 255.0).round().clamp(0, 255),
+                            // Corrected: Use .r for red, multiply by 255.0, round, and bitwise AND 0xff
+                            (Theme.of(context).textTheme.bodyMedium!.color!.r * 255.0).round().clamp(0, 255),
+                            // Corrected: Use .g for green, multiply by 255.0, round, and bitwise AND 0xff
+                            (Theme.of(context).textTheme.bodyMedium!.color!.g * 255.0).round().clamp(0, 255),
+                            // Corrected: Use .b for blue, multiply by 255.0, round, and bitwise AND 0xff
+                            (Theme.of(context).textTheme.bodyMedium!.color!.b * 255.0).round().clamp(0, 255),
                           )
                         : Colors.grey, // Fallback if bodyMedium color is null
                     fontFamily: 'Montserrat',
@@ -55,11 +58,11 @@ class FavouritePage extends StatelessWidget {
           } else {
             return GridView.builder(
               padding: const EdgeInsets.all(16.0),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2, // 2 items per row
+              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 250.0, // Maximum width for each item
                 crossAxisSpacing: 16.0, // Horizontal spacing
                 mainAxisSpacing: 16.0, // Vertical spacing
-                childAspectRatio: 0.65, // Adjusted for better fit
+                childAspectRatio: 0.65, // Aspect ratio of each item (width / height)
               ),
               itemCount: favoriteRecipes.length,
               itemBuilder: (context, index) {
