@@ -1,30 +1,15 @@
 // lib/main_page.dart
-<<<<<<< Updated upstream
-import 'package:dappr/homepage/auth_page.dart'; // Correct path for AuthPage
-import 'package:dappr/pages/about_page.dart'; // Correct path
-import 'package:dappr/pages/favourite_page.dart'; // Correct path
-import 'package:dappr/pages/home_page.dart'; // Corrected import for home_page.dart
-import 'package:dappr/pages/meal_planner_page.dart'; // Correct path
-import 'package:dappr/pages/recipe_list_page.dart'; // Correct path
-import 'package:dappr/pages/setting_page.dart'; // Correct path
-import 'package:dappr/pages/shopping_list_page.dart'; // Correct path
-import 'package:dappr/pages/timer_cooking_page.dart'; // Corrected import for timer_cooking_page.dart
-import 'package:flutter/material.dart';
-=======
-import 'package:flutter/material.dart';
+import 'package:dappr/homepage/auth_page.dart'; // Assuming AuthPage is the logout target
+import 'package:dappr/pages/about_page.dart';
+import 'package:dappr/pages/favourite_page.dart';
+import 'package:dappr/pages/meal_planner_page.dart';
 // Pages for Bottom Navigation Bar
 import 'package:dappr/pages/recipe_list_page.dart';
-import 'package:dappr/pages/meal_planner_page.dart';
-import 'package:dappr/pages/cooking_timer_page.dart';
-
+import 'package:dappr/pages/setting_page.dart';
 // Pages for Drawer (Sidebar Navigation)
 import 'package:dappr/pages/shopping_list_page.dart';
-import 'package:dappr/pages/favourite_page.dart';
-import 'package:dappr/pages/setting_page.dart';
-import 'package:dappr/pages/about_page.dart';
-import 'package:dappr/welcome_page/welcome_page.dart'; // <--- THIS IMPORT IS CRUCIAL
-// Based on image_bfd3d5.png, welcome_page.dart is directly under lib/welcome_page/
->>>>>>> Stashed changes
+import 'package:dappr/pages/timer_cooking_page.dart'; // Standardized to timer_cooking_page.dart
+import 'package:flutter/material.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -34,19 +19,12 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  int _selectedIndex = 1; // Starting on Recipes page
+  int _selectedIndex = 0; // Start on the first bottom nav page (Recipes List)
 
   final List<Widget> _bottomNavPages = [
-<<<<<<< Updated upstream
-    const HomePage(),
-    const RecipeListPage(),
-    const MealPlannerPage(),
-    const TimerCookingPage(),
-=======
-    const RecipeListPage(),
-    const MealPlannerPage(),
-    const CookingTimerPage(),
->>>>>>> Stashed changes
+    const RecipeListPage(), // Index 0
+    const MealPlannerPage(), // Index 1
+    const TimerCookingPage(), // Index 2 (Using TimerCookingPage name)
   ];
 
   void _onItemTapped(int index) {
@@ -83,7 +61,7 @@ class _MainPageState extends State<MainPage> {
               leading: const Icon(Icons.shopping_cart, color: Colors.deepOrange),
               title: const Text('Shopping List', style: TextStyle(fontFamily: 'Montserrat')),
               onTap: () {
-                Navigator.pop(context);
+                Navigator.pop(context); // Close the drawer
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const ShoppingListPage()),
@@ -94,7 +72,7 @@ class _MainPageState extends State<MainPage> {
               leading: const Icon(Icons.favorite, color: Colors.deepOrange),
               title: const Text('Favorite Recipes', style: TextStyle(fontFamily: 'Montserrat')),
               onTap: () {
-                Navigator.pop(context);
+                Navigator.pop(context); // Close the drawer
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const FavouritePage()),
@@ -105,7 +83,7 @@ class _MainPageState extends State<MainPage> {
               leading: const Icon(Icons.settings, color: Colors.deepOrange),
               title: const Text('Settings', style: TextStyle(fontFamily: 'Montserrat')),
               onTap: () {
-                Navigator.pop(context);
+                Navigator.pop(context); // Close the drawer
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const SettingPage()),
@@ -116,7 +94,7 @@ class _MainPageState extends State<MainPage> {
               leading: const Icon(Icons.info, color: Colors.deepOrange),
               title: const Text('About', style: TextStyle(fontFamily: 'Montserrat')),
               onTap: () {
-                Navigator.pop(context);
+                Navigator.pop(context); // Close the drawer
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const AboutPage()),
@@ -128,18 +106,11 @@ class _MainPageState extends State<MainPage> {
               leading: const Icon(Icons.logout, color: Colors.grey),
               title: const Text('Logout', style: TextStyle(fontFamily: 'Montserrat')),
               onTap: () {
-<<<<<<< Updated upstream
                 // Navigate to AuthPage and clear navigation stack
                 Navigator.pushAndRemoveUntil(
                   context,
-                  MaterialPageRoute(builder: (context) => const AuthPage()),
-=======
-                // This is the line causing the error:
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (context) => const WelcomePage()), // <--- Check this line
->>>>>>> Stashed changes
-                  (Route<dynamic> route) => false,
+                  MaterialPageRoute(builder: (context) => const AuthPage()), // Using AuthPage
+                  (Route<dynamic> route) => false, // Clear all previous routes
                 );
               },
             ),
@@ -148,16 +119,9 @@ class _MainPageState extends State<MainPage> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
-<<<<<<< Updated upstream
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-=======
->>>>>>> Stashed changes
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+            icon: Icon(Icons.home), // Icon for Recipes List (acting as "Home")
+            label: 'Recipes', // Label changed to 'Recipes'
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.calendar_today),
@@ -172,7 +136,7 @@ class _MainPageState extends State<MainPage> {
         selectedItemColor: Colors.deepOrange,
         unselectedItemColor: Colors.grey,
         onTap: _onItemTapped,
-        type: BottomNavigationBarType.fixed,
+        type: BottomNavigationBarType.fixed, // Ensure all items are visible
       ),
     );
   }
