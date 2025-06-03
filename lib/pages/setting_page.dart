@@ -1,6 +1,6 @@
-<<<<<<< Updated upstream
 // lib/pages/setting_page.dart
 import 'package:dappr/pages/about_page.dart'; // Assuming you have an AboutPage
+import 'package:dappr/providers/favorite_provider.dart'; // <--- Ensure this import is here
 import 'package:dappr/theme_notifier.dart'; // Import your ThemeNotifier
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart'; // Import provider
@@ -58,7 +58,7 @@ class _SettingPageState extends State<SettingPage> {
         return AlertDialog(
           title: const Text('Confirm Clear Data', style: TextStyle(fontFamily: 'Montserrat')),
           content: const Text(
-              'Are you sure you want to clear all app data (including saved timer states)? This action cannot be undone.',
+              'Are you sure you want to clear all app data (including saved timer states and favorites)? This action cannot be undone.',
               style: TextStyle(fontFamily: 'Montserrat')),
           actions: <Widget>[
             TextButton(
@@ -82,13 +82,18 @@ class _SettingPageState extends State<SettingPage> {
     if (confirm == true) {
       final prefs = await SharedPreferences.getInstance();
       await prefs.clear(); // Clears all key-value pairs
+
       // Reset local states to default after clearing
       setState(() {
         _isSoundEnabled = true;
         _isDarkModeEnabled = false; // Reset theme to light/system default
       });
+
       // Also reset theme in ThemeNotifier to system default
       Provider.of<ThemeNotifier>(context, listen: false).setSystemTheme();
+
+      // Call the new public method to clear favorites
+      Provider.of<FavoriteProvider>(context, listen: false).clearAllFavorites(); // <--- CHANGED THIS LINE
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -146,7 +151,6 @@ class _SettingPageState extends State<SettingPage> {
             leading: const Icon(Icons.privacy_tip_outlined, color: Colors.deepOrange),
             title: const Text('Privacy Policy', style: TextStyle(fontFamily: 'Montserrat')),
             onTap: () {
-              
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text('Privacy Policy page coming soon!', style: TextStyle(fontFamily: 'Montserrat')),
@@ -183,28 +187,4 @@ class _SettingPageState extends State<SettingPage> {
       ),
     );
   }
-=======
-// lib/pages/setting_page.dart
-import 'package:flutter/material.dart';
-
-class SettingPage extends StatelessWidget {
-  const SettingPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar( // <--- ADDED AppBar for back button and title
-        title: const Text('Settings', style: TextStyle(fontFamily: 'Montserrat', color: Colors.white)),
-        backgroundColor: Colors.deepOrange, // Consistent theme color
-        iconTheme: const IconThemeData(color: Colors.white), // For the back arrow icon
-      ),
-      body: const Center(
-        child: Text(
-          "Settings Page (Under Construction)",
-          style: TextStyle(fontSize: 24, fontFamily: 'Montserrat'), // Apply font
-        ),
-      ),
-    );
-  }
->>>>>>> Stashed changes
 }
