@@ -1,16 +1,7 @@
 // lib/homepage/auth_page.dart
-<<<<<<< Updated upstream
 import 'package:dappr/main_page.dart'; // Assuming navigation to MainPage after auth
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart'; // Assuming you use Lottie animations
-=======
-import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
-import 'package:dappr/main_page.dart'; // Import MainPage
-
-// No change needed for the back button logic, as Navigator.pop() is already there.
-// The previous change in welcome_page.dart enables it to work.
->>>>>>> Stashed changes
 
 class AuthPage extends StatefulWidget {
   const AuthPage({super.key});
@@ -20,26 +11,11 @@ class AuthPage extends StatefulWidget {
 }
 
 class _AuthPageState extends State<AuthPage> {
-<<<<<<< Updated upstream
   bool isLogin = true;
-=======
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-
-  bool _isLoginForm = true; // true for Login, false for Sign Up
-
-  @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
->>>>>>> Stashed changes
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-<<<<<<< Updated upstream
       backgroundColor: const Color.fromARGB(255, 255, 140, 25), // Changed to solid deep orange for consistency with WelcomePage
       appBar: AppBar(
         backgroundColor: Colors.transparent, // Make AppBar transparent
@@ -111,9 +87,9 @@ class _AuthPageState extends State<AuthPage> {
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.1), // FIX: Changed 'opacity' to 'alpha'
-                    blurRadius: 10,
-                    offset: Offset(0, 5),
+                      color: const Color.fromARGB(26, 0, 0, 0), // FIX: Replaced Colors.black.withOpacity(0.1)
+                      blurRadius: 10,
+                      offset: const Offset(0, 5),
                     ), // BoxShadow
                   ],
                 ),
@@ -131,7 +107,7 @@ class _AuthPageState extends State<AuthPage> {
                               });
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: isLogin ? Colors.deepOrange : Colors.orange.withAlpha(26),
+                              backgroundColor: isLogin ? Colors.deepOrange : const Color.fromARGB(26, 255, 165, 0), // Colors.orange.withAlpha(26) (alpha from 0.1 opacity)
                               padding: const EdgeInsets.symmetric(vertical: 12),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
@@ -157,7 +133,7 @@ class _AuthPageState extends State<AuthPage> {
                               });
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: isLogin ? Colors.orange.withAlpha(26) : Colors.deepOrange,
+                              backgroundColor: isLogin ? const Color.fromARGB(26, 255, 165, 0) : Colors.deepOrange, // Colors.orange.withAlpha(26)
                               padding: const EdgeInsets.symmetric(vertical: 12),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
@@ -272,314 +248,10 @@ class _AuthPageState extends State<AuthPage> {
                   ],
                 ),
               ),
-=======
-      backgroundColor: Colors.orange, // Matches your screenshot
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.of(context).pop(), // This pops to WelcomePage
-        ),
-      ),
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(vertical: 20.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Lottie.asset(
-                'assets/animations/dappr_logo_wrapped.json',
-                width: 150,
-                height: 150,
-                fit: BoxFit.cover,
-              ),
-              const SizedBox(height: 10),
-              const Text(
-                'Dappr',
-                style: TextStyle(
-                  fontSize: 36,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  fontFamily: 'Montserrat', // Using Montserrat
-                ),
-              ),
-              const SizedBox(height: 5),
-              const Text(
-                'Your Culinary Journey Starts Here',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.white70,
-                  fontFamily: 'Montserrat', // Using Montserrat
-                ),
-              ),
-              const SizedBox(height: 30),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 40.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: const Color.fromARGB(51, 255, 255, 255), // Colors.white.withOpacity(0.2)
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Expanded(
-                        child: TextButton(
-                          onPressed: () {
-                            setState(() {
-                              _isLoginForm = true;
-                            });
-                          },
-                          child: Text(
-                            'Login',
-                            style: TextStyle(
-                                color: _isLoginForm ? Colors.white : Colors.white70,
-                                fontWeight: _isLoginForm ? FontWeight.bold : FontWeight.normal,
-                                fontFamily: 'Montserrat'), // Using Montserrat
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: TextButton(
-                          onPressed: () {
-                            setState(() {
-                              _isLoginForm = false;
-                            });
-                          },
-                          child: Text(
-                            'Sign Up',
-                            style: TextStyle(
-                                color: !_isLoginForm ? Colors.white : Colors.white70,
-                                fontWeight: !_isLoginForm ? FontWeight.bold : FontWeight.normal,
-                                fontFamily: 'Montserrat'), // Using Montserrat
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 30),
-              _isLoginForm ? _buildLoginForm() : _buildSignUpForm(),
->>>>>>> Stashed changes
             ],
           ),
         ),
       ),
     );
   }
-<<<<<<< Updated upstream
-=======
-
-  Widget _buildLoginForm() {
-    return Column(
-      children: [
-        const Text(
-          'Login',
-          style: TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-            fontFamily: 'Montserrat', // Using Montserrat
-          ),
-        ),
-        const SizedBox(height: 20),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 40.0),
-          child: TextField(
-            controller: _emailController,
-            decoration: InputDecoration(
-              hintText: 'Email',
-              prefixIcon: const Icon(Icons.email, color: Colors.deepOrange),
-              filled: true,
-              fillColor: Colors.white,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide.none,
-              ),
-            ),
-            style: const TextStyle(fontFamily: 'Montserrat'), // Using Montserrat
-          ),
-        ),
-        const SizedBox(height: 15),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 40.0),
-          child: TextField(
-            controller: _passwordController,
-            obscureText: true,
-            decoration: InputDecoration(
-              hintText: 'Password',
-              prefixIcon: const Icon(Icons.lock, color: Colors.deepOrange),
-              suffixIcon: const Icon(Icons.remove_red_eye, color: Colors.grey),
-              filled: true,
-              fillColor: Colors.white,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide.none,
-              ),
-            ),
-            style: const TextStyle(fontFamily: 'Montserrat'), // Using Montserrat
-          ),
-        ),
-        const SizedBox(height: 30),
-        ElevatedButton(
-          onPressed: () {
-            // Implement actual login logic here
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const MainPage()),
-            );
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.deepOrange,
-            foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 15),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30),
-            ),
-            elevation: 5,
-          ),
-          child: const Text(
-            'Login',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, fontFamily: 'Montserrat'), // Using Montserrat
-          ),
-        ),
-        const SizedBox(height: 20),
-        TextButton(
-          onPressed: () {
-            setState(() {
-              _isLoginForm = false;
-            });
-          },
-          child: const Text(
-            "Don't have an account? Sign Up",
-            style: TextStyle(color: Colors.white, fontFamily: 'Montserrat'), // Using Montserrat
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSignUpForm() {
-    return Column(
-      children: [
-        const Text(
-          'Sign Up',
-          style: TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-            fontFamily: 'Montserrat', // Using Montserrat
-          ),
-        ),
-        const SizedBox(height: 20),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 40.0),
-          child: TextField(
-            decoration: InputDecoration(
-              hintText: 'Full Name',
-              prefixIcon: const Icon(Icons.person, color: Colors.deepOrange),
-              filled: true,
-              fillColor: Colors.white,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide.none,
-              ),
-            ),
-            style: const TextStyle(fontFamily: 'Montserrat'), // Using Montserrat
-          ),
-        ),
-        const SizedBox(height: 15),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 40.0),
-          child: TextField(
-            decoration: InputDecoration(
-              hintText: 'Email',
-              prefixIcon: const Icon(Icons.email, color: Colors.deepOrange),
-              filled: true,
-              fillColor: Colors.white,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide.none,
-              ),
-            ),
-            style: const TextStyle(fontFamily: 'Montserrat'), // Using Montserrat
-          ),
-        ),
-        const SizedBox(height: 15),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 40.0),
-          child: TextField(
-            obscureText: true,
-            decoration: InputDecoration(
-              hintText: 'Password',
-              prefixIcon: const Icon(Icons.lock, color: Colors.deepOrange),
-              filled: true,
-              fillColor: Colors.white,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide.none,
-              ),
-            ),
-            style: const TextStyle(fontFamily: 'Montserrat'), // Using Montserrat
-          ),
-        ),
-        const SizedBox(height: 15),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 40.0),
-          child: TextField(
-            obscureText: true,
-            decoration: InputDecoration(
-              hintText: 'Confirm Password',
-              prefixIcon: const Icon(Icons.lock, color: Colors.deepOrange),
-              filled: true,
-              fillColor: Colors.white,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide.none,
-              ),
-            ),
-            style: const TextStyle(fontFamily: 'Montserrat'), // Using Montserrat
-          ),
-        ),
-        const SizedBox(height: 30),
-        ElevatedButton(
-          onPressed: () {
-            // Implement actual sign-up logic here
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const MainPage()),
-            );
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.deepOrange,
-            foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(horizontal: 60, vertical: 15),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30),
-            ),
-            elevation: 5,
-          ),
-          child: const Text(
-            'Sign Up',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, fontFamily: 'Montserrat'), // Using Montserrat
-          ),
-        ),
-        const SizedBox(height: 20),
-        TextButton(
-          onPressed: () {
-            setState(() {
-              _isLoginForm = true;
-            });
-          },
-          child: const Text(
-            "Already have an account? Login",
-            style: TextStyle(color: Colors.white, fontFamily: 'Montserrat'), // Using Montserrat
-          ),
-        ),
-      ],
-    );
-  }
->>>>>>> Stashed changes
 }
