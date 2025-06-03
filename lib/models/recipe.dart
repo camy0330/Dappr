@@ -5,9 +5,9 @@ class Recipe {
   final String description;
   final String imageUrl;
   final List<String> ingredients;
-  final String instructions;
   final String prepTime;
   final String cookTime;
+  final List<String> steps;
 
   Recipe({
     required this.id,
@@ -15,8 +15,8 @@ class Recipe {
     required this.description,
     required this.imageUrl,
     required this.ingredients,
-    required this.instructions,
     required this.prepTime,
     required this.cookTime,
+    required this.steps,
   });
 }
