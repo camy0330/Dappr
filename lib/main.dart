@@ -1,22 +1,16 @@
 // lib/main.dart
-<<<<<<< Updated upstream
-import 'package:dappr/providers/favorite_provider.dart';
-import 'package:dappr/welcome_page/welcome_page.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:dappr/theme_notifier.dart'; // Import your ThemeNotifier
-
 // Import the pages that will be used in routes
 import 'package:dappr/pages/about_page.dart';
-import 'package:dappr/pages/timer_cooking_page.dart';
 import 'package:dappr/pages/setting_page.dart';
-=======
+import 'package:dappr/pages/timer_cooking_page.dart'; // Corrected import for timer_cooking_page.dart
+import 'package:dappr/providers/favorite_provider.dart';
+import 'package:dappr/theme_notifier.dart'; // Import your ThemeNotifier
+import 'package:dappr/welcome_page/welcome_page.dart'; // Ensure this path is correct
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart'; // Ensure logger is imported if used
-import 'welcome_page/welcome_page.dart'; // This is your starting page
+import 'package:logger/logger.dart'; // Keep logger import if you are using the package
+import 'package:provider/provider.dart';
 
-var logger = Logger();
->>>>>>> Stashed changes
+var logger = Logger(); // Keep logger initialization if you use it
 
 void main() {
   runApp(
@@ -35,12 +29,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< Updated upstream
     // Consumer listens to changes in ThemeNotifier and rebuilds MaterialApp when themeMode changes
     return Consumer<ThemeNotifier>(
       builder: (context, themeNotifier, child) {
         return MaterialApp(
-          title: 'Dappr Recipe App',
+          title: 'Dappr Recipe App', // From Updated upstream
           // Define your light theme
           theme: ThemeData(
             primarySwatch: Colors.deepOrange,
@@ -65,7 +58,7 @@ class MyApp extends StatelessWidget {
             brightness: Brightness.dark, // Explicitly define dark theme brightness
             scaffoldBackgroundColor: Colors.grey[900], // Dark background for scaffold
             cardColor: Colors.grey[850], // Darker card background
-            textTheme: TextTheme(
+            textTheme: const TextTheme( // Made const
               bodyLarge: TextStyle(color: Colors.white), // Default text color for dark mode
               bodyMedium: TextStyle(color: Colors.white70),
               titleLarge: TextStyle(color: Colors.white),
@@ -75,7 +68,7 @@ class MyApp extends StatelessWidget {
           ),
           themeMode: themeNotifier.themeMode, // Use the theme mode from ThemeNotifier
           home: const WelcomePage(), // Using WelcomePage as the initial route
-          debugShowCheckedModeBanner: false,
+          debugShowCheckedModeBanner: false, // From Stashed changes (good practice)
           // Define your app's routes
           routes: {
             '/about': (context) => const AboutPage(),
@@ -85,17 +78,6 @@ class MyApp extends StatelessWidget {
           },
         );
       },
-=======
-    return MaterialApp(
-      title: 'Dappr',
-      debugShowCheckedModeBanner: false, // Set to false to remove debug banner
-      theme: ThemeData(
-        primarySwatch: Colors.deepOrange, // Example theme color
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home:
-          const WelcomePage(), // This sets your WelcomePage as the initial route
->>>>>>> Stashed changes
     );
   }
 }
