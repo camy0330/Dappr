@@ -15,6 +15,7 @@ dependencies:
   logger: ^2.0.2
   lottie: ^2.0.0
   audioplayers: ^6.0.0 # Make sure this is still here and correctly indented
+  table_calendar: ^3.0.9
 
 dev_dependencies:
   flutter_test:
