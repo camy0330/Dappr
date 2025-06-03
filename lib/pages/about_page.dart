@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 // lib/pages/about_page.dart
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
@@ -21,9 +20,9 @@ class AboutPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('About Dappr', style: TextStyle(fontFamily: 'Montserrat', color: Colors.black87)),
-        backgroundColor: Colors.deepOrange, // Changed AppBar background to white
-        iconTheme: const IconThemeData(color: Colors.black87), // Changed icon color to black87
+        title: const Text('About Dappr', style: TextStyle(fontFamily: 'Montserrat', color: Colors.white)), // Changed title color to white
+        backgroundColor: Colors.deepOrange, // Consistent theme color
+        iconTheme: const IconThemeData(color: Colors.white), // For the back arrow icon, changed to white
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
@@ -40,8 +39,20 @@ class AboutPage extends StatelessWidget {
                     width: 160,
                     height: 150,
                     fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        width: 160,
+                        height: 150,
+                        color: Colors.red.shade900, // Strong red for error visibility
+                        alignment: Alignment.center,
+                        child: const Text(
+                          'Lottie asset failed to load. Check pubspec.yaml and path.',
+                          style: TextStyle(color: Colors.white, fontSize: 8),
+                          textAlign: TextAlign.center,
+                        ),
+                      );
+                    },
                   ),
-                  // Removed SizedBox here as it's now within the combined column
                   const Text(
                     'Dappr',
                     style: TextStyle(
@@ -63,7 +74,7 @@ class AboutPage extends StatelessWidget {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.black87, // Kept as black87 for good contrast on white
+                color: Colors.black87, // Kept as black87 for good contrast on white background
                 fontFamily: 'Montserrat',
               ),
             ),
@@ -120,7 +131,7 @@ class AboutPage extends StatelessWidget {
             Center(
               child: ElevatedButton.icon(
                 onPressed: () {
-                  //
+                  // Show a SnackBar as a placeholder for rating action
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Text('Thank you for rating Dappr!', style: TextStyle(fontFamily: 'Montserrat')),
@@ -187,28 +198,4 @@ class AboutPage extends StatelessWidget {
       ),
     );
   }
-=======
-// lib/pages/about_page.dart
-import 'package:flutter/material.dart';
-
-class AboutPage extends StatelessWidget {
-  const AboutPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar( // <--- ADDED AppBar for back button and title
-        title: const Text('About', style: TextStyle(fontFamily: 'Montserrat', color: Colors.white)),
-        backgroundColor: Colors.deepOrange, // Consistent theme color
-        iconTheme: const IconThemeData(color: Colors.white), // For the back arrow icon
-      ),
-      body: const Center(
-        child: Text(
-          "About Page (Under Construction)",
-          style: TextStyle(fontSize: 24, fontFamily: 'Montserrat'), // Apply font
-        ),
-      ),
-    );
-  }
->>>>>>> Stashed changes
 }
