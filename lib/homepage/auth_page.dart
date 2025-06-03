@@ -72,10 +72,12 @@ class _AuthPageState extends State<AuthPage> {
               // Subtitle Text
               Text(
                 'Your Culinary Journey Starts Here',
+                textAlign: TextAlign.center, // Added for better presentation
                 style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.white70, // Changed to white70 to contrast with deep orange background
+                  fontSize: 18, // Increased font size for more attention
+                  color: Colors.white, // Changed to pure white for maximum contrast
                   fontFamily: 'Montserrat',
+                  fontWeight: FontWeight.bold, // Make it bold
                 ),
               ),
               const SizedBox(height: 30),
