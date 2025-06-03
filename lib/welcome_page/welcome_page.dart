@@ -48,6 +48,7 @@ class WelcomePage extends StatelessWidget {
                     fontSize: 18,
                     color: Colors.white70,
                     fontFamily: 'Montserrat',
+                    fontWeight: FontWeight.bold, // Add this line to make the text bold
                   ),
                 ),
                 const SizedBox(height: 50),
