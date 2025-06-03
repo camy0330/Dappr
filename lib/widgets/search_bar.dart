@@ -1,5 +1,4 @@
 // lib/widgets/search_bar.dart
-<<<<<<< Updated upstream
 import 'package:flutter/material.dart'; // Place 'dart:' imports before others
 
 class MySearchBar extends StatelessWidget { // Class name updated
@@ -9,15 +8,15 @@ class MySearchBar extends StatelessWidget { // Class name updated
 
   @override
   Widget build(BuildContext context) {
-    return Padding( // Wrap with Padding
-      padding: const EdgeInsets.symmetric(horizontal: 20.0), // Adjust this value
+    return Padding( // Wrap with Padding from Updated upstream
+      padding: const EdgeInsets.symmetric(horizontal: 20.0), // Adjust this value as needed
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(30),
           boxShadow: [
             BoxShadow(
-              // Replaced deprecated withOpacity
+              // Replaced deprecated withOpacity (from both versions)
               color: const Color.fromARGB(38, 255, 87, 34), // Represents Colors.deepOrange.withOpacity(0.15)
               blurRadius: 8,
               offset: const Offset(0, 4),
@@ -25,49 +24,15 @@ class MySearchBar extends StatelessWidget { // Class name updated
           ],
         ),
         child: TextField(
-          onChanged: onSearch,
-          decoration: InputDecoration(
+          onChanged: onSearch, // Pass the callback
+          decoration: const InputDecoration( // Made const as it contains only const values
             hintText: 'Search recipes...',
-            prefixIcon: const Icon(Icons.search),
-            border: InputBorder.none,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            prefixIcon: Icon(Icons.search),
+            border: InputBorder.none, // No border needed since Container has one
+            contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           ),
-          style: const TextStyle(fontFamily: 'Montserrat'),
-=======
-import 'package:flutter/material.dart';
-
-class MySearchBar extends StatelessWidget { // <--- Class name is now MySearchBar
-  final Function(String) onSearch; // Add this line back for the onSearch callback
-
-  const MySearchBar({super.key, required this.onSearch}); // Add required onSearch
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(30),
-        boxShadow: [
-          BoxShadow(
-            // Before: color: Colors.deepOrange.withOpacity(0.15),
-            color: const Color.fromARGB(38, 255, 87, 34), // (255 * 0.15).round() = 38
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      // IMPORTANT: You need to add a TextField inside this Container
-      // to actually have a search bar functionality.
-      child: TextField(
-        onChanged: onSearch, // Pass the callback
-        decoration: InputDecoration(
-          hintText: 'Search recipes...',
-          prefixIcon: const Icon(Icons.search),
-          border: InputBorder.none, // No border needed since Container has one
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
->>>>>>> Stashed changes
+          style: const TextStyle(fontFamily: 'Montserrat'), // Apply font
         ),
-        style: const TextStyle(fontFamily: 'Montserrat'),
       ),
     );
   }
