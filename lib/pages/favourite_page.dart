@@ -16,12 +16,12 @@ class FavouritePage extends StatelessWidget {
           'Favorite Recipes',
           style: TextStyle(fontFamily: 'Montserrat', color: Colors.white),
         ),
-        backgroundColor: Colors.deepOrange, // Keeping this consistent orange app bar
-        iconTheme: const IconThemeData(color: Colors.white), // For the back button
+        backgroundColor: Colors.deepOrange,
+        iconTheme: const IconThemeData(color: Colors.white),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.of(context).pop(); // Navigate back
+            Navigator.of(context).pop();
           },
         ),
       ),
@@ -40,16 +40,12 @@ class FavouritePage extends StatelessWidget {
                     fontSize: 16,
                     color: Theme.of(context).textTheme.bodyMedium?.color != null
                         ? Color.fromARGB(
-                            // Corrected: Use .a for alpha, multiply by 255.0, round, and bitwise AND 0xff
                             (Theme.of(context).textTheme.bodyMedium!.color!.a * 255.0).round().clamp(0, 255),
-                            // Corrected: Use .r for red, multiply by 255.0, round, and bitwise AND 0xff
                             (Theme.of(context).textTheme.bodyMedium!.color!.r * 255.0).round().clamp(0, 255),
-                            // Corrected: Use .g for green, multiply by 255.0, round, and bitwise AND 0xff
                             (Theme.of(context).textTheme.bodyMedium!.color!.g * 255.0).round().clamp(0, 255),
-                            // Corrected: Use .b for blue, multiply by 255.0, round, and bitwise AND 0xff
                             (Theme.of(context).textTheme.bodyMedium!.color!.b * 255.0).round().clamp(0, 255),
                           )
-                        : Colors.grey, // Fallback if bodyMedium color is null
+                        : Colors.grey,
                     fontFamily: 'Montserrat',
                   ),
                 ),
@@ -59,10 +55,10 @@ class FavouritePage extends StatelessWidget {
             return GridView.builder(
               padding: const EdgeInsets.all(16.0),
               gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 250.0, // Maximum width for each item
-                crossAxisSpacing: 16.0, // Horizontal spacing
-                mainAxisSpacing: 16.0, // Vertical spacing
-                childAspectRatio: 0.65, // Aspect ratio of each item (width / height)
+                maxCrossAxisExtent: 250.0,
+                crossAxisSpacing: 16.0,
+                mainAxisSpacing: 16.0,
+                childAspectRatio: 0.65,
               ),
               itemCount: favoriteRecipes.length,
               itemBuilder: (context, index) {
@@ -89,24 +85,28 @@ class FavouritePage extends StatelessWidget {
                           flex: 3,
                           child: ClipRRect(
                             borderRadius: const BorderRadius.vertical(top: Radius.circular(15.0)),
-                            child: recipe.imageUrl.isNotEmpty
-                                ? Image.network(
-                                    recipe.imageUrl,
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (context, error, stackTrace) =>
-                                        Container(
-                                          color: Theme.of(context).hoverColor,
-                                          child: Icon(
-                                            Icons.broken_image,
-                                            size: 60,
-                                            color: Theme.of(context).hintColor,
+                            // Wrap the image with Hero
+                            child: Hero(
+                              tag: 'recipe-image-${recipe.id}', // Unique tag for each recipe
+                              child: recipe.imageUrl.isNotEmpty
+                                  ? Image.network(
+                                      recipe.imageUrl,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (context, error, stackTrace) =>
+                                          Container(
+                                            color: Theme.of(context).hoverColor,
+                                            child: Icon(
+                                              Icons.broken_image,
+                                              size: 60,
+                                              color: Theme.of(context).hintColor,
+                                            ),
                                           ),
-                                        ),
-                                  )
-                                : Container(
-                                    color: Theme.of(context).hoverColor,
-                                    child: const Icon(Icons.fastfood, size: 60, color: Colors.deepOrange),
-                                  ),
+                                    )
+                                  : Container(
+                                      color: Theme.of(context).hoverColor,
+                                      child: const Icon(Icons.fastfood, size: 60, color: Colors.deepOrange),
+                                    ),
+                            ),
                           ),
                         ),
                         Expanded(
