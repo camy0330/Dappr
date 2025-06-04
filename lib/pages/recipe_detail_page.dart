@@ -1,6 +1,8 @@
 // lib/pages/recipe_detail_page.dart
 import 'package:dappr/models/recipe.dart';
+import 'package:dappr/providers/favorite_provider.dart'; // Import your FavoriteProvider
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart'; // Import Provider
 
 class RecipeDetailPage extends StatelessWidget {
   final Recipe recipe;
@@ -14,28 +16,79 @@ class RecipeDetailPage extends StatelessWidget {
         title: Text(recipe.title, style: const TextStyle(fontFamily: 'Montserrat', color: Colors.white)),
         backgroundColor: Colors.deepOrange,
         iconTheme: const IconThemeData(color: Colors.white),
+        // Add favorite button to the AppBar actions
+        actions: [
+          Consumer<FavoriteProvider>(
+            builder: (context, favoriteProvider, child) {
+              return IconButton(
+                icon: Icon(
+                  favoriteProvider.isFavorite(recipe.id)
+                      ? Icons.favorite // Filled heart if favorite
+                      : Icons.favorite_border, // Bordered heart if not
+                  color: favoriteProvider.isFavorite(recipe.id)
+                      ? Colors.red // Red for favorite
+                      : Colors.white, // White otherwise
+                ),
+                onPressed: () {
+                  favoriteProvider.toggleFavorite(recipe.id);
+                  // Provide user feedback using a SnackBar
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        favoriteProvider.isFavorite(recipe.id)
+                            ? '${recipe.title} added to favorites!'
+                            : '${recipe.title} removed from favorites!',
+                      ),
+                      duration: const Duration(seconds: 1), // SnackBar visible for 1 second
+                      behavior: SnackBarBehavior.floating, // Makes it float above content
+                    ),
+                  );
+                },
+              );
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Image with ClipRRect and error handling
-            ClipRRect(
-              borderRadius: const BorderRadius.vertical(bottom: Radius.circular(16.0)),
-              child: Image.asset(
-                recipe.imageUrl,
-                width: double.infinity,
-                height: 250,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) =>
-                    Container(
-                      height: 250,
-                      color: Colors.grey[200],
-                      child: const Center(
-                        child: Icon(Icons.image_not_supported,
-                            size: 60, color: Colors.grey),
+            // Wrap the image with Hero for the animation
+            Hero(
+              tag: 'recipe-image-${recipe.id}', // Must match the tag from FavouritePage
+              child: ClipRRect(
+                borderRadius: const BorderRadius.vertical(bottom: Radius.circular(16.0)),
+                // Changed from Image.asset to Image.network
+                // This assumes recipe.imageUrl is a network URL
+                child: recipe.imageUrl.isNotEmpty
+                    ? Image.network(
+                        recipe.imageUrl,
+                        width: double.infinity,
+                        height: 250,
+                        fit: BoxFit.cover,
+                        // Enhanced errorBuilder for network images
+                        errorBuilder: (context, error, stackTrace) =>
+                            Container(
+                              height: 250,
+                              width: double.infinity,
+                              color: Theme.of(context).hoverColor, // Use theme color for consistency
+                              child: Center(
+                                child: Icon(
+                                  Icons.broken_image, // More descriptive icon
+                                  size: 80,
+                                  color: Theme.of(context).hintColor, // Use theme color
+                                ),
+                              ),
+                            ),
+                      )
+                    : Container( // Fallback if imageUrl is empty
+                        height: 250,
+                        width: double.infinity,
+                        color: Theme.of(context).hoverColor,
+                        child: const Center(
+                          child: Icon(Icons.fastfood, size: 80, color: Colors.deepOrange),
+                        ),
                       ),
-                    ),
               ),
             ),
             Padding(
@@ -95,7 +148,7 @@ class RecipeDetailPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   const Text(
-                    'Instructions:', // Display header for instructions
+                    'Instructions:',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -104,11 +157,10 @@ class RecipeDetailPage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  // Use recipe.steps and format them as numbered steps
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: recipe.steps // <--- CHANGED FROM recipe.instructions TO recipe.steps
-                        .asMap() // Use asMap to get index for numbering
+                    children: recipe.steps
+                        .asMap()
                         .entries
                         .map((entry) => Padding(
                               padding: const EdgeInsets.symmetric(vertical: 4.0),
