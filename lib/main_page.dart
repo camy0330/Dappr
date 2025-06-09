@@ -10,6 +10,7 @@ import 'package:dappr/pages/setting_page.dart';
 import 'package:dappr/pages/shopping_list_page.dart';
 import 'package:dappr/pages/timer_cooking_page.dart'; // Standardized to timer_cooking_page.dart
 import 'package:flutter/material.dart';
+import 'package:dappr/pages/rating_page.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -76,6 +77,17 @@ class _MainPageState extends State<MainPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const FavouritePage()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.star_rate, color: Colors.deepOrange),
+              title: const Text('Rating and Review', style: TextStyle(fontFamily: 'Montserrat')),
+              onTap: () {
+                Navigator.pop(context); // Close the drawer
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const RatingPage()),
                 );
               },
             ),
