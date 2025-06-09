@@ -1,37 +1,51 @@
-// lib/widgets/search_bar.dart
-import 'package:flutter/material.dart'; // Place 'dart:' imports before others
+import 'package:flutter/material.dart';
 
-class MySearchBar extends StatelessWidget { // Class name updated
+class MySearchBar extends StatelessWidget {
   final Function(String) onSearch;
 
-  const MySearchBar({super.key, required this.onSearch});
+  const MySearchBar({super.key, required this.onSearch, required Color textColor});
 
   @override
   Widget build(BuildContext context) {
-    return Padding( // Wrap with Padding from Updated upstream
-      padding: const EdgeInsets.symmetric(horizontal: 20.0), // Adjust this value as needed
+    final brightness = Theme.of(context).brightness;
+    final isDark = brightness == Brightness.dark;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20.0),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark ? Colors.grey[850] : Colors.white,
           borderRadius: BorderRadius.circular(30),
           boxShadow: [
             BoxShadow(
-              // Replaced deprecated withOpacity (from both versions)
-              color: const Color.fromARGB(38, 255, 87, 34), // Represents Colors.deepOrange.withOpacity(0.15)
+              color: isDark
+                  ? Colors.black.withOpacity(0.6)
+                  : const Color.fromARGB(38, 255, 87, 34),
               blurRadius: 8,
               offset: const Offset(0, 4),
             ),
           ],
         ),
         child: TextField(
-          onChanged: onSearch, // Pass the callback
-          decoration: const InputDecoration( // Made const as it contains only const values
+          onChanged: onSearch,
+          decoration: InputDecoration(
             hintText: 'Search recipes...',
-            prefixIcon: Icon(Icons.search),
-            border: InputBorder.none, // No border needed since Container has one
-            contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            hintStyle: TextStyle(
+              color: isDark ? Colors.grey[400] : Colors.grey[600],
+              fontFamily: 'Montserrat',
+            ),
+            prefixIcon: Icon(
+              Icons.search,
+              color: isDark ? Colors.grey[400] : Colors.grey[600],
+            ),
+            border: InputBorder.none,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           ),
-          style: const TextStyle(fontFamily: 'Montserrat'), // Apply font
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            color: isDark ? Colors.white : Colors.black,
+          ),
+          cursorColor: isDark ? Colors.white : Colors.black,
         ),
       ),
     );
