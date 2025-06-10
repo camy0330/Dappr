@@ -4,6 +4,7 @@ import 'package:dappr/pages/about_page.dart';
 import 'package:dappr/pages/setting_page.dart';
 import 'package:dappr/pages/timer_cooking_page.dart';
 import 'package:dappr/providers/favorite_provider.dart';
+import 'package:dappr/providers/rating_provider.dart';
 import 'package:dappr/theme_notifier.dart';
 import 'package:dappr/welcome_page/welcome_page.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,7 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (context) => FavoriteProvider()),
         ChangeNotifierProvider(create: (context) => ThemeNotifier()),
+        ChangeNotifierProvider(create: (context) => RatingProvider()),
       ],
       child: const MyApp(),
     ),
