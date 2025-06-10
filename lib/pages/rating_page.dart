@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:dappr/data/recipes_data.dart';
-import 'package:dappr/data/ratings-data.dart';
+import 'package:dappr/data/ratings_data.dart';
 import 'package:dappr/models/recipe.dart';
 import 'package:dappr/models/rating.dart';
+import 'package:provider/provider.dart';
+import 'package:dappr/providers/rating_provider.dart';
 
-class RatingPage extends StatelessWidget {
+class RatingPage extends StatefulWidget {
   const RatingPage({super.key});
 
+  @override
+  State<RatingPage> createState() => _RatingPageState();
+}
+
+class _RatingPageState extends State<RatingPage> {
   // Generate a consistent avatar color based on username
   Color randomAvatarColor(String username) {
     final colors = [
@@ -17,6 +24,82 @@ class RatingPage extends StatelessWidget {
       Colors.amber,
     ];
     return colors[username.codeUnitAt(0) % colors.length];
+  }
+
+  // Show dialog for user to add a rating
+  void _showAddRatingDialog(BuildContext context, String recipeId) {
+    final _userController = TextEditingController();
+    final _commentController = TextEditingController();
+    double _ratingValue = 3.0;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) => AlertDialog(
+            title: const Text('Add Your Rating'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: _userController,
+                  decoration: const InputDecoration(labelText: 'Your Name'),
+                ),
+                TextField(
+                  controller: _commentController,
+                  decoration: const InputDecoration(labelText: 'Your Review'),
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    const Text('Rating:'),
+                    Expanded(
+                      child: Slider(
+                        value: _ratingValue,
+                        min: 1,
+                        max: 5,
+                        divisions: 4,
+                        label: _ratingValue.toString(),
+                        onChanged: (value) {
+                          setState(() {
+                            _ratingValue = value;
+                          });
+                        },
+                      ),
+                    ),
+                    Text(_ratingValue.toStringAsFixed(1)),
+                  ],
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Cancel'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  if (_userController.text.isNotEmpty &&
+                      _commentController.text.isNotEmpty) {
+                    Provider.of<RatingProvider>(context, listen: false).addRating(
+                      Rating(
+                        userName: _userController.text,
+                        comment: _commentController.text,
+                        ratingValue: _ratingValue,
+                        recipeId: recipeId,
+                      ),
+                    );
+                    Navigator.pop(context);
+                    setState(() {}); // <-- Force rebuild after adding rating
+                  }
+                },
+                child: const Text('Submit'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -34,6 +117,10 @@ class RatingPage extends StatelessWidget {
     final Color commentTextColor =
         isDarkMode ? Colors.orange.shade100 : Colors.black87;
 
+    // Combine static ratings and user ratings from provider
+    final userRatings = Provider.of<RatingProvider>(context).userRatings;
+    final List<Rating> allCombinedRatings = [...allRatings, ...userRatings];
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Recipe Reviews & Ratings"),
@@ -45,8 +132,8 @@ class RatingPage extends StatelessWidget {
         itemBuilder: (context, index) {
           final Recipe recipe = recipes[index];
 
-          // Filter reviews for this recipe
-          final List<Rating> recipeReviews = allRatings
+          // Filter reviews for this recipe from combined ratings
+          final List<Rating> recipeReviews = allCombinedRatings
               .where((rating) => rating.recipeId == recipe.id)
               .toList();
 
@@ -169,6 +256,18 @@ class RatingPage extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 10),
+                  // Add Review Button
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton.icon(
+                      icon: const Icon(Icons.rate_review, color: Colors.deepOrange),
+                      label: const Text(
+                        "Add Review",
+                        style: TextStyle(color: Colors.deepOrange),
+                      ),
+                      onPressed: () => _showAddRatingDialog(context, recipe.id),
+                    ),
+                  ),
                   // Reviews section title
                   const Text(
                     "Reviews:",
@@ -183,7 +282,7 @@ class RatingPage extends StatelessWidget {
                         )
                       : Column(
                           children: recipeReviews
-                              .take(2) // Show only up to 2 reviews
+                              .reversed 
                               .map((review) => Container(
                                     margin: const EdgeInsets.symmetric(vertical: 3),
                                     decoration: BoxDecoration(
