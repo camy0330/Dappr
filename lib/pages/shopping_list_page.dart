@@ -1,84 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:dappr/providers/shopping_list_provider.dart';
 
-class ShoppingListPage extends StatefulWidget {
+class ShoppingListPage extends StatelessWidget {
   const ShoppingListPage({super.key});
-
-  @override
-  State<ShoppingListPage> createState() => _ShoppingListPageState();
-}
-
-class GroceryItem {
-  String name;
-  int quantity;
-  bool isBought;
-
-  GroceryItem({
-    required this.name,
-    required this.quantity,
-    this.isBought = false,
-  });
-}
-
-class _ShoppingListPageState extends State<ShoppingListPage> {
-  final TextEditingController _storeController = TextEditingController();
-  final TextEditingController _itemNameController = TextEditingController();
-  final TextEditingController _itemQtyController = TextEditingController();
-
-  // Key: Store name, Value: List of grocery items
-  final Map<String, List<GroceryItem>> _storeItems = {};
-
-  String? _selectedStore;
-
-  void _addStore() {
-    final storeName = _storeController.text.trim();
-    if (storeName.isNotEmpty && !_storeItems.containsKey(storeName)) {
-      setState(() {
-        _storeItems[storeName] = [];
-        _selectedStore = storeName;
-      });
-      _storeController.clear();
-    }
-  }
-
-  void _addItemToSelectedStore() {
-    if (_selectedStore == null) return;
-    final name = _itemNameController.text.trim();
-    final qty = int.tryParse(_itemQtyController.text.trim()) ?? 1;
-
-    if (name.isEmpty) return;
-
-    setState(() {
-      _storeItems[_selectedStore]!.add(GroceryItem(name: name, quantity: qty));
-    });
-
-    _itemNameController.clear();
-    _itemQtyController.clear();
-  }
-
-  void _toggleBought(String store, int index) {
-    setState(() {
-      _storeItems[store]![index].isBought =
-          !_storeItems[store]![index].isBought;
-    });
-  }
-
-  void _removeItem(String store, int index) {
-    setState(() {
-      _storeItems[store]!.removeAt(index);
-    });
-  }
-
-  @override
-  void dispose() {
-    _storeController.dispose();
-    _itemNameController.dispose();
-    _itemQtyController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     final primaryColor = Colors.deepOrange;
+    final shoppingListProvider = Provider.of<ShoppingListProvider>(context);
+    final TextEditingController _storeController = TextEditingController();
+    final TextEditingController _itemNameController = TextEditingController();
+    final TextEditingController _itemQtyController = TextEditingController();
 
     return Scaffold(
       appBar: AppBar(
@@ -104,12 +37,18 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
                       prefixIcon: const Icon(Icons.store),
                     ),
                     style: const TextStyle(fontFamily: 'Montserrat'),
-                    onSubmitted: (_) => _addStore(),
+                    onSubmitted: (_) {
+                      shoppingListProvider.addStore(_storeController.text.trim());
+                      _storeController.clear();
+                    },
                   ),
                 ),
                 const SizedBox(width: 10),
                 ElevatedButton(
-                  onPressed: _addStore,
+                  onPressed: () {
+                    shoppingListProvider.addStore(_storeController.text.trim());
+                    _storeController.clear();
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: primaryColor,
                     shape: RoundedRectangleBorder(
@@ -123,7 +62,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
             const SizedBox(height: 20),
 
             // List of Stores and Items
-            if (_storeItems.isEmpty)
+            if (shoppingListProvider.storeItems.isEmpty)
               const Center(
                 child: Padding(
                   padding: EdgeInsets.only(top: 40),
@@ -137,7 +76,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
                 ),
               )
             else
-              ..._storeItems.entries.map((entry) {
+              ...shoppingListProvider.storeItems.entries.map((entry) {
                 final storeName = entry.key;
                 final items = entry.value;
 
@@ -167,11 +106,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
                             IconButton(
                               icon: const Icon(Icons.close, color: Colors.red),
                               onPressed: () {
-                                setState(() {
-                                  _storeItems.remove(storeName);
-                                  if (_selectedStore == storeName)
-                                    _selectedStore = null;
-                                });
+                                shoppingListProvider.removeStore(storeName);
                               },
                             ),
                           ],
@@ -179,7 +114,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
                         const SizedBox(height: 10),
 
                         // Add item form for this store
-                        if (_selectedStore == storeName)
+                        if (shoppingListProvider.selectedStore == storeName)
                           Row(
                             children: [
                               Expanded(
@@ -192,7 +127,14 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
                                         borderRadius:
                                             BorderRadius.circular(12)),
                                   ),
-                                  onSubmitted: (_) => _addItemToSelectedStore(),
+                                  onSubmitted: (_) {
+                                    shoppingListProvider.addItemToSelectedStore(
+                                      _itemNameController.text.trim(),
+                                      int.tryParse(_itemQtyController.text.trim()) ?? 1,
+                                    );
+                                    _itemNameController.clear();
+                                    _itemQtyController.clear();
+                                  },
                                 ),
                               ),
                               const SizedBox(width: 8),
@@ -207,12 +149,26 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
                                             BorderRadius.circular(12)),
                                   ),
                                   keyboardType: TextInputType.number,
-                                  onSubmitted: (_) => _addItemToSelectedStore(),
+                                  onSubmitted: (_) {
+                                    shoppingListProvider.addItemToSelectedStore(
+                                      _itemNameController.text.trim(),
+                                      int.tryParse(_itemQtyController.text.trim()) ?? 1,
+                                    );
+                                    _itemNameController.clear();
+                                    _itemQtyController.clear();
+                                  },
                                 ),
                               ),
                               const SizedBox(width: 8),
                               ElevatedButton(
-                                onPressed: _addItemToSelectedStore,
+                                onPressed: () {
+                                  shoppingListProvider.addItemToSelectedStore(
+                                    _itemNameController.text.trim(),
+                                    int.tryParse(_itemQtyController.text.trim()) ?? 1,
+                                  );
+                                  _itemNameController.clear();
+                                  _itemQtyController.clear();
+                                },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: primaryColor,
                                   shape: RoundedRectangleBorder(
@@ -225,11 +181,9 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
                         else
                           TextButton(
                             onPressed: () {
-                              setState(() {
-                                _selectedStore = storeName;
-                                _itemNameController.clear();
-                                _itemQtyController.clear();
-                              });
+                              shoppingListProvider.selectStore(storeName);
+                              _itemNameController.clear();
+                              _itemQtyController.clear();
                             },
                             child: const Text('Add Items',
                                 style: TextStyle(fontFamily: 'Montserrat')),
@@ -253,7 +207,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
                               leading: Checkbox(
                                 value: item.isBought,
                                 onChanged: (_) =>
-                                    _toggleBought(storeName, index),
+                                    shoppingListProvider.toggleBought(storeName, index),
                                 activeColor: primaryColor,
                               ),
                               title: Text(
@@ -266,25 +220,4 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
                                 ),
                               ),
                               subtitle: Text(
-                                'Quantity: ${item.quantity}',
-                                style:
-                                    const TextStyle(fontFamily: 'Montserrat'),
-                              ),
-                              trailing: IconButton(
-                                icon:
-                                    const Icon(Icons.delete, color: Colors.red),
-                                onPressed: () => _removeItem(storeName, index),
-                              ),
-                            );
-                          }).toList(),
-                      ],
-                    ),
-                  ),
-                );
-              }).toList(),
-          ],
-        ),
-      ),
-    );
-  }
-}
+                                'Quantity: 
