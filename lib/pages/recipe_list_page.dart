@@ -21,25 +21,25 @@ class _RecipeListPageState extends State<RecipeListPage> {
     try {
       _filteredRecipes = recipes;
 
-      // Fallback UI jika tiada data resepi
+      // Fallback UI if no recipe data
       if (_filteredRecipes.isEmpty) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Tiada data resepi tersedia.')),
+            const SnackBar(content: Text('No recipe data available.')),
           );
         });
       }
     } catch (e) {
-      // Tunjuk ralat umum jika berlaku masalah semasa load
+      // Show general error if loading fails
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Ralat memuat data resepi.')),
+          const SnackBar(content: Text('Error loading recipe data.')),
         );
       });
     }
   }
 
-  // Filter resepi berdasarkan input carian
+  // Filter recipes based on search input
   void _onSearchChanged(String query) {
     try {
       setState(() {
@@ -54,9 +54,9 @@ class _RecipeListPageState extends State<RecipeListPage> {
         }
       });
     } catch (e) {
-      // Jika berlaku ralat semasa cari
+      // If search fails
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Carian gagal. Sila cuba lagi.')),
+        const SnackBar(content: Text('Search failed. Please try again.')),
       );
     }
   }
@@ -70,12 +70,12 @@ class _RecipeListPageState extends State<RecipeListPage> {
     return Scaffold(
       body: Column(
         children: [
-          // Header dengan carian
+          // Header with search
           Container(
             height: 160,
             child: Stack(
               children: [
-                // Latar belakang gradient
+                // Gradient background
                 Container(
                   height: 160,
                   decoration: BoxDecoration(
@@ -89,7 +89,7 @@ class _RecipeListPageState extends State<RecipeListPage> {
                     ),
                   ),
                 ),
-                // Kandungan header
+                // Header content
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 32, 16, 8),
                   child: Column(
@@ -104,7 +104,7 @@ class _RecipeListPageState extends State<RecipeListPage> {
                             ),
                       ),
                       const SizedBox(height: 12),
-                      // Ruangan carian
+                      // Search field
                       Container(
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.9),
@@ -130,7 +130,7 @@ class _RecipeListPageState extends State<RecipeListPage> {
             ),
           ),
 
-          // Senarai resepi atau mesej tiada
+          // Recipe list or no data message
           Expanded(
             child: _filteredRecipes.isEmpty
                 ? Center(
@@ -165,7 +165,7 @@ class _RecipeListPageState extends State<RecipeListPage> {
                         child: InkWell(
                           onTap: () {
                             try {
-                              // Cuba navigasi ke halaman detail
+                              // Try to navigate to detail page
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -174,17 +174,17 @@ class _RecipeListPageState extends State<RecipeListPage> {
                                 ),
                               );
                             } catch (e) {
-                              // Jika navigasi gagal
+                              // If navigation fails
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                    content: Text('Tidak dapat buka resepi.')),
+                                    content: Text('Unable to open recipe.')),
                               );
                             }
                           },
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              // Gambar resepi
+                              // Recipe image
                               Expanded(
                                 child: ClipRRect(
                                   borderRadius: const BorderRadius.vertical(
@@ -193,7 +193,7 @@ class _RecipeListPageState extends State<RecipeListPage> {
                                     recipe.imageUrl,
                                     fit: BoxFit.cover,
                                     errorBuilder: (context, error, stackTrace) {
-                                      // Tangani ralat gambar rosak
+                                      // Handle broken image error
                                       return Container(
                                         color: Colors.grey[300],
                                         child: const Icon(Icons.broken_image,
@@ -203,7 +203,7 @@ class _RecipeListPageState extends State<RecipeListPage> {
                                   ),
                                 ),
                               ),
-                              // Tajuk & deskripsi
+                              // Title & description
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Column(
@@ -236,7 +236,7 @@ class _RecipeListPageState extends State<RecipeListPage> {
                                   ],
                                 ),
                               ),
-                              // Butang kegemaran
+                              // Favorite button
                               Align(
                                 alignment: Alignment.bottomRight,
                                 child: IconButton(
@@ -257,7 +257,7 @@ class _RecipeListPageState extends State<RecipeListPage> {
                                           .showSnackBar(
                                         const SnackBar(
                                             content: Text(
-                                                'Gagal kemas kini kegemaran.')),
+                                                'Failed to update favorite.')),
                                       );
                                     }
                                   },
