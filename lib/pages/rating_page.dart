@@ -6,9 +6,9 @@ import 'package:dappr/models/rating.dart';
 import 'package:provider/provider.dart';
 import 'package:dappr/providers/rating_provider.dart';
 
+// Main page for viewing and adding ratings/reviews for all recipes
 class RatingPage extends StatefulWidget {
   const RatingPage({super.key});
-
   @override
   State<RatingPage> createState() => _RatingPageState();
 }
@@ -25,72 +25,77 @@ class _RatingPageState extends State<RatingPage> {
     ];
     return colors[username.codeUnitAt(0) % colors.length];
   }
-
-  // Show dialog for user to add a rating
+  // Show dialog for user to add a rating for a recipe
   void _showAddRatingDialog(BuildContext context, String recipeId) {
-    final _userController = TextEditingController();
-    final _commentController = TextEditingController();
-    double _ratingValue = 3.0;
-
+    final userController = TextEditingController();
+    final commentController = TextEditingController();
+    double ratingValue = 3.0;
     showDialog(
       context: context,
       builder: (context) {
+        // Use StatefulBuilder to allow dialog to update its own state
         return StatefulBuilder(
           builder: (context, setState) => AlertDialog(
             title: const Text('Add Your Rating'),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                // User name input
                 TextField(
-                  controller: _userController,
+                  controller: userController,
                   decoration: const InputDecoration(labelText: 'Your Name'),
                 ),
+                // Review comment input
                 TextField(
-                  controller: _commentController,
+                  controller: commentController,
                   decoration: const InputDecoration(labelText: 'Your Review'),
                 ),
                 const SizedBox(height: 10),
+                // Star rating slider
                 Row(
                   children: [
                     const Text('Rating:'),
                     Expanded(
                       child: Slider(
-                        value: _ratingValue,
+                        value: ratingValue,
                         min: 1,
                         max: 5,
                         divisions: 4,
-                        label: _ratingValue.toString(),
+                        label: ratingValue.toString(),
                         onChanged: (value) {
                           setState(() {
-                            _ratingValue = value;
+                            ratingValue = value;
                           });
                         },
                       ),
                     ),
-                    Text(_ratingValue.toStringAsFixed(1)),
+                    Text(ratingValue.toStringAsFixed(1)),
                   ],
                 ),
               ],
             ),
             actions: [
+              // Cancel button
               TextButton(
                 onPressed: () => Navigator.pop(context),
                 child: const Text('Cancel'),
               ),
+              // Submit button
               ElevatedButton(
                 onPressed: () {
-                  if (_userController.text.isNotEmpty &&
-                      _commentController.text.isNotEmpty) {
+                  // Only submit if both fields are filled
+                  if (userController.text.isNotEmpty &&
+                      commentController.text.isNotEmpty) {
                     Provider.of<RatingProvider>(context, listen: false).addRating(
                       Rating(
-                        userName: _userController.text,
-                        comment: _commentController.text,
-                        ratingValue: _ratingValue,
+                        userName: userController.text,
+                        comment: commentController.text,
+                        ratingValue: ratingValue,
                         recipeId: recipeId,
                       ),
                     );
                     Navigator.pop(context);
-                    setState(() {}); // <-- Force rebuild after adding rating
+                    setState(() {}); // Force rebuild after adding rating
                   }
                 },
                 child: const Text('Submit'),
@@ -104,19 +109,16 @@ class _RatingPageState extends State<RatingPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Detect dark mode for adaptive colors
     final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
-
     // Colors that adapt based on theme mode
     final Color reviewBoxColor = isDarkMode
         ? Colors.orange.shade900.withOpacity(0.3)
         : Colors.orange.shade50;
-
     final Color userNameColor =
         isDarkMode ? Colors.orange.shade300 : Colors.deepOrange;
-
     final Color commentTextColor =
         isDarkMode ? Colors.orange.shade100 : Colors.black87;
-
     // Combine static ratings and user ratings from provider
     final userRatings = Provider.of<RatingProvider>(context).userRatings;
     final List<Rating> allCombinedRatings = [...allRatings, ...userRatings];
@@ -131,12 +133,10 @@ class _RatingPageState extends State<RatingPage> {
         itemCount: recipes.length,
         itemBuilder: (context, index) {
           final Recipe recipe = recipes[index];
-
           // Filter reviews for this recipe from combined ratings
           final List<Rating> recipeReviews = allCombinedRatings
               .where((rating) => rating.recipeId == recipe.id)
               .toList();
-
           // Calculate average rating for this recipe
           final double avgRating = recipeReviews.isNotEmpty
               ? recipeReviews
@@ -144,7 +144,6 @@ class _RatingPageState extends State<RatingPage> {
                       .reduce((a, b) => a + b) /
                   recipeReviews.length
               : 0.0;
-
           return Card(
             elevation: 6,
             margin: const EdgeInsets.symmetric(vertical: 10),
@@ -282,7 +281,7 @@ class _RatingPageState extends State<RatingPage> {
                         )
                       : Column(
                           children: recipeReviews
-                              .reversed 
+                              .reversed // Show latest reviews first
                               .map((review) => Container(
                                     margin: const EdgeInsets.symmetric(vertical: 3),
                                     decoration: BoxDecoration(
