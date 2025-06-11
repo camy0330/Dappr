@@ -121,7 +121,7 @@ class ShoppingListPage extends StatelessWidget {
                                 flex: 5,
                                 child: TextField(
                                   controller: _itemNameController,
-                                  decoration: InputDecoration(
+                                                                    decoration: InputDecoration(
                                     labelText: 'Item name',
                                     border: OutlineInputBorder(
                                         borderRadius:
@@ -220,4 +220,25 @@ class ShoppingListPage extends StatelessWidget {
                                 ),
                               ),
                               subtitle: Text(
-                                'Quantity: 
+                                'Quantity:  {item.quantity}',
+                                style:
+                                    const TextStyle(fontFamily: 'Montserrat'),
+                              ),
+                              trailing: IconButton(
+                                icon:
+                                    const Icon(Icons.delete, color: Colors.red),
+                                onPressed: () => shoppingListProvider.removeItem(storeName, index),
+                              ),
+                            );
+                          }).toList(),
+                      ],
+                    ),
+                  ),
+                );
+              }).toList(),
+          ],
+        ),
+      ),
+    );
+  }
+}          
