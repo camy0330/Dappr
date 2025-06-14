@@ -40,6 +40,7 @@ final List<Recipe> recipes = [
     'Add salt, scrambled eggs, water spinach leaves, sweet soy sauce, and fried anchovies; stir well.',
     'Serve with fried anchovies, sliced cucumber, and red chili.',
   ],
+  submittedBy: 'Admin', // Example value
 ),
 Recipe(
   id: 'R2',
@@ -89,6 +90,7 @@ Recipe(
     'Serve garnished with spring onions, red chili, lime, and fried shallots.',
     'Fry peanuts and pound into a coarse powder to be used as garnish.',
   ],
+  submittedBy: 'Chef Mamak', // Example value
 ),
   Recipe(
   id: 'R3',
@@ -115,6 +117,7 @@ Recipe(
     'When the pancake turns yellowish and the edges look crispy, lift it up.',
     'Roll or fold the lace pancake according to preference and ready to serve.',
   ],
+  submittedBy: 'Ayu', // Example value
 ),
 Recipe(
   id: 'R4',
@@ -148,6 +151,7 @@ Recipe(
     'Season with salt and sugar to taste. Be careful as chicken cube is already salty.',
     'Remove from heat and serve. Sprinkle with sliced coriander or parsley.',
   ],
+  submittedBy: 'Chef Italia',
 ),
 Recipe(
   id: 'R5',
@@ -171,7 +175,6 @@ Recipe(
     '2 stalks lemongrass, thinly sliced',
     '2 tablespoons Thai fish sauce',
     '1 ladle cooking oil for sautéing',
-
     '--- Ingredients for Tomyam Soup ---',
     '3 cups water (or chicken/seafood broth)',
     'Chicken meat, thinly sliced',
@@ -196,7 +199,6 @@ Recipe(
     'Cook on medium heat and stir constantly to avoid burning.',
     'Stir until color turns dark red and oil separates (20-30 minutes).',
     'Cool the paste and set aside for use.',
-
     '--- How to cook Tomyam Soup ---',
     'Heat water in a pot.',
     'Add half of the prepared tomyam paste, lemongrass, and carrot.',
@@ -205,8 +207,9 @@ Recipe(
     'Boil until cooked and season to taste with salt and sugar.',
     'Sprinkle coriander leaves and ready to serve.',
   ],
+  submittedBy: 'Thai Homecook',
 ),
- Recipe(
+Recipe(
   id: 'R6',
   title: 'Spiced Red Chicken',
   description: 'Spiced chicken in thick sambal sauce that is sweet and spicy.',
@@ -236,6 +239,7 @@ Recipe(
     'Season with salt and sugar.',
     'Cook until sauce thickens and chicken is tender.',
   ],
+  submittedBy: 'Mak Cik Siti',
 ),
 Recipe(
   id: 'R7',
@@ -262,6 +266,7 @@ Recipe(
     'Add tamarind juice, salt, and sugar.',
     'Cook until prawns are cooked and sauce thickens.',
   ],
+  submittedBy: 'Pak Ali',
 ),
 Recipe(
   id: 'R8',
@@ -289,6 +294,7 @@ Recipe(
     'Season with salt and seasoning powder.',
     'Serve hot with garnished Chinese celery and fried shallots.',
   ],
+  submittedBy: 'Dr. Lim',
 ),
 Recipe(
   id: 'R9',
@@ -316,6 +322,7 @@ Recipe(
     'Grill the fish on a grill or non-stick pan without oil until cooked.',
     'Serve with extra sambal as a dipping sauce.',
   ],
+  submittedBy: 'IkanMan',
 ),
 Recipe(
   id: 'R10',
@@ -344,6 +351,7 @@ Recipe(
     'Boil the eggs, peel, and cut in half.',
     'Serve the coconut rice with sambal, fried anchovies, peanuts, boiled eggs, and cucumber slices.',
   ],
+  submittedBy: 'Mak Long',
 ),
 Recipe(
   id: 'R11',
@@ -370,8 +378,8 @@ Recipe(
     'Add cooked noodles to the soup.',
     'Serve with bean sprouts, boiled eggs, coriander, and lime wedges.',
   ],
+  submittedBy: 'Penangite',
 ),
-
 Recipe(
   id: 'R12',
   title: 'Fried Chicken',
@@ -392,8 +400,8 @@ Recipe(
     'Fry chicken pieces until golden brown and cooked through.',
     'Drain and serve hot.',
   ],
+  submittedBy: 'Chef Ayam',
 ),
-
 Recipe(
   id: 'R13',
   title: 'Layered Cake',
@@ -414,8 +422,8 @@ Recipe(
     'Steam each colored layer for 5-7 minutes, pour the next layer on top, and repeat.',
     'Cool before slicing and serving.',
   ],
+  submittedBy: 'Kak Lapis',
 ),
-
 Recipe(
   id: 'R14',
   title: 'Teh Tarik',
@@ -435,8 +443,8 @@ Recipe(
     'Pour tea back and forth between two containers to create frothy texture.',
     'Serve hot.',
   ],
+  submittedBy: 'Pak Teh',
 ),
-
 Recipe(
   id: 'R15',
   title: 'Carrot Susu',
@@ -455,8 +463,8 @@ Recipe(
     'Strain mixture to remove solids.',
     'Serve chilled with ice cubes.',
   ],
+  submittedBy: 'JuiceQueen',
 ),
-
 Recipe(
   id: 'R16',
   title: 'Fish Soup ',
@@ -481,6 +489,7 @@ Recipe(
     'Season with salt and pepper.',
     'Garnish with fresh coriander before serving.',
   ],
+  submittedBy: 'Chef Ikan',
 ),
 
 ];
