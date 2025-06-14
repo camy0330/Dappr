@@ -53,4 +53,10 @@ class ShoppingListProvider extends ChangeNotifier {
     _storeItems[store]!.removeAt(index);
     notifyListeners();
   }
+
+  void clearAll() {
+    _storeItems.clear();
+    _selectedStore = null;
+    notifyListeners();
+  }
 }
