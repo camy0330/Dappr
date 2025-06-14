@@ -10,4 +10,9 @@ class RatingProvider with ChangeNotifier {
     _userRatings.add(rating);
     notifyListeners();
   }
+
+  void clearAllRatings() {
+    _userRatings.clear();
+    notifyListeners();
+  }
 }
