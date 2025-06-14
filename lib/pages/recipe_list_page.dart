@@ -203,37 +203,67 @@ class _RecipeListPageState extends State<RecipeListPage> {
                                   ),
                                 ),
                               ),
-                              // Title & description
+                              const SizedBox(height: 10), // Add spacing between image and avatar row
+                              // Submitter info and title (like the sample image)
                               Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                                child: Row(
                                   children: [
-                                    Text(
-                                      recipe.title,
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        fontFamily: 'Montserrat',
-                                        color: textColor,
-                                      ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
+                                    // Avatar placeholder (user to add image later)
+                                    CircleAvatar(
+                                      radius: 16,
+                                      backgroundColor: Colors.grey.shade300,
+                                      child: Icon(Icons.person,
+                                          color: Colors.grey.shade700, size: 20),
                                     ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      recipe.description,
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: brightness == Brightness.dark
-                                            ? Colors.grey[400]
-                                            : Colors.grey,
-                                        fontFamily: 'Montserrat',
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            recipe.submittedBy,
+                                            style: const TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w600,
+                                              fontFamily: 'Montserrat',
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                          Text(
+                                            recipe.title,
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                              fontFamily: 'Montserrat',
+                                              color: textColor,
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ],
                                       ),
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ],
+                                ),
+                              ),
+                              // Description (optional, can be removed for compactness)
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8),
+                                child: Text(
+                                  recipe.description,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: brightness == Brightness.dark
+                                        ? Colors.grey[400]
+                                        : Colors.grey,
+                                    fontFamily: 'Montserrat',
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                               // Favorite button
