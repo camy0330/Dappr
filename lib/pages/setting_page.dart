@@ -1,6 +1,8 @@
 // lib/pages/setting_page.dart
 import 'package:dappr/pages/about_page.dart'; // Assuming you have an AboutPage
 import 'package:dappr/providers/favorite_provider.dart'; // <--- Ensure this import is here
+import 'package:dappr/providers/shopping_list_provider.dart';
+import 'package:dappr/providers/rating_provider.dart';
 import 'package:dappr/theme_notifier.dart'; // Import your ThemeNotifier
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart'; // Import provider
@@ -93,7 +95,11 @@ class _SettingPageState extends State<SettingPage> {
       Provider.of<ThemeNotifier>(context, listen: false).setSystemTheme();
 
       // Call the new public method to clear favorites
-      Provider.of<FavoriteProvider>(context, listen: false).clearAllFavorites(); // <--- CHANGED THIS LINE
+      Provider.of<FavoriteProvider>(context, listen: false).clearAllFavorites();
+      // Clear shopping list
+      Provider.of<ShoppingListProvider>(context, listen: false).clearAll();
+      // Clear user ratings
+      Provider.of<RatingProvider>(context, listen: false).clearAllRatings();
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
