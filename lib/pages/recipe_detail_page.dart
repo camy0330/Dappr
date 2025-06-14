@@ -4,6 +4,7 @@ import 'package:dappr/providers/favorite_provider.dart'; // Import your Favorite
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart'; // Import Provider
 
+
 class RecipeDetailPage extends StatelessWidget {
   final Recipe recipe;
 
@@ -56,39 +57,37 @@ class RecipeDetailPage extends StatelessWidget {
             // Wrap the image with Hero for the animation
             Hero(
               tag: 'recipe-image-${recipe.id}', // Must match the tag from FavouritePage
-              child: ClipRRect(
-                borderRadius: const BorderRadius.vertical(bottom: Radius.circular(16.0)),
-                // Changed from Image.asset to Image.network
-                // This assumes recipe.imageUrl is a network URL
-                child: recipe.imageUrl.isNotEmpty
-                    ? Image.network(
-                        recipe.imageUrl,
-                        width: double.infinity,
-                        height: 250,
-                        fit: BoxFit.cover,
-                        // Enhanced errorBuilder for network images
-                        errorBuilder: (context, error, stackTrace) =>
-                            Container(
-                              height: 250,
-                              width: double.infinity,
-                              color: Theme.of(context).hoverColor, // Use theme color for consistency
-                              child: Center(
-                                child: Icon(
-                                  Icons.broken_image, // More descriptive icon
-                                  size: 80,
-                                  color: Theme.of(context).hintColor, // Use theme color
+              child: AspectRatio(
+                aspectRatio: 16 / 9, // Konsisten untuk semua gambar
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.vertical(bottom: Radius.circular(16.0)),
+                  // Changed from Image.asset to Image.network
+                  // This assumes recipe.imageUrl is a network URL
+                  child: recipe.imageUrl.isNotEmpty
+                      ? Image.network(
+                          recipe.imageUrl,
+                          width: double.infinity,
+                          fit: BoxFit.cover, // Gambar selalu penuh dan seragam
+                          // Enhanced errorBuilder for network images
+                          errorBuilder: (context, error, stackTrace) =>
+                              Container(
+                                color: Theme.of(context).hoverColor, // Use theme color for consistency
+                                child: Center(
+                                  child: Icon(
+                                    Icons.broken_image, // More descriptive icon
+                                    size: 80,
+                                    color: Theme.of(context).hintColor, // Use theme color
+                                  ),
                                 ),
                               ),
-                            ),
-                      )
-                    : Container( // Fallback if imageUrl is empty
-                        height: 250,
-                        width: double.infinity,
-                        color: Theme.of(context).hoverColor,
-                        child: const Center(
-                          child: Icon(Icons.fastfood, size: 80, color: Colors.deepOrange),
+                        )
+                      : Container( // Fallback if imageUrl is empty
+                          color: Theme.of(context).hoverColor,
+                          child: const Center(
+                            child: Icon(Icons.fastfood, size: 80, color: Colors.deepOrange),
+                          ),
                         ),
-                      ),
+                ),
               ),
             ),
             Padding(
