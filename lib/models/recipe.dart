@@ -8,6 +8,7 @@ class Recipe {
   final String prepTime;
   final String cookTime;
   final List<String> steps;
+  final String submittedBy; // New field for recipe origin/user
 
   Recipe({
     required this.id,
@@ -18,5 +19,6 @@ class Recipe {
     required this.prepTime,
     required this.cookTime,
     required this.steps,
+    required this.submittedBy, // Add to constructor
   });
 }
