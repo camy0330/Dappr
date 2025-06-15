@@ -73,20 +73,18 @@ class _RecipeListPageState extends State<RecipeListPage> {
           // Header with search
           Container(
             height: 160,
+            color: Colors.deepOrange, // Ganti ke warna solid tanpa gradient
             child: Stack(
               children: [
-                // Gradient background
-                Container(
-                  height: 160,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Colors.deepOrange.shade700,
-                        Colors.deepOrange.shade400,
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
+                // Hapus gradient background, gunakan warna solid
+                // Garis putih di bawah AppBar
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  child: Container(
+                    height: 3,
+                    color: Colors.white,
                   ),
                 ),
                 // Header content
@@ -146,8 +144,8 @@ class _RecipeListPageState extends State<RecipeListPage> {
                   )
                 : GridView.builder(
                     padding: const EdgeInsets.all(8.0),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: MediaQuery.of(context).size.width < 600 ? 2 : 3, // Responsive: 2 for phone, 3 for tablet/desktop
                       crossAxisSpacing: 10.0,
                       mainAxisSpacing: 10.0,
                       childAspectRatio: 0.8,
