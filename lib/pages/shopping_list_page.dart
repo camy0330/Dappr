@@ -1,6 +1,6 @@
+import 'package:dappr/providers/shopping_list_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:dappr/providers/shopping_list_provider.dart';
 
 class ShoppingListPage extends StatelessWidget {
   const ShoppingListPage({super.key});

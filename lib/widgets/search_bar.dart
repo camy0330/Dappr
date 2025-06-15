@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 class MySearchBar extends StatelessWidget {
   final Function(String) onSearch;
-
-  const MySearchBar({super.key, required this.onSearch, required Color textColor});
+  // Removed the redundant 'textColor' from constructor as it's not used directly
+  // and is derived from theme's brightness within the build method.
+  const MySearchBar({super.key, required this.onSearch});
 
   @override
   Widget build(BuildContext context) {
@@ -18,8 +19,9 @@ class MySearchBar extends StatelessWidget {
           borderRadius: BorderRadius.circular(30),
           boxShadow: [
             BoxShadow(
+              // FIX: Replaced withOpacity with withAlpha for direct alpha control
               color: isDark
-                  ? Colors.black.withOpacity(0.6)
+                  ? Colors.black.withAlpha((255 * 0.6).round()) // Fixed here
                   : const Color.fromARGB(38, 255, 87, 34),
               blurRadius: 8,
               offset: const Offset(0, 4),

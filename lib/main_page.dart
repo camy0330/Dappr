@@ -3,6 +3,7 @@ import 'package:dappr/homepage/auth_page.dart'; // Assuming AuthPage is the logo
 import 'package:dappr/pages/about_page.dart';
 import 'package:dappr/pages/favourite_page.dart';
 import 'package:dappr/pages/meal_planner_page.dart';
+import 'package:dappr/pages/rating_page.dart';
 // Pages for Bottom Navigation Bar
 import 'package:dappr/pages/recipe_list_page.dart';
 import 'package:dappr/pages/setting_page.dart';
@@ -10,7 +11,6 @@ import 'package:dappr/pages/setting_page.dart';
 import 'package:dappr/pages/shopping_list_page.dart';
 import 'package:dappr/pages/timer_cooking_page.dart'; // Standardized to timer_cooking_page.dart
 import 'package:flutter/material.dart';
-import 'package:dappr/pages/rating_page.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});

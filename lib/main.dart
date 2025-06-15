@@ -12,6 +12,11 @@ import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
+// NEW IMPORTS FOR RECIPE DATA AND FILTER PAGE
+import 'package:dappr/data/recipes_data.dart'; // Ensure this path is correct for your 'recipes' list
+import 'package:dappr/pages/filter_recipe_page.dart'; // Ensure this path is correct for RecipeFilterPage
+
+
 var logger = Logger();
 
 void main() {
@@ -56,8 +61,6 @@ class MyApp extends StatelessWidget {
               onSecondary: Colors.black,
               surface: Colors.white, // Color for surfaces like cards, dialogs
               onSurface: Colors.black87, // Color for content on surface
-              // 'background' and 'onBackground' are deprecated; use 'surface' and 'onSurface'
-              // or rely on ThemeData.scaffoldBackgroundColor for the main screen background.
               error: Colors.red,
               onError: Colors.white,
             ),
@@ -91,8 +94,6 @@ class MyApp extends StatelessWidget {
               onSecondary: Colors.black,
               surface: Colors.grey.shade800, // Color for surfaces like cards, dialogs in dark theme
               onSurface: Colors.white70, // Color for content on surface in dark theme
-              // 'background' and 'onBackground' are deprecated; use 'surface' and 'onSurface'
-              // or rely on ThemeData.scaffoldBackgroundColor for the main screen background.
               error: Colors.red.shade400,
               onError: Colors.black,
             ),
@@ -108,12 +109,15 @@ class MyApp extends StatelessWidget {
             ),
           ),
           themeMode: themeNotifier.themeMode,
-          home: const WelcomePage(),
+          home: const WelcomePage(), // Your current home page
           debugShowCheckedModeBanner: false,
           routes: {
             '/about': (context) => const AboutPage(),
             '/timer': (context) => const TimerCookingPage(),
             '/settings': (context) => const SettingPage(),
+            // NEW ROUTE FOR YOUR FILTER PAGE:
+            // This 'recipes' here refers to the top-level 'recipes' list imported from 'recipes_data.dart'
+            '/filter_recipes': (context) => RecipeFilterPage(recipes: recipes),
           },
         );
       },

@@ -1,5 +1,5 @@
-import 'package:dappr/data/recipes_data.dart';
-import 'package:dappr/models/recipe.dart';
+import 'package:dappr/data/recipes_data.dart'; // Make sure this provides 'recipes' List<Recipe>
+import 'package:dappr/models/recipe.dart'; // Make sure Recipe model has an 'id' field
 import 'package:dappr/pages/recipe_detail_page.dart';
 import 'package:dappr/providers/favorite_provider.dart';
 import 'package:flutter/material.dart';
@@ -19,10 +19,12 @@ class _RecipeListPageState extends State<RecipeListPage> {
   void initState() {
     super.initState();
     try {
+      // Initialize _filteredRecipes with the full list of recipes
       _filteredRecipes = recipes;
 
-      // Fallback UI if no recipe data
+      // Fallback UI if no recipe data is loaded
       if (_filteredRecipes.isEmpty) {
+        // Using addPostFrameCallback to ensure SnackBar is shown after widget has been built
         WidgetsBinding.instance.addPostFrameCallback((_) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('No recipe data available.')),
@@ -30,7 +32,7 @@ class _RecipeListPageState extends State<RecipeListPage> {
         });
       }
     } catch (e) {
-      // Show general error if loading fails
+      // Show general error if initial loading fails
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Error loading recipe data.')),
@@ -39,13 +41,15 @@ class _RecipeListPageState extends State<RecipeListPage> {
     }
   }
 
-  // Filter recipes based on search input
+  // Filter recipes based on search input query
   void _onSearchChanged(String query) {
     try {
       setState(() {
         if (query.isEmpty) {
+          // If query is empty, show all recipes
           _filteredRecipes = recipes;
         } else {
+          // Filter recipes by title or description (case-insensitive)
           _filteredRecipes = recipes
               .where((recipe) =>
                   recipe.title.toLowerCase().contains(query.toLowerCase()) ||
@@ -54,7 +58,7 @@ class _RecipeListPageState extends State<RecipeListPage> {
         }
       });
     } catch (e) {
-      // If search fails
+      // If search filtering causes an error
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Search failed. Please try again.')),
       );
@@ -63,21 +67,22 @@ class _RecipeListPageState extends State<RecipeListPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Access the FavoriteProvider to check favorite status
     final favoriteProvider = Provider.of<FavoriteProvider>(context);
+    // Determine current brightness (light/dark mode) for adaptive text colors
     final brightness = Theme.of(context).brightness;
     final textColor = brightness == Brightness.dark ? Colors.white : Colors.black;
 
     return Scaffold(
       body: Column(
         children: [
-          // Header with search
+          // Header section with title and search bar
           Container(
             height: 160,
-            color: Colors.deepOrange, // Ganti ke warna solid tanpa gradient
+            color: Colors.deepOrange, // Solid color background for the header
             child: Stack(
               children: [
-                // Hapus gradient background, gunakan warna solid
-                // Garis putih di bawah AppBar
+                // White line at the top (under the AppBar implicitly)
                 Positioned(
                   top: 0,
                   left: 0,
@@ -87,7 +92,7 @@ class _RecipeListPageState extends State<RecipeListPage> {
                     color: Colors.white,
                   ),
                 ),
-                // Header content
+                // Header content: title and search field
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 32, 16, 8),
                   child: Column(
@@ -96,31 +101,32 @@ class _RecipeListPageState extends State<RecipeListPage> {
                       Text(
                         'What would you like to cook today?',
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              color: textColor,
+                              color: textColor, // Adaptive text color
                               fontFamily: 'Montserrat',
                               fontWeight: FontWeight.bold,
                             ),
                       ),
                       const SizedBox(height: 12),
-                      // Search field
+                      // Search field container with rounded corners and subtle background
                       Container(
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.9),
+                          // FIX: Replaced withOpacity with withAlpha for direct alpha control
+                          color: Colors.white.withAlpha((255 * 0.9).round()),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         padding: const EdgeInsets.symmetric(horizontal: 12),
                         child: TextField(
-                          onChanged: _onSearchChanged,
-                          style: const TextStyle(color: Colors.black),
+                          onChanged: _onSearchChanged, // Calls the filter method on text change
+                          style: const TextStyle(color: Colors.black), // Text input color
                           decoration: InputDecoration(
                             hintText: 'Search recipes...',
-                            hintStyle: TextStyle(color: Colors.grey[700]),
-                            border: InputBorder.none,
-                            icon: Icon(Icons.search, color: Colors.grey[700]),
+                            hintStyle: TextStyle(color: Colors.grey[700]), // Hint text color
+                            border: InputBorder.none, // No default border for text field
+                            icon: Icon(Icons.search, color: Colors.grey[700]), // Search icon
                           ),
                         ),
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 10), // Spacing below search field
                     ],
                   ),
                 ),
@@ -128,7 +134,7 @@ class _RecipeListPageState extends State<RecipeListPage> {
             ),
           ),
 
-          // Recipe list or no data message
+          // Recipe list or "No recipes found" message
           Expanded(
             child: _filteredRecipes.isEmpty
                 ? Center(
@@ -137,7 +143,7 @@ class _RecipeListPageState extends State<RecipeListPage> {
                       style: TextStyle(
                         fontSize: 18,
                         fontFamily: 'Montserrat',
-                        color: textColor,
+                        color: textColor, // Adaptive text color
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -145,34 +151,36 @@ class _RecipeListPageState extends State<RecipeListPage> {
                 : GridView.builder(
                     padding: const EdgeInsets.all(8.0),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: MediaQuery.of(context).size.width < 600 ? 2 : 3, // Responsive: 2 for phone, 3 for tablet/desktop
+                      // Responsive grid: 2 columns for smaller screens, 3 for larger
+                      crossAxisCount: MediaQuery.of(context).size.width < 600 ? 2 : 3,
                       crossAxisSpacing: 10.0,
                       mainAxisSpacing: 10.0,
-                      childAspectRatio: 0.8,
+                      childAspectRatio: 0.8, // Aspect ratio of each grid item
                     ),
                     itemCount: _filteredRecipes.length,
                     itemBuilder: (context, index) {
                       final recipe = _filteredRecipes[index];
+                      // Check if the current recipe is a favorite
                       final bool isFavorite = favoriteProvider.isFavorite(recipe.id);
 
                       return Card(
-                        elevation: 4,
+                        elevation: 4, // Card shadow
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15)),
-                        clipBehavior: Clip.antiAlias,
+                            borderRadius: BorderRadius.circular(15)), // Rounded card corners
+                        clipBehavior: Clip.antiAlias, // Ensures content is clipped to card shape
                         child: InkWell(
                           onTap: () {
                             try {
-                              // Try to navigate to detail page
+                              // Navigate to the RecipeDetailPage when card is tapped
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
-                                      RecipeDetailPage(recipe: recipe),
+                                      RecipeDetailPage(recipe: recipe), // Pass the selected recipe
                                 ),
                               );
                             } catch (e) {
-                              // If navigation fails
+                              // If navigation fails (e.g., RecipeDetailPage not set up correctly)
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                     content: Text('Unable to open recipe.')),
@@ -186,12 +194,12 @@ class _RecipeListPageState extends State<RecipeListPage> {
                               Expanded(
                                 child: ClipRRect(
                                   borderRadius: const BorderRadius.vertical(
-                                      top: Radius.circular(15)),
-                                  child: Image.asset(
+                                      top: Radius.circular(15)), // Rounded top corners for image
+                                  child: Image.network( // Using Image.network for external URLs
                                     recipe.imageUrl,
                                     fit: BoxFit.cover,
                                     errorBuilder: (context, error, stackTrace) {
-                                      // Handle broken image error
+                                      // Fallback for image loading errors
                                       return Container(
                                         color: Colors.grey[300],
                                         child: const Icon(Icons.broken_image,
@@ -201,13 +209,13 @@ class _RecipeListPageState extends State<RecipeListPage> {
                                   ),
                                 ),
                               ),
-                              const SizedBox(height: 10), // Add spacing between image and avatar row
-                              // Submitter info and title (like the sample image)
+                              const SizedBox(height: 10), // Spacing between image and text content
+                              // Submitter info and title
                               Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                                 child: Row(
                                   children: [
-                                    // Avatar placeholder (user to add image later)
+                                    // Avatar placeholder
                                     CircleAvatar(
                                       radius: 16,
                                       backgroundColor: Colors.grey.shade300,
@@ -236,7 +244,7 @@ class _RecipeListPageState extends State<RecipeListPage> {
                                               fontSize: 15,
                                               fontWeight: FontWeight.bold,
                                               fontFamily: 'Montserrat',
-                                              color: textColor,
+                                              color: textColor, // Adaptive text color
                                             ),
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
@@ -257,14 +265,14 @@ class _RecipeListPageState extends State<RecipeListPage> {
                                     fontSize: 12,
                                     color: brightness == Brightness.dark
                                         ? Colors.grey[400]
-                                        : Colors.grey,
+                                        : Colors.grey, // Adaptive text color
                                     fontFamily: 'Montserrat',
                                   ),
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                              // Favorite button
+                              // Favorite button aligned to the bottom right
                               Align(
                                 alignment: Alignment.bottomRight,
                                 child: IconButton(
@@ -279,14 +287,14 @@ class _RecipeListPageState extends State<RecipeListPage> {
                                   onPressed: () {
                                     try {
                                       favoriteProvider
-                                          .toggleFavorite(recipe.id);
+                                          .toggleFavorite(recipe.id); // Toggle favorite status
                                     } catch (e) {
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(
-                                        const SnackBar(
-                                            content: Text(
-                                                'Failed to update favorite.')),
-                                      );
+                                            const SnackBar(
+                                                content: Text(
+                                                    'Failed to update favorite.')),
+                                          );
                                     }
                                   },
                                 ),

@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
-import 'package:dappr/data/recipes_data.dart';
-import 'package:dappr/data/ratings_data.dart';
-import 'package:dappr/models/recipe.dart';
+import 'package:dappr/data/ratings-data.dart'; // Make sure this file exists and is correctly structured
+import 'package:dappr/data/recipes_data.dart'; // Make sure this file exists and is correctly structured
 import 'package:dappr/models/rating.dart';
-import 'package:provider/provider.dart';
+import 'package:dappr/models/recipe.dart'; // Make sure Recipe model has an 'id' field
 import 'package:dappr/providers/rating_provider.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 // Main page for viewing and adding ratings/reviews for all recipes
 class RatingPage extends StatefulWidget {
@@ -25,15 +25,17 @@ class _RatingPageState extends State<RatingPage> {
     ];
     return colors[username.codeUnitAt(0) % colors.length];
   }
+
   // Show dialog for user to add a rating for a recipe
   void _showAddRatingDialog(BuildContext context, String recipeId) {
     final userController = TextEditingController();
     final commentController = TextEditingController();
-    double ratingValue = 3.0;
+    double ratingValue = 3.0; // Initial rating value
+
     showDialog(
       context: context,
       builder: (context) {
-        // Use StatefulBuilder to allow dialog to update its own state
+        // Use StatefulBuilder to allow dialog to update its own state (e.g., slider value)
         return StatefulBuilder(
           builder: (context, setState) => AlertDialog(
             title: const Text('Add Your Rating'),
@@ -49,6 +51,7 @@ class _RatingPageState extends State<RatingPage> {
                 TextField(
                   controller: commentController,
                   decoration: const InputDecoration(labelText: 'Your Review'),
+                  maxLines: 3, // Allow multiple lines for comments
                 ),
                 const SizedBox(height: 10),
                 // Star rating slider
@@ -58,18 +61,18 @@ class _RatingPageState extends State<RatingPage> {
                     Expanded(
                       child: Slider(
                         value: ratingValue,
-                        min: 1,
-                        max: 5,
-                        divisions: 4,
-                        label: ratingValue.toString(),
+                        min: 1, // Minimum rating
+                        max: 5, // Maximum rating
+                        divisions: 4, // Allows values 1.0, 2.0, 3.0, 4.0, 5.0
+                        label: ratingValue.toString(), // Shows current value above thumb
                         onChanged: (value) {
-                          setState(() {
+                          setState(() { // Update dialog's local state
                             ratingValue = value;
                           });
                         },
                       ),
                     ),
-                    Text(ratingValue.toStringAsFixed(1)),
+                    Text(ratingValue.toStringAsFixed(1)), // Display rating with one decimal place
                   ],
                 ),
               ],
@@ -77,13 +80,13 @@ class _RatingPageState extends State<RatingPage> {
             actions: [
               // Cancel button
               TextButton(
-                onPressed: () => Navigator.pop(context),
+                onPressed: () => Navigator.pop(context), // Close dialog without saving
                 child: const Text('Cancel'),
               ),
               // Submit button
               ElevatedButton(
                 onPressed: () {
-                  // Only submit if both fields are filled
+                  // Only submit if both user name and comment fields are filled
                   if (userController.text.isNotEmpty &&
                       commentController.text.isNotEmpty) {
                     Provider.of<RatingProvider>(context, listen: false).addRating(
@@ -91,11 +94,17 @@ class _RatingPageState extends State<RatingPage> {
                         userName: userController.text,
                         comment: commentController.text,
                         ratingValue: ratingValue,
-                        recipeId: recipeId,
+                        recipeId: recipeId, // Pass the recipeId to the Rating object
                       ),
                     );
-                    Navigator.pop(context);
-                    setState(() {}); // Force rebuild after adding rating
+                    Navigator.pop(context); // Close the dialog
+                    // No need for setState(() {}); here as Provider will notify listeners
+                    // and rebuild the parent widget automatically.
+                  } else {
+                    // Optionally, show a snackbar or message if fields are empty
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Please enter your name and review.')),
+                    );
                   }
                 },
                 child: const Text('Submit'),
@@ -111,16 +120,20 @@ class _RatingPageState extends State<RatingPage> {
   Widget build(BuildContext context) {
     // Detect dark mode for adaptive colors
     final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    // Colors that adapt based on theme mode
+
+    // Colors that adapt based on theme mode - FIX: Replaced withOpacity
     final Color reviewBoxColor = isDarkMode
-        ? Colors.orange.shade900.withOpacity(0.3)
+        ? Colors.orange.shade900.withAlpha((255 * 0.3).round()) // Fix deprecated withOpacity
         : Colors.orange.shade50;
     final Color userNameColor =
         isDarkMode ? Colors.orange.shade300 : Colors.deepOrange;
     final Color commentTextColor =
         isDarkMode ? Colors.orange.shade100 : Colors.black87;
-    // Combine static ratings and user ratings from provider
+
+    // Combine static ratings (from ratings-data.dart) and user ratings from provider
     final userRatings = Provider.of<RatingProvider>(context).userRatings;
+    // Assuming 'allRatings' is defined in ratings-data.dart.
+    // Ensure `recipe.id` exists and is consistent for filtering.
     final List<Rating> allCombinedRatings = [...allRatings, ...userRatings];
 
     return Scaffold(
@@ -130,20 +143,23 @@ class _RatingPageState extends State<RatingPage> {
       ),
       body: ListView.builder(
         padding: const EdgeInsets.all(12),
-        itemCount: recipes.length,
+        itemCount: recipes.length, // Assuming 'recipes' is available (e.g., from recipes_data.dart)
         itemBuilder: (context, index) {
           final Recipe recipe = recipes[index];
-          // Filter reviews for this recipe from combined ratings
+          
+          // Filter reviews for this specific recipe from combined ratings
           final List<Rating> recipeReviews = allCombinedRatings
-              .where((rating) => rating.recipeId == recipe.id)
+              .where((rating) => rating.recipeId == recipe.id) // IMPORTANT: Recipe model needs an 'id' field
               .toList();
+          
           // Calculate average rating for this recipe
           final double avgRating = recipeReviews.isNotEmpty
               ? recipeReviews
-                      .map((r) => r.ratingValue)
-                      .reduce((a, b) => a + b) /
+                  .map((r) => r.ratingValue)
+                  .reduce((a, b) => a + b) /
                   recipeReviews.length
-              : 0.0;
+              : 0.0; // Default to 0.0 if no reviews
+
           return Card(
             elevation: 6,
             margin: const EdgeInsets.symmetric(vertical: 10),
@@ -157,15 +173,26 @@ class _RatingPageState extends State<RatingPage> {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Recipe image
+                      // Recipe image (assuming it's a local asset for Image.asset)
+                      // If it's a network image, use Image.network and provide a fallback.
                       if (recipe.imageUrl.isNotEmpty)
                         ClipRRect(
                           borderRadius: BorderRadius.circular(12),
-                          child: Image.asset(
+                          // Consider using Image.network if paths are URLs,
+                          // or ensure 'assets/images/' is correctly configured in pubspec.yaml
+                          child: Image.network( // Changed from Image.asset to Image.network
                             recipe.imageUrl,
                             height: 90,
                             width: 90,
                             fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                width: 90,
+                                height: 90,
+                                color: Colors.grey[300],
+                                child: const Icon(Icons.broken_image, color: Colors.grey),
+                              );
+                            },
                           ),
                         ),
                       const SizedBox(width: 14),
@@ -191,8 +218,9 @@ class _RatingPageState extends State<RatingPage> {
                               margin: const EdgeInsets.symmetric(vertical: 2),
                               padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 10),
                               decoration: BoxDecoration(
+                                // Fix deprecated withOpacity
                                 color: isDarkMode
-                                    ? Colors.orange.shade900.withOpacity(0.4)
+                                    ? Colors.orange.shade900.withAlpha((255 * 0.4).round())
                                     : Colors.orange.shade100,
                                 borderRadius: BorderRadius.circular(10),
                               ),
@@ -231,7 +259,8 @@ class _RatingPageState extends State<RatingPage> {
                                     Container(
                                       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
                                       decoration: BoxDecoration(
-                                        color: Colors.deepOrange.withOpacity(0.15),
+                                        // Fix deprecated withOpacity
+                                        color: Colors.deepOrange.withAlpha((255 * 0.15).round()),
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                       child: Text(
@@ -264,7 +293,7 @@ class _RatingPageState extends State<RatingPage> {
                         "Add Review",
                         style: TextStyle(color: Colors.deepOrange),
                       ),
-                      onPressed: () => _showAddRatingDialog(context, recipe.id),
+                      onPressed: () => _showAddRatingDialog(context, recipe.id), // Pass recipe.id
                     ),
                   ),
                   // Reviews section title
