@@ -1,6 +1,61 @@
 import 'package:flutter/material.dart';
-import 'package:dappr/models/recipe.dart';
 
+// === Simple Recipe Model === //
+class Recipe {
+  final String id;
+  final String title;
+  final String description;
+  final String imageUrl;
+  final String cookTime;
+  final String prepTime;
+  final List<String> ingredients;
+  final List<String> steps;
+  final String submittedBy;
+  final String category;
+  final List<String> tags;
+
+  Recipe({
+    required this.id,
+    required this.title,
+    required this.description,
+    required this.imageUrl,
+    required this.cookTime,
+    required this.prepTime,
+    required this.ingredients,
+    required this.steps,
+    required this.submittedBy,
+    required this.category,
+    required this.tags,
+  });
+}
+
+// === Sample Recipe Data === //
+final List<Recipe> recipes = [
+  Recipe(
+    id: 'R1',
+    title: 'Village Fried Rice',
+    description: 'Spicy and delicious, perfect for lunch or dinner.',
+    imageUrl: 'assets/images/nasi_goreng.jpg',
+    cookTime: '15 minutes',
+    prepTime: '25 minutes',
+    ingredients: ['rice', 'egg', 'chicken', 'anchovies', 'soy sauce', 'garlic'],
+    steps: ['Step 1', 'Step 2', 'Step 3'],
+    submittedBy: 'Admin',
+    category: 'Main Dish',
+    tags: ['lunch', 'dinner', 'sidedish'],
+  ),
+  // Add more recipes if needed
+];
+
+// === Main App Entry === //
+void main() {
+  runApp(MaterialApp(
+    home: RecipeFilterPage(),
+    debugShowCheckedModeBanner: false,
+  ));
+}
+
+// === Full Filter UI === //
 class RecipeFilterPage extends StatefulWidget {
   @override
   _RecipeFilterPageState createState() => _RecipeFilterPageState();
@@ -10,8 +65,13 @@ class _RecipeFilterPageState extends State<RecipeFilterPage> {
   String searchQuery = '';
   List<String> selectedIngredients = [];
   String? selectedCategory;
+  List<String> selectedTags = [];
 
-  // Get all unique ingredients
+  final List<String> allTags = [
+    'breakfast', 'lunch', 'dinner', 'sidedish',
+    'dessert', 'soup', 'supper', 'brunch', 'vegetable'
+  ];
+
   List<String> get allIngredients {
     final Set<String> ingredientsSet = {};
     for (var recipe in recipes) {
@@ -20,18 +80,14 @@ class _RecipeFilterPageState extends State<RecipeFilterPage> {
     return ingredientsSet.toList()..sort();
   }
 
-  // Get all unique categories
   List<String> get allCategories {
     final Set<String> categorySet = {};
     for (var recipe in recipes) {
-      if (recipe.category.isNotEmpty) {
-        categorySet.add(recipe.category);
-      }
+      categorySet.add(recipe.category);
     }
     return categorySet.toList()..sort();
   }
 
-  // Filtered recipe list
   List<Recipe> get filteredRecipes {
     return recipes.where((recipe) {
       final matchesSearch = searchQuery.isEmpty ||
@@ -41,17 +97,18 @@ class _RecipeFilterPageState extends State<RecipeFilterPage> {
 
       final matchesIngredients = selectedIngredients.isEmpty ||
           selectedIngredients.every((selected) =>
-              recipe.ingredients.any((ingredient) =>
-                  ingredient.toLowerCase().contains(selected)));
+              recipe.ingredients.map((e) => e.toLowerCase()).contains(selected));
 
       final matchesCategory = selectedCategory == null ||
           recipe.category.toLowerCase() == selectedCategory!.toLowerCase();
 
-      return matchesSearch && matchesIngredients && matchesCategory;
+      final matchesTags = selectedTags.isEmpty ||
+          selectedTags.every((tag) => recipe.tags.contains(tag));
+
+      return matchesSearch && matchesIngredients && matchesCategory && matchesTags;
     }).toList();
   }
 
-  // UI Starts Here
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,29 +120,26 @@ class _RecipeFilterPageState extends State<RecipeFilterPage> {
             // 🔍 Text Search
             TextField(
               decoration: InputDecoration(
-                labelText: 'Search recipes',
+                labelText: 'Search',
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.search),
               ),
               onChanged: (value) {
-                setState(() {
-                  searchQuery = value;
-                });
+                setState(() => searchQuery = value.toLowerCase());
               },
             ),
-            SizedBox(height: 10),
+            SizedBox(height: 12),
 
-            // ✅ Ingredient Multi-select
+            // ✅ Ingredient Checkboxes
             ExpansionTile(
               title: Text('Filter by Ingredients'),
               children: allIngredients.map((ingredient) {
-                final isSelected = selectedIngredients.contains(ingredient);
                 return CheckboxListTile(
                   title: Text(ingredient),
-                  value: isSelected,
-                  onChanged: (value) {
+                  value: selectedIngredients.contains(ingredient),
+                  onChanged: (checked) {
                     setState(() {
-                      if (value == true) {
+                      if (checked == true) {
                         selectedIngredients.add(ingredient);
                       } else {
                         selectedIngredients.remove(ingredient);
@@ -95,46 +149,63 @@ class _RecipeFilterPageState extends State<RecipeFilterPage> {
                 );
               }).toList(),
             ),
+            SizedBox(height: 10),
 
             // 🍽 Category Dropdown
             DropdownButtonFormField<String>(
               decoration: InputDecoration(
-                labelText: 'Filter by Category',
+                labelText: 'Category',
                 border: OutlineInputBorder(),
               ),
               value: selectedCategory,
-              hint: Text('Choose a category'),
-              onChanged: (value) {
-                setState(() {
-                  selectedCategory = value;
-                });
-              },
-              items: allCategories.map((category) {
-                return DropdownMenuItem(
-                  value: category,
-                  child: Text(category),
+              items: allCategories.map((cat) {
+                return DropdownMenuItem(value: cat, child: Text(cat));
+              }).toList(),
+              onChanged: (value) => setState(() => selectedCategory = value),
+            ),
+            SizedBox(height: 10),
+
+            // 🏷️ Tags/Meal Types (Chips)
+            Wrap(
+              spacing: 6,
+              children: allTags.map((tag) {
+                final isSelected = selectedTags.contains(tag);
+                return FilterChip(
+                  label: Text('#$tag'),
+                  selected: isSelected,
+                  onSelected: (selected) {
+                    setState(() {
+                      isSelected
+                          ? selectedTags.remove(tag)
+                          : selectedTags.add(tag);
+                    });
+                  },
+                  selectedColor: Colors.green.shade300,
+                  checkmarkColor: Colors.white,
                 );
               }).toList(),
             ),
             SizedBox(height: 10),
 
-            // 🧾 Filtered Recipe List
+            // Filtered List
             Expanded(
-              child: ListView.builder(
-                itemCount: filteredRecipes.length,
-                itemBuilder: (context, index) {
-                  final recipe = filteredRecipes[index];
-                  return Card(
-                    child: ListTile(
-                      leading: Image.asset(recipe.imageUrl,
-                          width: 50, height: 50, fit: BoxFit.cover),
-                      title: Text(recipe.title),
-                      subtitle: Text(
-                          'Category: ${recipe.category}, Prep: ${recipe.prepTime}'),
+              child: filteredRecipes.isEmpty
+                  ? Center(child: Text('No recipes match your filters.'))
+                  : ListView.builder(
+                      itemCount: filteredRecipes.length,
+                      itemBuilder: (context, index) {
+                        final recipe = filteredRecipes[index];
+                        return Card(
+                          child: ListTile(
+                            leading: Image.asset(recipe.imageUrl,
+                                width: 50, height: 50, fit: BoxFit.cover),
+                            title: Text(recipe.title),
+                            subtitle: Text(
+                                '${recipe.category} • ${recipe.cookTime}'),
+                          ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
             ),
           ],
         ),
