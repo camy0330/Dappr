@@ -151,11 +151,23 @@ class _MealPlannerPageState extends State<MealPlannerPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
+   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Meal Planner'),
-        backgroundColor: Colors.deepOrange,
+        title: const Text(
+          'Meal Planner',
+          style: TextStyle(fontFamily: 'Montserrat', color: Colors.white),
+        ),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.deepOrange, Colors.orangeAccent], // Gradient applied
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: TableCalendar(
         firstDay: DateTime.utc(2020, 1, 1),
