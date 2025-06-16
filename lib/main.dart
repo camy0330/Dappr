@@ -117,6 +117,12 @@ class MyApp extends StatelessWidget {
             // NEW ROUTE FOR YOUR FILTER PAGE:
             // This 'recipes' here refers to the top-level 'recipes' list imported from 'recipes_data.dart'
             '/filter_recipes': (context) => RecipeFilterPage(recipes: recipes),
+            ElevatedButton(
+          onPressed: () {
+          Navigator.pushNamed(context, '/filter_recipes');
+          },
+          child: Text('Filter Recipes'),
+          ),
           },
         );
       },
