@@ -1,20 +1,23 @@
 // lib/main.dart
-// Import the pages that will be used in routes
-// NEW IMPORTS FOR RECIPE DATA AND FILTER PAGE
-import 'package:dappr/data/recipes_data.dart'; // Ensure this path is correct for your 'recipes' list
-import 'package:dappr/pages/about_page.dart';
-import 'package:dappr/pages/filter_recipe_page.dart'; // Ensure this path is correct for RecipeFilterPage
-import 'package:dappr/pages/setting_page.dart';
-import 'package:dappr/pages/timer_cooking_page.dart';
+
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:logger/logger.dart';
+
+// Data & Providers
+import 'package:dappr/data/recipes_data.dart';
 import 'package:dappr/providers/favorite_provider.dart';
 import 'package:dappr/providers/rating_provider.dart';
 import 'package:dappr/providers/shopping_list_provider.dart';
 import 'package:dappr/theme_notifier.dart';
-import 'package:dappr/welcome_page/welcome_page.dart';
-import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
-import 'package:provider/provider.dart';
 
+// Pages
+import 'package:dappr/welcome_page/welcome_page.dart';
+import 'package:dappr/pages/about_page.dart';
+import 'package:dappr/pages/filter_recipe_page.dart';
+import 'package:dappr/pages/setting_page.dart';
+import 'package:dappr/pages/timer_cooking_page.dart';
+import 'package:dappr/pages/recipe_puzzle_game.dart'; // ✅ Puzzle Game
 
 var logger = Logger();
 
@@ -41,9 +44,9 @@ class MyApp extends StatelessWidget {
       builder: (context, themeNotifier, child) {
         return MaterialApp(
           title: 'Dappr Recipe App',
-          // Define your light theme
+          debugShowCheckedModeBanner: false,
           theme: ThemeData(
-            useMaterial3: true, // Enable Material 3
+            useMaterial3: true,
             primarySwatch: Colors.deepOrange,
             fontFamily: 'Montserrat',
             visualDensity: VisualDensity.adaptivePlatformDensity,
@@ -52,18 +55,17 @@ class MyApp extends StatelessWidget {
               foregroundColor: Colors.white,
             ),
             brightness: Brightness.light,
-
+            scaffoldBackgroundColor: Colors.white,
             colorScheme: const ColorScheme.light(
               primary: Colors.deepOrange,
               onPrimary: Colors.white,
               secondary: Colors.amber,
               onSecondary: Colors.black,
-              surface: Colors.white, // Color for surfaces like cards, dialogs
-              onSurface: Colors.black87, // Color for content on surface
+              surface: Colors.white,
+              onSurface: Colors.black87,
               error: Colors.red,
               onError: Colors.white,
             ),
-            scaffoldBackgroundColor: Colors.white, // Explicitly set scaffold background for light theme
             textTheme: const TextTheme(
               displayLarge: TextStyle(fontSize: 96, color: Colors.black87),
               headlineMedium: TextStyle(fontSize: 32, color: Colors.black87),
@@ -74,9 +76,8 @@ class MyApp extends StatelessWidget {
               labelLarge: TextStyle(fontSize: 14, color: Colors.white),
             ),
           ),
-          // Define your dark theme
           darkTheme: ThemeData(
-            useMaterial3: true, // Enable Material 3
+            useMaterial3: true,
             primarySwatch: Colors.deepOrange,
             fontFamily: 'Montserrat',
             visualDensity: VisualDensity.adaptivePlatformDensity,
@@ -85,18 +86,17 @@ class MyApp extends StatelessWidget {
               foregroundColor: Colors.white,
             ),
             brightness: Brightness.dark,
-
+            scaffoldBackgroundColor: Colors.grey.shade900,
             colorScheme: ColorScheme.dark(
               primary: Colors.deepOrange.shade700,
               onPrimary: Colors.white,
               secondary: Colors.amberAccent,
               onSecondary: Colors.black,
-              surface: Colors.grey.shade800, // Color for surfaces like cards, dialogs in dark theme
-              onSurface: Colors.white70, // Color for content on surface in dark theme
+              surface: Colors.grey.shade800,
+              onSurface: Colors.white70,
               error: Colors.red.shade400,
               onError: Colors.black,
             ),
-            scaffoldBackgroundColor: Colors.grey.shade900, // Explicitly set scaffold background for dark theme
             textTheme: const TextTheme(
               displayLarge: TextStyle(fontSize: 96, color: Colors.white70),
               headlineMedium: TextStyle(fontSize: 32, color: Colors.white70),
@@ -108,18 +108,30 @@ class MyApp extends StatelessWidget {
             ),
           ),
           themeMode: themeNotifier.themeMode,
-          home: const WelcomePage(), // Your current home page
-          debugShowCheckedModeBanner: false,
+          home: const WelcomePage(),
           routes: {
             '/about': (context) => const AboutPage(),
             '/timer': (context) => const TimerCookingPage(),
             '/settings': (context) => const SettingPage(),
-            // NEW ROUTE FOR YOUR FILTER PAGE:
-            // This 'recipes' here refers to the top-level 'recipes' list imported from 'recipes_data.dart'
             '/filter_recipes': (context) => RecipeFilterPage(recipes: recipes),
+            '/puzzle_game': (context) => const DummyPuzzleRoute(), // ✅ Game route placeholder
           },
         );
       },
+    );
+  }
+}
+
+// Optional dummy widget for direct navigation (not used if you push manually with recipe)
+class DummyPuzzleRoute extends StatelessWidget {
+  const DummyPuzzleRoute({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(
+        child: Text("Open the Puzzle Game using Navigator.push."),
+      ),
     );
   }
 }

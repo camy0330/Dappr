@@ -3,6 +3,7 @@ import 'package:dappr/models/recipe.dart';
 import 'package:dappr/providers/favorite_provider.dart'; // Import your FavoriteProvider
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart'; // Import Provider
+import 'package:dappr/pages/recipe_puzzle_game.dart'; // 👈 import your puzzle game page
 
 
 class RecipeDetailPage extends StatelessWidget {
@@ -166,6 +167,32 @@ class RecipeDetailPage extends StatelessWidget {
                               child: Text('${entry.key + 1}. ${entry.value}', style: const TextStyle(fontSize: 16, fontFamily: 'Montserrat')),
                             ))
                         .toList(),
+                  ),
+                  // The new puzzle game button
+                  const SizedBox(height: 24),
+                  ElevatedButton.icon(
+                    icon: const Icon(Icons.extension),
+                    label: const Text('🧩 Play Puzzle Game'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.deepOrange,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      textStyle: const TextStyle(fontFamily: 'Montserrat', fontSize: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => RecipePuzzleGame(
+                            recipe: recipe, // This uses your current recipe
+                            useSteps: true, // Change to false if you want ingredient puzzle
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),

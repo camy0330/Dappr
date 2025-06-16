@@ -1,88 +1,42 @@
-// pages/filter_recipe_page.dart
-
+// lib/widgets/search_bar.dart
 import 'package:flutter/material.dart';
-import '../models/recipe.dart';
-import '../widgets/my_search_bar.dart'; // your custom search bar
-import '../data/recipes_data.dart'; // your recipe list
 
-class RecipeFilterPage extends StatefulWidget {
-  final List<Recipe> recipes;
+class MySearchBar extends StatefulWidget {
+  final ValueChanged<String> onSearch;
 
-  const RecipeFilterPage({super.key, required this.recipes});
+  const MySearchBar({super.key, required this.onSearch});
 
   @override
-  State<RecipeFilterPage> createState() => _RecipeFilterPageState();
+  State<MySearchBar> createState() => _MySearchBarState();
 }
 
-class _RecipeFilterPageState extends State<RecipeFilterPage> {
-  List<Recipe> filteredRecipes = [];
-
-  @override
-  void initState() {
-    super.initState();
-    filteredRecipes = widget.recipes;
-  }
-
-  void handleSearch(String input) {
-    final keywords = input
-        .split(' ')
-        .where((word) => word.isNotEmpty && !word.startsWith('#'))
-        .toList();
-
-    final hashtags = input
-        .split(' ')
-        .where((word) => word.startsWith('#'))
-        .map((h) => h.toLowerCase())
-        .toList();
-
-    setState(() {
-      filteredRecipes = widget.recipes.where((recipe) {
-        final hasKeywords = keywords.every((kw) =>
-            recipe.title.toLowerCase().contains(kw.toLowerCase()) ||
-            recipe.description.toLowerCase().contains(kw.toLowerCase()));
-
-        final hasHashtags = hashtags.every((tag) =>
-            recipe.hashtags.map((h) => h.toLowerCase()).contains(tag));
-
-        return hasKeywords && hasHashtags;
-      }).toList();
-    });
-  }
+class _MySearchBarState extends State<MySearchBar> {
+  // Optional: If you want to debounce the input within the MySearchBar widget itself,
+  // you'd add a Timer here and debounce the onChanged callback.
+  // For simplicity, we'll assume the parent (RecipeFilterPage) handles debouncing if needed.
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Search Recipes')),
-      body: Column(
-        children: [
-          const SizedBox(height: 16),
-          MySearchBar(onSearch: handleSearch),
-          const SizedBox(height: 16),
-          Expanded(
-            child: filteredRecipes.isEmpty
-                ? const Center(child: Text("No recipes found."))
-                : ListView.builder(
-                    itemCount: filteredRecipes.length,
-                    itemBuilder: (context, index) {
-                      final recipe = filteredRecipes[index];
-                      return Card(
-                        margin:
-                            const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        child: ListTile(
-                          leading: Image.asset(
-                            recipe.imageUrl,
-                            width: 60,
-                            height: 60,
-                            fit: BoxFit.cover,
-                          ),
-                          title: Text(recipe.title),
-                          subtitle: Text(recipe.description),
-                        ),
-                      );
-                    },
-                  ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: TextField(
+        decoration: const InputDecoration(
+          labelText: 'Search recipes',
+          hintText: 'e.g., chicken pasta #dinner',
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10.0)),
           ),
-        ],
+          prefixIcon: Icon(Icons.search),
+          suffixIcon: Icon(Icons.clear), // Optional: Add a clear button
+        ),
+        onChanged: widget.onSearch, // Pass the input directly to the parent's handler
+        // You could also implement debouncing here:
+        // onChanged: (value) {
+        //   if (_debounce?.isActive ?? false) _debounce!.cancel();
+        //   _debounce = Timer(const Duration(milliseconds: 300), () {
+        //     widget.onSearch(value);
+        //   });
+        // },
       ),
     );
   }
