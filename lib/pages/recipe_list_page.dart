@@ -79,7 +79,13 @@ class _RecipeListPageState extends State<RecipeListPage> {
           // Header section with title and search bar
           Container(
             height: 160,
-            color: Colors.deepOrange, // Solid color background for the header
+              decoration: const BoxDecoration(
+               gradient: LinearGradient(
+               colors: [Colors.deepOrange, Colors.orangeAccent], // Gradient warna yang diminta
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ), // Solid color background for the header
             child: Stack(
               children: [
                 // White line at the top (under the AppBar implicitly)
