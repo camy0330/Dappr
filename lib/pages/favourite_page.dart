@@ -1,10 +1,10 @@
 // lib/pages/favourite_page.dart
 
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 // Important: This import makes the FavoriteProvider class and its associated
 // enums (RecipeSortType, RecipeFilterType) accessible within this file.
-import 'package:dappr/providers/favorite_provider.dart'; 
+import 'package:dappr/providers/favorite_provider.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'recipe_detail_page.dart'; // Import for navigating to recipe details.
 

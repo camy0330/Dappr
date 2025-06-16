@@ -20,7 +20,7 @@ class Recipe {
     required this.prepTime,
     required this.cookTime,
     required this.steps,
-    required this.hashtags,
+    this.hashtags = const [],
     required this.submittedBy, // Add to constructor
   });
 
