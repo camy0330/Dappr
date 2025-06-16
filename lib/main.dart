@@ -1,6 +1,9 @@
 // lib/main.dart
 // Import the pages that will be used in routes
+// NEW IMPORTS FOR RECIPE DATA AND FILTER PAGE
+import 'package:dappr/data/recipes_data.dart'; // Ensure this path is correct for your 'recipes' list
 import 'package:dappr/pages/about_page.dart';
+import 'package:dappr/pages/filter_recipe_page.dart'; // Ensure this path is correct for RecipeFilterPage
 import 'package:dappr/pages/setting_page.dart';
 import 'package:dappr/pages/timer_cooking_page.dart';
 import 'package:dappr/providers/favorite_provider.dart';
@@ -11,10 +14,6 @@ import 'package:dappr/welcome_page/welcome_page.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
-
-// NEW IMPORTS FOR RECIPE DATA AND FILTER PAGE
-import 'package:dappr/data/recipes_data.dart'; // Ensure this path is correct for your 'recipes' list
-import 'package:dappr/pages/filter_recipe_page.dart'; // Ensure this path is correct for RecipeFilterPage
 
 
 var logger = Logger();

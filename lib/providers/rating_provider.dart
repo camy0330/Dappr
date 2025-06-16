@@ -1,9 +1,9 @@
 // lib/providers/rating_provider.dart
-import 'package:flutter/foundation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert'; // For encoding/decoding JSON
 
 import 'package:dappr/models/rating.dart'; // Import your Rating model (ensure it has toJson/fromJson)
+import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RatingProvider with ChangeNotifier {
   // This list will store all the user's ratings.
