@@ -8,6 +8,7 @@ class Recipe {
   final String prepTime; // e.g., "30 mins", "1 hour"
   final String cookTime; // e.g., "20 mins", "45 mins"
   final List<String> steps;
+  final List<String> hashtags;
   final String submittedBy; // New field for recipe origin/user
 
   Recipe({
@@ -19,6 +20,7 @@ class Recipe {
     required this.prepTime,
     required this.cookTime,
     required this.steps,
+    required this.hashtags,
     required this.submittedBy, // Add to constructor
   });
 
