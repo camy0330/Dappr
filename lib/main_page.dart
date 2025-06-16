@@ -1,4 +1,3 @@
-// lib/main_page.dart
 import 'package:dappr/homepage/auth_page.dart'; // Assuming AuthPage is the logout target
 import 'package:dappr/pages/about_page.dart';
 import 'package:dappr/pages/favourite_page.dart';
@@ -38,8 +37,19 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Dappr', style: TextStyle(color: Colors.white, fontFamily: 'Montserrat')),
-        backgroundColor: Colors.deepOrange,
+        title: const Text(
+          'Dappr',
+          style: TextStyle(color: Colors.white, fontFamily: 'Montserrat'),
+        ),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.deepOrange, Colors.orangeAccent], // Gradient applied
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: _bottomNavPages[_selectedIndex],
@@ -48,14 +58,24 @@ class _MainPageState extends State<MainPage> {
           padding: EdgeInsets.zero,
           children: <Widget>[
             const UserAccountsDrawerHeader(
-              accountName: Text('John Doe', style: TextStyle(color: Colors.white, fontFamily: 'Montserrat')),
-              accountEmail: Text('john.doe@example.com', style: TextStyle(color: Colors.white70, fontFamily: 'Montserrat')),
+              accountName: Text(
+                'John Doe',
+                style: TextStyle(color: Colors.white, fontFamily: 'Montserrat'),
+              ),
+              accountEmail: Text(
+                'john.doe@example.com',
+                style: TextStyle(color: Colors.white70, fontFamily: 'Montserrat'),
+              ),
               currentAccountPicture: CircleAvatar(
                 backgroundColor: Colors.white,
                 child: Icon(Icons.person, size: 50, color: Colors.deepOrange),
               ),
               decoration: BoxDecoration(
-                color: Colors.deepOrange,
+                gradient: LinearGradient(
+                  colors: [Colors.deepOrange, Colors.orangeAccent], // Gradient applied
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
               ),
             ),
             ListTile(
