@@ -12,37 +12,36 @@ class RecipeFilterPage extends StatefulWidget {
 
 class _RecipeFilterPageState extends State<RecipeFilterPage> {
   String searchText = '';
-  List<String> selectedHashtags = [];
 
-  final List<String> allHashtags = [
-    '#breakfast',
-    '#lunch',
-    '#dinner',
-    '#drink',
-    '#rice',
-    '#spicy',
-  ];
+  List<String> get keywords =>
+      searchText.split(' ').where((w) => w.isNotEmpty && !w.startsWith('#')).toList();
+
+  List<String> get hashtags =>
+      searchText.split(' ').where((w) => w.startsWith('#')).toList();
 
   @override
   Widget build(BuildContext context) {
     List<Recipe> filteredRecipes = widget.recipes.where((recipe) {
-      final matchesSearch = recipe.title.toLowerCase().contains(searchText.toLowerCase());
-      final matchesTags = selectedHashtags.every((tag) => recipe.hashtags.contains(tag));
-      return matchesSearch && matchesTags;
+      final textMatch = keywords.every((kw) =>
+          recipe.title.toLowerCase().contains(kw.toLowerCase()) ||
+          recipe.description.toLowerCase().contains(kw.toLowerCase()));
+
+      final tagMatch = hashtags.every((tag) =>
+          recipe.hashtags.map((h) => h.toLowerCase()).contains(tag.toLowerCase()));
+
+      return textMatch && tagMatch;
     }).toList();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Filter Recipes'),
-      ),
+      appBar: AppBar(title: const Text('Filter Recipes')),
       body: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Column(
           children: [
-            // 🔍 Text Search
+            // 🔍 Combined Search + Hashtag input
             TextField(
               decoration: const InputDecoration(
-                labelText: 'Search recipe...',
+                labelText: 'Search with keywords or #hashtags',
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.search),
               ),
@@ -54,33 +53,10 @@ class _RecipeFilterPageState extends State<RecipeFilterPage> {
             ),
             const SizedBox(height: 12),
 
-            // ✅ Hashtag Filters
-            Wrap(
-              spacing: 10,
-              runSpacing: 6,
-              children: allHashtags.map((tag) {
-                final isSelected = selectedHashtags.contains(tag);
-                return FilterChip(
-                  label: Text(tag),
-                  selected: isSelected,
-                  onSelected: (bool selected) {
-                    setState(() {
-                      if (selected) {
-                        selectedHashtags.add(tag);
-                      } else {
-                        selectedHashtags.remove(tag);
-                      }
-                    });
-                  },
-                );
-              }).toList(),
-            ),
-            const SizedBox(height: 16),
-
             // 🍽 Filtered Recipes List
             Expanded(
               child: filteredRecipes.isEmpty
-                  ? const Center(child: Text("No recipes match your filters."))
+                  ? const Center(child: Text("No matching recipes."))
                   : ListView.builder(
                       itemCount: filteredRecipes.length,
                       itemBuilder: (context, index) {
@@ -96,9 +72,6 @@ class _RecipeFilterPageState extends State<RecipeFilterPage> {
                             ),
                             title: Text(recipe.title),
                             subtitle: Text(recipe.description),
-                            onTap: () {
-                              // TODO: Navigate to detail page if needed
-                            },
                           ),
                         );
                       },
