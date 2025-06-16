@@ -40,6 +40,7 @@ final List<Recipe> recipes = [
     'Add salt, scrambled eggs, water spinach leaves, sweet soy sauce, and fried anchovies; stir well.',
     'Serve with fried anchovies, sliced cucumber, and red chili.',
   ],
+  hashtags: ['#dinner', '#rice', '#spicy'],
   submittedBy: 'Admin', // Example value
 ),
 Recipe(
