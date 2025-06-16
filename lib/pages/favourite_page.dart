@@ -2,26 +2,68 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-// IMPORTANT: Ensure this import is present and correct to access FavoriteProvider and its enums
+// Important: This import makes the FavoriteProvider class and its associated
+// enums (RecipeSortType, RecipeFilterType) accessible within this file.
 import 'package:dappr/providers/favorite_provider.dart'; 
 
-import 'recipe_detail_page.dart'; // Import your recipe detail page
+import 'recipe_detail_page.dart'; // Import for navigating to recipe details.
 
+/// ===========================================================================
+/// HELPER DEFINITIONS FOR COMBINED SORT/FILTER MENU
+/// These classes and enums are specifically designed to enable a single
+/// dropdown menu button to handle both sorting and filtering options.
+/// They are defined locally within this file as their usage is confined here.
+/// ===========================================================================
+
+/// Defines the category of action for a menu item: either a sorting action
+/// or a filtering action. This helps in distinguishing selection logic.
+enum FavoriteMenuActionType { sort, filter }
+
+/// A custom data structure to represent a single item in the combined
+/// sort/filter dropdown menu. Each item carries its type (sort/filter),
+/// the actual enum value (e.g., RecipeSortType.titleAsc), and the
+/// display label for the menu item.
+class FavoriteMenuItem {
+  final FavoriteMenuActionType type; // Specifies if it's a sort or filter option.
+  final dynamic value; // Holds the specific RecipeSortType or RecipeFilterType enum value.
+  final String label; // The text string displayed in the menu.
+
+  /// Constructor for [FavoriteMenuItem].
+  FavoriteMenuItem({
+    required this.type,
+    required this.value,
+    required this.label,
+  });
+}
+
+/// ===========================================================================
+/// FavouritePage Class
+/// This widget displays a grid of favorite recipes. It interacts with the
+/// [FavoriteProvider] to fetch the list of recipes and to allow users to
+/// sort, filter, and toggle favorite status. It uses the [Consumer] widget
+/// from the `provider` package to efficiently rebuild only when the
+/// [FavoriteProvider]'s state changes.
+/// ===========================================================================
 class FavouritePage extends StatelessWidget {
   const FavouritePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Use Consumer to react to changes in FavoriteProvider and rebuild the UI
+    // [Consumer<FavoriteProvider>] listens for changes in [FavoriteProvider].
+    // When `notifyListeners()` is called in `FavoriteProvider`, this builder
+    // function will re-execute, updating the UI with the latest data.
     return Consumer<FavoriteProvider>(
       builder: (context, favoriteProvider, child) {
-        // The list of favorite recipes, already filtered and sorted by the provider
+        // Retrieve the list of favorite recipes, which is already
+        // filtered and sorted according to the provider's current state.
         final favoriteRecipes = favoriteProvider.favoriteRecipes; 
         
-        // Check if there are ANY favorite recipes stored at all (raw count)
+        // Checks if there are any recipes marked as favorite at all,
+        // regardless of current filters. Used to determine initial empty state.
         final bool hasAnyFavorites = favoriteProvider.hasRawFavorites; 
         
-        // Check if any filter or sort is currently active
+        // Checks if any sorting or filtering is currently active.
+        // Used to provide a specific message when the filtered list is empty.
         final bool isFilteredOrSorted = favoriteProvider.currentSortType != RecipeSortType.none || favoriteProvider.currentFilterType != RecipeFilterType.none;
 
         return Scaffold(
@@ -31,85 +73,136 @@ class FavouritePage extends StatelessWidget {
               style: TextStyle(fontFamily: 'Montserrat', color: Colors.white),
             ),
             backgroundColor: Colors.deepOrange,
-            iconTheme: const IconThemeData(color: Colors.white),
+            iconTheme: const IconThemeData(color: Colors.white), // Ensures icons are white
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
+              icon: const Icon(Icons.arrow_back), // Back button for navigation
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
-            // Actions for Sorting and Filtering in the AppBar
+            // Actions list for the AppBar. Contains only one button for combined functionality.
             actions: [
-              // Sort Button
-              PopupMenuButton<RecipeSortType>(
-                icon: const Icon(Icons.sort, color: Colors.white),
-                onSelected: (RecipeSortType selectedType) {
-                  favoriteProvider.setSortType(selectedType); // Update sort type
+              // [PopupMenuButton] provides a dropdown menu for sorting and filtering options.
+              PopupMenuButton<FavoriteMenuItem>(
+                icon: const Icon(Icons.filter_list, color: Colors.white), // A single filter icon representing both functions.
+                onSelected: (FavoriteMenuItem selectedItem) {
+                  // This callback is triggered when a menu item is selected.
+                  // It determines whether the selected item is a sort or filter action
+                  // and calls the appropriate method on the FavoriteProvider.
+                  if (selectedItem.type == FavoriteMenuActionType.sort) {
+                    // Cast `selectedItem.value` to `RecipeSortType` as it's a sort action.
+                    favoriteProvider.setSortType(selectedItem.value as RecipeSortType);
+                  } else if (selectedItem.type == FavoriteMenuActionType.filter) {
+                    // Cast `selectedItem.value` to `RecipeFilterType` as it's a filter action.
+                    favoriteProvider.setFilterType(selectedItem.value as RecipeFilterType);
+                  }
                 },
-                itemBuilder: (BuildContext context) => <PopupMenuEntry<RecipeSortType>>[
-                  const PopupMenuItem<RecipeSortType>(
-                    value: RecipeSortType.none,
-                    child: Text('Default Order'),
+                // [itemBuilder] constructs the list of menu items displayed in the dropdown.
+                itemBuilder: (BuildContext context) => <PopupMenuEntry<FavoriteMenuItem>>[
+                  // --- SORTING OPTIONS ---
+                  // Each PopupMenuItem is an instance of [FavoriteMenuItem]
+                  // categorizing it as a sort action and providing its specific sort type.
+                  PopupMenuItem<FavoriteMenuItem>(
+                    value: FavoriteMenuItem(
+                      type: FavoriteMenuActionType.sort,
+                      value: RecipeSortType.none,
+                      label: 'Default Order',
+                    ),
+                    child: const Text('Default Order'),
                   ),
-                  const PopupMenuItem<RecipeSortType>(
-                    value: RecipeSortType.titleAsc,
-                    child: Text('Title (A-Z)'),
+                  PopupMenuItem<FavoriteMenuItem>(
+                    value: FavoriteMenuItem(
+                      type: FavoriteMenuActionType.sort,
+                      value: RecipeSortType.titleAsc,
+                      label: 'Title (A-Z)',
+                    ),
+                    child: const Text('Title (A-Z)'),
                   ),
-                  const PopupMenuItem<RecipeSortType>(
-                    value: RecipeSortType.titleDesc,
-                    child: Text('Title (Z-A)'),
+                  PopupMenuItem<FavoriteMenuItem>(
+                    value: FavoriteMenuItem(
+                      type: FavoriteMenuActionType.sort,
+                      value: RecipeSortType.titleDesc,
+                      label: 'Title (Z-A)',
+                    ),
+                    child: const Text('Title (Z-A)'),
                   ),
-                  const PopupMenuItem<RecipeSortType>(
-                    value: RecipeSortType.prepTimeAsc,
-                    child: Text('Prep Time (Shortest)'),
+                  PopupMenuItem<FavoriteMenuItem>(
+                    value: FavoriteMenuItem(
+                      type: FavoriteMenuActionType.sort,
+                      value: RecipeSortType.prepTimeAsc,
+                      label: 'Prep Time (Shortest)',
+                    ),
+                    child: const Text('Prep Time (Shortest)'),
                   ),
-                  const PopupMenuItem<RecipeSortType>(
-                    value: RecipeSortType.prepTimeDesc,
-                    child: Text('Prep Time (Longest)'),
+                  PopupMenuItem<FavoriteMenuItem>(
+                    value: FavoriteMenuItem(
+                      type: FavoriteMenuActionType.sort,
+                      value: RecipeSortType.prepTimeDesc,
+                      label: 'Prep Time (Longest)',
+                    ),
+                    child: const Text('Prep Time (Longest)'),
                   ),
-                  const PopupMenuItem<RecipeSortType>(
-                    value: RecipeSortType.cookTimeAsc,
-                    child: Text('Cook Time (Shortest)'),
+                  PopupMenuItem<FavoriteMenuItem>(
+                    value: FavoriteMenuItem(
+                      type: FavoriteMenuActionType.sort,
+                      value: RecipeSortType.cookTimeAsc,
+                      label: 'Cook Time (Shortest)',
+                    ),
+                    child: const Text('Cook Time (Shortest)'),
                   ),
-                  const PopupMenuItem<RecipeSortType>(
-                    value: RecipeSortType.cookTimeDesc,
-                    child: Text('Cook Time (Longest)'),
+                  PopupMenuItem<FavoriteMenuItem>(
+                    value: FavoriteMenuItem(
+                      type: FavoriteMenuActionType.sort,
+                      value: RecipeSortType.cookTimeDesc,
+                      label: 'Cook Time (Longest)',
+                    ),
+                    child: const Text('Cook Time (Longest)'),
                   ),
-                ],
-              ),
-              // Filter Button
-              PopupMenuButton<RecipeFilterType>(
-                icon: const Icon(Icons.filter_list, color: Colors.white),
-                onSelected: (RecipeFilterType selectedType) {
-                  favoriteProvider.setFilterType(selectedType); // Update filter type
-                },
-                itemBuilder: (BuildContext context) => <PopupMenuEntry<RecipeFilterType>>[
-                  const PopupMenuItem<RecipeFilterType>(
-                    value: RecipeFilterType.none,
-                    child: Text('Show All'),
+
+                  const PopupMenuDivider(), // A visual separator to distinguish sorting from filtering options.
+
+                  // --- FILTERING OPTIONS ---
+                  // Each PopupMenuItem here is an instance of [FavoriteMenuItem]
+                  // categorizing it as a filter action and providing its specific filter type.
+                  PopupMenuItem<FavoriteMenuItem>(
+                    value: FavoriteMenuItem(
+                      type: FavoriteMenuActionType.filter,
+                      value: RecipeFilterType.none,
+                      label: 'Show All',
+                    ),
+                    child: const Text('Show All'),
                   ),
-                  const PopupMenuItem<RecipeFilterType>(
-                    value: RecipeFilterType.lessThan30MinPrep,
-                    child: Text('Prep Time < 30 Mins'),
+                  PopupMenuItem<FavoriteMenuItem>(
+                    value: FavoriteMenuItem(
+                      type: FavoriteMenuActionType.filter,
+                      value: RecipeFilterType.lessThan30MinPrep,
+                      label: 'Prep Time < 30 Mins',
+                    ),
+                    child: const Text('Prep Time < 30 Mins'),
                   ),
-                  const PopupMenuItem<RecipeFilterType>(
-                    value: RecipeFilterType.lessThan1HourPrep,
-                    child: Text('Prep Time < 1 Hour'),
+                  PopupMenuItem<FavoriteMenuItem>(
+                    value: FavoriteMenuItem(
+                      type: FavoriteMenuActionType.filter,
+                      value: RecipeFilterType.lessThan1HourPrep,
+                      label: 'Prep Time < 1 Hour',
+                    ),
+                    child: const Text('Prep Time < 1 Hour'),
                   ),
-                  // Add more filter menu items here if you define more filter types
+                  // Add more filter menu items here if new filter types are defined in `RecipeFilterType`.
                 ],
               ),
             ],
           ),
-          body: hasAnyFavorites // If there are ANY favorites stored in the app
-              ? (favoriteRecipes.isEmpty // But the currently filtered/sorted list is empty
+          // Conditional body content based on the availability of favorite recipes.
+          body: hasAnyFavorites 
+              ? (favoriteRecipes.isEmpty // If there are favorites, but the filtered/sorted list is empty.
                   ? Center(
                       child: Padding(
                         padding: const EdgeInsets.all(20.0),
                         child: Text(
-                          isFilteredOrSorted // Message changes if filters/sort are active
+                          isFilteredOrSorted // Message tailored if filters/sorts are active.
                               ? "No recipes match your current filter and sort criteria. Try adjusting them!"
-                              : "This should not happen: No favorite recipes found with no active filters/sort.", // Fallback, ideally not seen
+                              : "This should not happen: No favorite recipes found with no active filters/sort.", 
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 16,
@@ -119,20 +212,20 @@ class FavouritePage extends StatelessWidget {
                         ),
                       ),
                     )
-                  : GridView.builder( // Display the grid of filtered/sorted favorites
+                  : GridView.builder( // Displays the favorite recipes in a grid layout.
                       padding: const EdgeInsets.all(16.0),
                       gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                        maxCrossAxisExtent: 250.0,
-                        crossAxisSpacing: 16.0,
-                        mainAxisSpacing: 16.0,
-                        childAspectRatio: 0.65,
+                        maxCrossAxisExtent: 250.0, // Maximum width of each grid item.
+                        crossAxisSpacing: 16.0,     // Horizontal spacing between items.
+                        mainAxisSpacing: 16.0,      // Vertical spacing between items.
+                        childAspectRatio: 0.65,     // Aspect ratio of each item (width / height).
                       ),
                       itemCount: favoriteRecipes.length,
                       itemBuilder: (context, index) {
                         final recipe = favoriteRecipes[index];
                         return GestureDetector(
                           onTap: () {
-                            // Navigate to Recipe Detail Page when a card is tapped
+                            // Navigates to the [RecipeDetailPage] when a recipe card is tapped.
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -154,13 +247,14 @@ class FavouritePage extends StatelessWidget {
                                   child: ClipRRect(
                                     borderRadius: const BorderRadius.vertical(top: Radius.circular(15.0)),
                                     child: Hero(
-                                      tag: 'recipe-image-${recipe.id}', // Hero animation tag
+                                      tag: 'recipe-image-${recipe.id}', // Unique tag for Hero animation.
                                       child: recipe.imageUrl.isNotEmpty
                                           ? Image.network(
                                               recipe.imageUrl,
                                               fit: BoxFit.cover,
+                                              // Error builder for network images.
                                               errorBuilder: (context, error, stackTrace) =>
-                                                  Container( // Fallback for image loading errors
+                                                  Container( 
                                                     color: Theme.of(context).hoverColor,
                                                     child: Icon(
                                                       Icons.broken_image,
@@ -169,7 +263,7 @@ class FavouritePage extends StatelessWidget {
                                                     ),
                                                   ),
                                             )
-                                          : Container( // Fallback if no image URL
+                                          : Container( // Placeholder if image URL is empty.
                                               color: Theme.of(context).hoverColor,
                                               child: const Icon(Icons.fastfood, size: 60, color: Colors.deepOrange),
                                             ),
@@ -205,12 +299,12 @@ class FavouritePage extends StatelessWidget {
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                         ),
-                                        const Spacer(),
+                                        const Spacer(), // Pushes the IconButton to the bottom-right.
                                         Align(
                                           alignment: Alignment.bottomRight,
                                           child: IconButton(
                                             icon: Icon(
-                                              favoriteProvider.isFavorite(recipe.id) // Check favorite status
+                                              favoriteProvider.isFavorite(recipe.id) // Checks current favorite status.
                                                   ? Icons.favorite
                                                   : Icons.favorite_border,
                                               color: favoriteProvider.isFavorite(recipe.id)
@@ -218,7 +312,7 @@ class FavouritePage extends StatelessWidget {
                                                   : Theme.of(context).hintColor,
                                             ),
                                             onPressed: () {
-                                              favoriteProvider.toggleFavorite(recipe.id); // Toggle favorite on tap
+                                              favoriteProvider.toggleFavorite(recipe.id); // Toggles favorite status on tap.
                                             },
                                           ),
                                         ),
@@ -232,7 +326,7 @@ class FavouritePage extends StatelessWidget {
                         );
                       },
                     ))
-              : Center( // If no favorites are stored at all
+              : Center( // Displays this message if no recipes have ever been favorited.
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),
                     child: Text(

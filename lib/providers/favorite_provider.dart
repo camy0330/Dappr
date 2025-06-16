@@ -2,74 +2,96 @@
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../data/recipes_data.dart'; // Ensure this path is correct for your recipes data
-import '../models/recipe.dart'; // Ensure this path is correct for your Recipe model
+import '../data/recipes_data.dart'; // Import to access the global list of all recipes.
+import '../models/recipe.dart';     // Import the Recipe model definition.
 
-// ===================================================================
-// IMPORTANT: These enums MUST be defined OUTSIDE the FavoriteProvider class
-// (i.e., at the top level of this file)
-// ===================================================================
+/// ===========================================================================
+/// ENUMERATIONS FOR SORTING AND FILTERING
+/// These enums define the available options for ordering and filtering recipes.
+/// They are declared at the top-level of this file to be easily accessible
+/// by other parts of the application, such as the UI.
+/// ===========================================================================
 
+/// Defines the possible sorting criteria for a list of recipes.
 enum RecipeSortType {
-  none,
-  titleAsc, // Sort by title A-Z
-  titleDesc, // Sort by title Z-A
-  prepTimeAsc, // Sort by preparation time (shortest to longest)
-  prepTimeDesc, // Sort by preparation time (longest to shortest)
-  cookTimeAsc, // Sort by cooking time (shortest to longest)
-  cookTimeDesc, // Sort by cooking time (longest to shortest)
+  none,        // No specific sorting applied, maintains original insertion order.
+  titleAsc,    // Sorts recipes by title in ascending (A-Z) order.
+  titleDesc,   // Sorts recipes by title in descending (Z-A) order.
+  prepTimeAsc, // Sorts recipes by preparation time from shortest to longest.
+  prepTimeDesc, // Sorts recipes by preparation time from longest to shortest.
+  cookTimeAsc, // Sorts recipes by cooking time from shortest to longest.
+  cookTimeDesc, // Sorts recipes by cooking time from longest to shortest.
 }
 
+/// Defines the possible filtering criteria for a list of recipes.
 enum RecipeFilterType {
-  none,
-  lessThan30MinPrep, // Filter for recipes with prep time <= 30 minutes
-  lessThan1HourPrep, // Filter for recipes with prep time <= 60 minutes
-  // Add more filter types here if you need them in the future
+  none,             // No filtering applied, all recipes are included.
+  lessThan30MinPrep, // Filters for recipes with a preparation time of 30 minutes or less.
+  lessThan1HourPrep, // Filters for recipes with a preparation time of 1 hour (60 minutes) or less.
+  // Additional filter types can be added here as the application expands.
 }
 
-// ===================================================================
-// End of enum definitions. The class definition follows.
-// ===================================================================
-
+/// ===========================================================================
+/// FavoriteProvider Class
+/// This class manages the state of favorite recipes, including adding, removing,
+/// persisting, loading, sorting, and filtering them. It extends [ChangeNotifier]
+/// from the Flutter [provider] package, allowing it to notify its listeners
+/// (typically UI widgets) when its internal state changes, triggering UI updates.
+/// ===========================================================================
 class FavoriteProvider with ChangeNotifier {
-  // Stores only the IDs of favorite recipes for persistence
+  /// Internal set to store the unique IDs of favorite recipes.
+  /// Using a [Set] ensures that each recipe is marked as favorite only once
+  /// and provides efficient O(1) lookup, addition, and removal.
   Set<String> _favoriteRecipeIds = {};
-  
-  // Stores the actual Recipe objects corresponding to the favorite IDs
-  // This list is updated whenever _favoriteRecipeIds changes
+
+  /// Internal list to hold the actual [Recipe] objects that are favorited.
+  /// This list is populated from `_favoriteRecipeIds` and the global `recipes` data.
   List<Recipe> _allFavoriteRecipes = [];
-  
-  // Current sorting and filtering preferences
+
+  /// Stores the currently selected sorting type.
   RecipeSortType _currentSortType = RecipeSortType.none;
+
+  /// Stores the currently selected filtering type.
   RecipeFilterType _currentFilterType = RecipeFilterType.none;
 
+  /// Constructor for [FavoriteProvider].
+  /// Initializes the provider and immediately attempts to load previously
+  /// saved favorite recipe IDs from persistent storage.
   FavoriteProvider() {
-    _loadFavorites(); // Load favorites when the provider is initialized
+    _loadFavorites();
   }
 
-  // Getter to expose the current sort type to the UI
+  /// Getter to retrieve the currently active sorting type.
+  /// Used by the UI to reflect the user's current sorting preference.
   RecipeSortType get currentSortType => _currentSortType;
-  // Getter to expose the current filter type to the UI
+
+  /// Getter to retrieve the currently active filtering type.
+  /// Used by the UI to reflect the user's current filtering preference.
   RecipeFilterType get currentFilterType => _currentFilterType;
 
-  // Getter to check if there are any favorites stored at all (before any filtering/sorting)
+  /// Getter to check if there are any favorite recipes stored at all,
+  /// regardless of current filters or sorts. This is useful for displaying
+  /// an "empty state" message if no recipes have ever been favorited.
   bool get hasRawFavorites => _allFavoriteRecipes.isNotEmpty;
 
-  // This is the main getter that the UI will use to display favorite recipes.
-  // It applies the current filter and sort settings.
+  /// Public getter that returns the list of favorite recipes after
+  /// applying the current filter and sorting preferences.
+  /// This is the primary list used by the UI to display recipes.
   List<Recipe> get favoriteRecipes {
-    // Start with a mutable copy of all favorite recipe objects
+    // Create a mutable copy of the current favorite recipes to apply operations.
     List<Recipe> processedList = List.from(_allFavoriteRecipes);
 
-    // Apply filtering logic based on _currentFilterType
+    // --- Apply Filtering Logic ---
+    // Filters the list based on the `_currentFilterType`.
     if (_currentFilterType == RecipeFilterType.lessThan30MinPrep) {
       processedList = processedList.where((recipe) => recipe.prepTimeInMinutes <= 30).toList();
     } else if (_currentFilterType == RecipeFilterType.lessThan1HourPrep) {
       processedList = processedList.where((recipe) => recipe.prepTimeInMinutes <= 60).toList();
     }
-    // Add more `else if` conditions here for any new filter types you define
+    // Extend this section with more `else if` conditions for additional filters.
 
-    // Apply sorting logic based on _currentSortType
+    // --- Apply Sorting Logic ---
+    // Sorts the filtered list based on the `_currentSortType`.
     switch (_currentSortType) {
       case RecipeSortType.titleAsc:
         processedList.sort((a, b) => a.title.compareTo(b.title));
@@ -90,76 +112,91 @@ class FavoriteProvider with ChangeNotifier {
         processedList.sort((a, b) => b.cookTimeInMinutes.compareTo(a.cookTimeInMinutes));
         break;
       case RecipeSortType.none:
-        // No specific sorting applied, maintains original order from _allFavoriteRecipes
+        // No specific sorting applied; the list remains in its filtered order.
         break;
     }
 
     return processedList;
   }
 
-  // Checks if a recipe is currently marked as favorite
+  /// Checks if a specific recipe is currently marked as favorite.
+  ///
+  /// [recipeId]: The unique identifier of the recipe to check.
+  /// Returns `true` if the recipe is favorite, `false` otherwise.
   bool isFavorite(String recipeId) {
     return _favoriteRecipeIds.contains(recipeId);
   }
 
-  // Toggles the favorite status of a recipe
+  /// Toggles the favorite status of a given recipe.
+  /// If the recipe is currently favorite, it will be unfavorited, and vice-versa.
+  ///
+  /// [recipeId]: The unique identifier of the recipe to toggle.
   void toggleFavorite(String recipeId) {
     if (_favoriteRecipeIds.contains(recipeId)) {
       _favoriteRecipeIds.remove(recipeId);
     } else {
       _favoriteRecipeIds.add(recipeId);
     }
-    _updateAllFavoriteRecipesList(); // Update the list of Recipe objects
-    _saveFavorites(); // Persist changes to SharedPreferences
-    notifyListeners(); // Notify listeners (UI) to rebuild
+    _updateAllFavoriteRecipesList(); // Synchronize the list of Recipe objects.
+    _saveFavorites(); // Persist the updated favorite IDs.
+    notifyListeners(); // Notify all listening widgets to rebuild.
   }
 
-  // Loads favorite recipe IDs from SharedPreferences
+  /// Asynchronously loads favorite recipe IDs from device's [SharedPreferences].
+  /// This method is called upon initialization of the [FavoriteProvider].
   Future<void> _loadFavorites() async {
     final prefs = await SharedPreferences.getInstance();
     final savedIds = prefs.getStringList('favoriteRecipeIds');
     if (savedIds != null) {
       _favoriteRecipeIds = savedIds.toSet();
-      _updateAllFavoriteRecipesList(); // Rebuild the list of Recipe objects after loading IDs
+      _updateAllFavoriteRecipesList(); // Populate the list of Recipe objects from loaded IDs.
     }
-    notifyListeners(); // Notify after initial load is complete
+    notifyListeners(); // Notify listeners that initial data loading is complete.
   }
 
-  // Saves current favorite recipe IDs to SharedPreferences
+  /// Asynchronously saves the current set of favorite recipe IDs to [SharedPreferences].
+  /// This ensures that favorite selections persist across app sessions.
   Future<void> _saveFavorites() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setStringList('favoriteRecipeIds', _favoriteRecipeIds.toList());
   }
 
-  // Helper method to populate _allFavoriteRecipes list based on current _favoriteRecipeIds
+  /// Internal helper method to update the `_allFavoriteRecipes` list.
+  /// It reconstructs this list by filtering the global `recipes` list
+  /// (assumed to be defined in `recipes_data.dart`) based on the IDs
+  /// currently present in `_favoriteRecipeIds`.
   void _updateAllFavoriteRecipesList() {
-    // Assuming 'recipes' is a global list of all available recipes (from recipes_data.dart)
+    // `recipes` is expected to be a globally accessible list of all Recipe objects.
     _allFavoriteRecipes = recipes
         .where((recipe) => _favoriteRecipeIds.contains(recipe.id))
         .toList();
   }
 
-  // Clears all favorite recipes
+  /// Clears all favorite recipes from the list and persistent storage.
   Future<void> clearAllFavorites() async {
     _favoriteRecipeIds.clear();
     await _saveFavorites();
-    _updateAllFavoriteRecipesList(); // Ensure the list of Recipe objects is also cleared
-    notifyListeners();
+    _updateAllFavoriteRecipesList(); // Ensure the `_allFavoriteRecipes` list is also empty.
+    notifyListeners(); // Notify UI to reflect the empty favorites state.
   }
 
-  // Setter to change the current sorting type
+  /// Sets the active sorting type and notifies listeners if the type has changed.
+  ///
+  /// [sortType]: The new [RecipeSortType] to apply.
   void setSortType(RecipeSortType sortType) {
     if (_currentSortType != sortType) {
       _currentSortType = sortType;
-      notifyListeners(); // Trigger UI rebuild with new sorting
+      notifyListeners(); // Trigger a rebuild of widgets that depend on `favoriteRecipes`.
     }
   }
 
-  // Setter to change the current filtering type
+  /// Sets the active filtering type and notifies listeners if the type has changed.
+  ///
+  /// [filterType]: The new [RecipeFilterType] to apply.
   void setFilterType(RecipeFilterType filterType) {
     if (_currentFilterType != filterType) {
       _currentFilterType = filterType;
-      notifyListeners(); // Trigger UI rebuild with new filtering
+      notifyListeners(); // Trigger a rebuild of widgets that depend on `favoriteRecipes`.
     }
   }
 }
