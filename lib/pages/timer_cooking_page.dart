@@ -244,9 +244,17 @@ class _TimerCookingPageState extends State<TimerCookingPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Cooking Timer', style: TextStyle(fontFamily: 'Montserrat', color: Colors.white)),
-        backgroundColor: Colors.deepOrange,
-        iconTheme: const IconThemeData(color: Colors.white),
+        flexibleSpace: Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Colors.deepOrange, Colors.orangeAccent], // Gradient applied
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
       ),
+    ),
+    iconTheme: const IconThemeData(color: Colors.white),
+  ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
