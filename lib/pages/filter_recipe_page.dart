@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
-import '../data/recipes_data.dart';
 import '../models/recipe.dart';
 
 class RecipeFilterPage extends StatefulWidget {
+  final List<Recipe> recipes;
+
+  const RecipeFilterPage({Key? key, required this.recipes}) : super(key: key);
+
   @override
-  _RecipeFilterPageState createState() => _RecipeFilterPageState();
+  State<RecipeFilterPage> createState() => _RecipeFilterPageState();
 }
 
 class _RecipeFilterPageState extends State<RecipeFilterPage> {
@@ -22,70 +25,84 @@ class _RecipeFilterPageState extends State<RecipeFilterPage> {
 
   @override
   Widget build(BuildContext context) {
-    List<Recipe> filteredRecipes = recipes.where((recipe) {
+    List<Recipe> filteredRecipes = widget.recipes.where((recipe) {
       final matchesSearch = recipe.title.toLowerCase().contains(searchText.toLowerCase());
       final matchesTags = selectedHashtags.every((tag) => recipe.hashtags.contains(tag));
       return matchesSearch && matchesTags;
     }).toList();
 
     return Scaffold(
-      appBar: AppBar(title: Text('Filter Recipes')),
+      appBar: AppBar(
+        title: const Text('Filter Recipes'),
+      ),
       body: Padding(
-        padding: EdgeInsets.all(10),
+        padding: const EdgeInsets.all(12.0),
         child: Column(
           children: [
             // 🔍 Text Search
             TextField(
-              decoration: InputDecoration(labelText: 'Search by name...'),
+              decoration: const InputDecoration(
+                labelText: 'Search recipe...',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.search),
+              ),
               onChanged: (value) {
                 setState(() {
                   searchText = value;
                 });
               },
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 12),
 
-            // ✅ Filter Chips
+            // ✅ Hashtag Filters
             Wrap(
-              spacing: 8.0,
+              spacing: 10,
+              runSpacing: 6,
               children: allHashtags.map((tag) {
                 final isSelected = selectedHashtags.contains(tag);
                 return FilterChip(
                   label: Text(tag),
                   selected: isSelected,
-                  onSelected: (selected) {
+                  onSelected: (bool selected) {
                     setState(() {
-                      selected
-                          ? selectedHashtags.add(tag)
-                          : selectedHashtags.remove(tag);
+                      if (selected) {
+                        selectedHashtags.add(tag);
+                      } else {
+                        selectedHashtags.remove(tag);
+                      }
                     });
                   },
                 );
               }).toList(),
             ),
+            const SizedBox(height: 16),
 
-            SizedBox(height: 10),
-
-            // 🍽 Filtered List
+            // 🍽 Filtered Recipes List
             Expanded(
-              child: ListView.builder(
-                itemCount: filteredRecipes.length,
-                itemBuilder: (context, index) {
-                  final recipe = filteredRecipes[index];
-                  return Card(
-                    child: ListTile(
-                      leading: Image.asset(
-                        recipe.imageUrl,
-                        width: 50,
-                        height: 50,
-                        fit: BoxFit.cover,
-                      ),
-                      title: Text(recipe.title),
-                      subtitle: Text(recipe.description),
+              child: filteredRecipes.isEmpty
+                  ? const Center(child: Text("No recipes match your filters."))
+                  : ListView.builder(
+                      itemCount: filteredRecipes.length,
+                      itemBuilder: (context, index) {
+                        final recipe = filteredRecipes[index];
+                        return Card(
+                          margin: const EdgeInsets.symmetric(vertical: 8),
+                          child: ListTile(
+                            leading: Image.asset(
+                              recipe.imageUrl,
+                              width: 60,
+                              height: 60,
+                              fit: BoxFit.cover,
+                            ),
+                            title: Text(recipe.title),
+                            subtitle: Text(recipe.description),
+                            onTap: () {
+                              // TODO: Navigate to detail page if needed
+                            },
+                          ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
             ),
           ],
         ),
