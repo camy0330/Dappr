@@ -1,54 +1,88 @@
-import 'package:flutter/material.dart';
+// pages/filter_recipe_page.dart
 
-class MySearchBar extends StatelessWidget {
-  final Function(String) onSearch;
-  // Removed the redundant 'textColor' from constructor as it's not used directly
-  // and is derived from theme's brightness within the build method.
-  const MySearchBar({super.key, required this.onSearch});
+import 'package:flutter/material.dart';
+import '../models/recipe.dart';
+import '../widgets/my_search_bar.dart'; // your custom search bar
+import '../data/recipes_data.dart'; // your recipe list
+
+class RecipeFilterPage extends StatefulWidget {
+  final List<Recipe> recipes;
+
+  const RecipeFilterPage({super.key, required this.recipes});
+
+  @override
+  State<RecipeFilterPage> createState() => _RecipeFilterPageState();
+}
+
+class _RecipeFilterPageState extends State<RecipeFilterPage> {
+  List<Recipe> filteredRecipes = [];
+
+  @override
+  void initState() {
+    super.initState();
+    filteredRecipes = widget.recipes;
+  }
+
+  void handleSearch(String input) {
+    final keywords = input
+        .split(' ')
+        .where((word) => word.isNotEmpty && !word.startsWith('#'))
+        .toList();
+
+    final hashtags = input
+        .split(' ')
+        .where((word) => word.startsWith('#'))
+        .map((h) => h.toLowerCase())
+        .toList();
+
+    setState(() {
+      filteredRecipes = widget.recipes.where((recipe) {
+        final hasKeywords = keywords.every((kw) =>
+            recipe.title.toLowerCase().contains(kw.toLowerCase()) ||
+            recipe.description.toLowerCase().contains(kw.toLowerCase()));
+
+        final hasHashtags = hashtags.every((tag) =>
+            recipe.hashtags.map((h) => h.toLowerCase()).contains(tag));
+
+        return hasKeywords && hasHashtags;
+      }).toList();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final brightness = Theme.of(context).brightness;
-    final isDark = brightness == Brightness.dark;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-      child: Container(
-        decoration: BoxDecoration(
-          color: isDark ? Colors.grey[850] : Colors.white,
-          borderRadius: BorderRadius.circular(30),
-          boxShadow: [
-            BoxShadow(
-              // FIX: Replaced withOpacity with withAlpha for direct alpha control
-              color: isDark
-                  ? Colors.black.withAlpha((255 * 0.6).round()) // Fixed here
-                  : const Color.fromARGB(38, 255, 87, 34),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: TextField(
-          onChanged: onSearch,
-          decoration: InputDecoration(
-            hintText: 'Search recipes...',
-            hintStyle: TextStyle(
-              color: isDark ? Colors.grey[400] : Colors.grey[600],
-              fontFamily: 'Montserrat',
-            ),
-            prefixIcon: Icon(
-              Icons.search,
-              color: isDark ? Colors.grey[400] : Colors.grey[600],
-            ),
-            border: InputBorder.none,
-            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+    return Scaffold(
+      appBar: AppBar(title: const Text('Search Recipes')),
+      body: Column(
+        children: [
+          const SizedBox(height: 16),
+          MySearchBar(onSearch: handleSearch),
+          const SizedBox(height: 16),
+          Expanded(
+            child: filteredRecipes.isEmpty
+                ? const Center(child: Text("No recipes found."))
+                : ListView.builder(
+                    itemCount: filteredRecipes.length,
+                    itemBuilder: (context, index) {
+                      final recipe = filteredRecipes[index];
+                      return Card(
+                        margin:
+                            const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        child: ListTile(
+                          leading: Image.asset(
+                            recipe.imageUrl,
+                            width: 60,
+                            height: 60,
+                            fit: BoxFit.cover,
+                          ),
+                          title: Text(recipe.title),
+                          subtitle: Text(recipe.description),
+                        ),
+                      );
+                    },
+                  ),
           ),
-          style: TextStyle(
-            fontFamily: 'Montserrat',
-            color: isDark ? Colors.white : Colors.black,
-          ),
-          cursorColor: isDark ? Colors.white : Colors.black,
-        ),
+        ],
       ),
     );
   }
