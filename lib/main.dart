@@ -1,23 +1,20 @@
 // lib/main.dart
 
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:logger/logger.dart';
-
 // Data & Providers
 import 'package:dappr/data/recipes_data.dart';
-import 'package:dappr/providers/favorite_provider.dart';
-import 'package:dappr/providers/rating_provider.dart';
-import 'package:dappr/providers/shopping_list_provider.dart';
-import 'package:dappr/theme_notifier.dart';
-
-// Pages
-import 'package:dappr/welcome_page/welcome_page.dart';
 import 'package:dappr/pages/about_page.dart';
 import 'package:dappr/pages/filter_recipe_page.dart';
 import 'package:dappr/pages/setting_page.dart';
 import 'package:dappr/pages/timer_cooking_page.dart';
-import 'package:dappr/pages/recipe_puzzle_game.dart'; // ✅ Puzzle Game
+import 'package:dappr/providers/favorite_provider.dart';
+import 'package:dappr/providers/rating_provider.dart';
+import 'package:dappr/providers/shopping_list_provider.dart';
+import 'package:dappr/theme_notifier.dart';
+// Pages
+import 'package:dappr/welcome_page/welcome_page.dart';
+import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
+import 'package:provider/provider.dart';
 
 var logger = Logger();
 
