@@ -456,6 +456,7 @@ class _RecipeListPageState extends State<RecipeListPage> {
                 style: TextStyle(
                   fontSize: 14,
                   fontFamily: 'Montserrat',
+                  // ignore: deprecated_member_use
                   color: textColor.withOpacity(0.7),
                 ),
               ),

@@ -6,18 +6,10 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class RatingProvider with ChangeNotifier {
-  // This list will store all the user's ratings.
   final List<Rating> _userRatings = [];
 
-  // Constructor: When the RatingProvider is created, it attempts to load saved ratings.
-  RatingProvider() {
-    _loadRatings();
-  }
-
-  // Getter: Provides read-only access to the list of user ratings.
   List<Rating> get userRatings => _userRatings;
 
-  // Method to add or update a rating for a specific recipe.
   void addRating(Rating rating) {
     // Check if a rating for this recipeId already exists in the list.
     int existingIndex = _userRatings.indexWhere((r) => r.recipeId == rating.recipeId);
@@ -43,27 +35,6 @@ class RatingProvider with ChangeNotifier {
     ).ratingValue;
   }
 
-  // Asynchronous method to load ratings from SharedPreferences.
-  Future<void> _loadRatings() async {
-    final prefs = await SharedPreferences.getInstance();
-    // Retrieve the JSON string of ratings from SharedPreferences using a specific key.
-    final String? ratingsJsonString = prefs.getString('user_ratings_list');
-
-    if (ratingsJsonString != null) {
-      try {
-        // Decode the JSON string into a dynamic list (List<Map<String, dynamic>>).
-        final List<dynamic> decodedList = json.decode(ratingsJsonString);
-        _userRatings.clear(); // Clear any existing data before loading.
-        // Convert each item in the decoded list (which are Maps) back into Rating objects.
-        _userRatings.addAll(decodedList.map((item) => Rating.fromJson(item as Map<String, dynamic>)));
-      } catch (e) {
-        // Log any errors during loading (e.g., corrupted data) and clear the list.
-        debugPrint('Error loading ratings list from SharedPreferences: $e');
-        _userRatings.clear();
-      }
-    }
-    notifyListeners(); // Notify listeners after data is loaded (even if empty).
-  }
 
   // Asynchronous method to save the current ratings list to SharedPreferences.
   Future<void> _saveRatings() async {
@@ -75,7 +46,29 @@ class RatingProvider with ChangeNotifier {
     // Save the JSON string to SharedPreferences.
     await prefs.setString('user_ratings_list', ratingsJsonString);
   }
-
+  
+void editRating({
+  required String recipeId,
+  required String userName,
+  required String newComment,
+  required double newRating,
+}) {
+  final index = _userRatings.indexWhere(
+    (r) => r.recipeId == recipeId && r.userName == userName,
+  );
+  if (index != -1) {
+    _userRatings[index] = Rating(
+      userName: userName,
+      comment: newComment,
+      ratingValue: newRating,
+      recipeId: recipeId,
+    );
+    debugPrint('Rating updated: ${_userRatings[index]}');
+    notifyListeners();
+  } else {
+    debugPrint('Rating not found for recipeId: $recipeId and userName: $userName');
+  }
+}
   // NEW: Method to clear all ratings. This is the method that SettingPage was trying to call.
   void clearAllRatings() {
     _userRatings.clear(); // Remove all elements from the list.
