@@ -17,9 +17,18 @@ class ShoppingListPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Store Shopping List',
             style: TextStyle(fontFamily: 'Montserrat')),
-        backgroundColor: primaryColor,
-        centerTitle: true,
+       centerTitle: true,
+  // The FlexibleSpaceBar allows for custom background drawing
+  flexibleSpace: Container(
+    decoration: const BoxDecoration(
+      gradient: LinearGradient(
+        colors: [Colors.deepOrange, Colors.orangeAccent],
+        begin: Alignment.topLeft, // Adjust gradient start point as needed
+        end: Alignment.bottomRight, // Adjust gradient end point as needed
       ),
+    ),
+  ),
+),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(

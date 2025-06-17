@@ -139,7 +139,23 @@ class _RatingPageState extends State<RatingPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Recipe Reviews & Ratings"),
-        backgroundColor: Colors.deepOrange,
+        iconTheme: const IconThemeData(color: Colors.white), // Ensures icons are white
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back), // Back button for navigation
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        // ADD flexibleSpace for the gradient
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.deepOrange, Colors.orangeAccent], // Your desired gradient colors
+              begin: Alignment.topLeft, // Start of the gradient (adjust as needed)
+              end: Alignment.bottomRight, // End of the gradient (adjust as needed)
+            ),
+          ),
+        ),
       ),
       body: ListView.builder(
         padding: const EdgeInsets.all(12),

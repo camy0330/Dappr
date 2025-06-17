@@ -44,8 +44,8 @@ class AboutPage extends StatelessWidget {
           decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [Colors.deepOrange, Colors.orangeAccent], // Your desired gradient for the AppBar
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
+              begin: Alignment.topLeft, // Start of the gradient (adjust as needed)
+              end: Alignment.bottomRight, 
             ),
           ),
         ),

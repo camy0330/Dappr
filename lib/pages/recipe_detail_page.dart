@@ -1,9 +1,9 @@
 // lib/pages/recipe_detail_page.dart
 import 'package:dappr/models/recipe.dart';
+import 'package:dappr/pages/recipe_puzzle_game.dart'; // 👈 import your puzzle game page
 import 'package:dappr/providers/favorite_provider.dart'; // Import your FavoriteProvider
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart'; // Import Provider
-import 'package:dappr/pages/recipe_puzzle_game.dart'; // 👈 import your puzzle game page
 
 
 class RecipeDetailPage extends StatelessWidget {
@@ -16,8 +16,17 @@ class RecipeDetailPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(recipe.title, style: const TextStyle(fontFamily: 'Montserrat', color: Colors.white)),
-        backgroundColor: Colors.deepOrange,
         iconTheme: const IconThemeData(color: Colors.white),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.deepOrange, Colors.orangeAccent], // Your desired gradient colors
+              begin: Alignment.topLeft, // Adjust the start direction of the gradient
+              end: Alignment.bottomRight, // Adjust the end direction of the gradient
+            ),
+          ),
+        ),
+
         // Add favorite button to the AppBar actions
         actions: [
           Consumer<FavoriteProvider>(
