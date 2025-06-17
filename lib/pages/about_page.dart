@@ -23,22 +23,35 @@ class AboutPage extends StatelessWidget {
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
     // Determine if the current theme is dark
-    final bool isDarkTheme = Theme.of(context).brightness == Brightness.dark;
+    final bool isDarkTheme = Theme.of(context).brightness == Brightness.dark; // Still useful for body text colors
 
-    // Define colors that change based on the theme
-    final Color textColor = isDarkTheme ? Colors.white70 : Colors.black87; // For general text
-    final Color subtitleColor = isDarkTheme ? Colors.white54 : Colors.grey[700]!; // For descriptions/subtle text
-    final Color dividerColor = isDarkTheme ? Colors.grey.shade700 : Colors.grey.shade300; // For dividers
+    // Define colors that change based on the theme for the body content
+    final Color bodyTextColor = isDarkTheme ? Colors.white70 : Colors.black87; // For general text
+    final Color bodySubtitleColor = isDarkTheme ? Colors.white54 : Colors.grey[700]!; // For descriptions/subtle text
+    final Color bodyDividerColor = isDarkTheme ? Colors.grey.shade700 : Colors.grey.shade300; // For dividers
 
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor, // Use theme's scaffold background color
+      // Scaffold background will use the theme's scaffold background color
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor, // Reverted to default theme background
+
       appBar: AppBar(
         title: Text(
           'About Dappr',
-          style: TextStyle(fontFamily: 'Montserrat', color: colorScheme.onPrimary), // Use onPrimary for AppBar title
+          style: TextStyle(fontFamily: 'Montserrat', color: Colors.white), // Title color is white for contrast
         ),
-        backgroundColor: colorScheme.primary, // Use theme primary color (deepOrange)
-        iconTheme: IconThemeData(color: colorScheme.onPrimary), // Use onPrimary for back arrow icon
+        // Apply the gradient here using flexibleSpace
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.deepOrange, Colors.orangeAccent], // Your desired gradient for the AppBar
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+          ),
+        ),
+        // Ensure icon color contrasts with the gradient
+        iconTheme: const IconThemeData(color: Colors.white), // Back arrow icon color is white
+        elevation: 0, // No shadow under the AppBar
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
@@ -71,8 +84,8 @@ class AboutPage extends StatelessWidget {
                   ),
                   Text(
                     'Dappr',
-                    style: textTheme.headlineMedium!.copyWith( // Use headlineMedium from theme
-                      color: colorScheme.primary, // Keep Dappr name deep orange
+                    style: textTheme.headlineMedium!.copyWith(
+                      color: colorScheme.primary, // Keep Dappr name deep orange (or adjust based on overall theme)
                       fontFamily: 'Montserrat',
                       fontWeight: FontWeight.bold,
                     ),
@@ -87,33 +100,33 @@ class AboutPage extends StatelessWidget {
               'Discover new recipes, plan your meals, manage shopping lists, and set cooking timers '
               'all in one intuitive app.',
               textAlign: TextAlign.center,
-              style: textTheme.bodyLarge!.copyWith( // Use bodyLarge from theme
-                color: textColor, // Use the dynamically determined textColor
+              style: textTheme.bodyLarge!.copyWith(
+                color: bodyTextColor, // Use the dynamically determined bodyTextColor
                 fontFamily: 'Montserrat',
               ),
             ),
-            Divider(height: 40, thickness: 1, color: dividerColor), // Use dynamic divider color
+            Divider(height: 40, thickness: 1, color: bodyDividerColor), // Use dynamic divider color
             // Version Information
             _buildInfoRow(
-              context, // Pass context to access theme
+              context,
               'Version:',
               '1.0.0',
-              labelColor: textColor,
-              valueColor: subtitleColor,
+              labelColor: bodyTextColor,
+              valueColor: bodySubtitleColor,
             ),
             _buildInfoRow(
-              context, // Pass context to access theme
+              context,
               'Developed by:',
               'Dappr Team',
-              labelColor: textColor,
-              valueColor: subtitleColor,
+              labelColor: bodyTextColor,
+              valueColor: bodySubtitleColor,
             ),
             const SizedBox(height: 20),
             // Contact Information
             Text(
               'Contact Us:',
-              style: textTheme.titleLarge!.copyWith( // Use titleLarge from theme
-                color: textColor, // Use dynamically determined textColor
+              style: textTheme.titleLarge!.copyWith(
+                color: bodyTextColor,
                 fontFamily: 'Montserrat',
                 fontWeight: FontWeight.bold,
               ),
@@ -121,20 +134,20 @@ class AboutPage extends StatelessWidget {
             const SizedBox(height: 10),
             ListTile(
               leading: Icon(Icons.email, color: colorScheme.primary), // Use theme primary color
-              title: Text('support@dappr.com', style: textTheme.bodyLarge!.copyWith(color: textColor, fontFamily: 'Montserrat')), // Use dynamic textColor
+              title: Text('support@dappr.com', style: textTheme.bodyLarge!.copyWith(color: bodyTextColor, fontFamily: 'Montserrat')), // Use dynamic bodyTextColor
               onTap: () => _launchUrl('mailto:support@dappr.com?subject=Dappr App Support'),
             ),
             ListTile(
               leading: Icon(Icons.web, color: colorScheme.primary), // Use theme primary color
-              title: Text('www.dappr.com', style: textTheme.bodyLarge!.copyWith(color: textColor, fontFamily: 'Montserrat')), // Use dynamic textColor
+              title: Text('www.dappr.com', style: textTheme.bodyLarge!.copyWith(color: bodyTextColor, fontFamily: 'Montserrat')), // Use dynamic bodyTextColor
               onTap: () => _launchUrl('https://www.dappr.com'), // Replace with your actual website
             ),
-            Divider(height: 40, thickness: 1, color: dividerColor), // Use dynamic divider color
+            Divider(height: 40, thickness: 1, color: bodyDividerColor), // Use dynamic divider color
             // Legal Links
             Text(
               'Legal:',
-              style: textTheme.titleLarge!.copyWith( // Use titleLarge from theme
-                color: textColor, // Use dynamically determined textColor
+              style: textTheme.titleLarge!.copyWith(
+                color: bodyTextColor,
                 fontFamily: 'Montserrat',
                 fontWeight: FontWeight.bold,
               ),
@@ -142,12 +155,12 @@ class AboutPage extends StatelessWidget {
             const SizedBox(height: 10),
             ListTile(
               leading: Icon(Icons.policy, color: colorScheme.primary), // Use theme primary color
-              title: Text('Privacy Policy', style: textTheme.bodyLarge!.copyWith(color: textColor, fontFamily: 'Montserrat')), // Use dynamic textColor
+              title: Text('Privacy Policy', style: textTheme.bodyLarge!.copyWith(color: bodyTextColor, fontFamily: 'Montserrat')), // Use dynamic bodyTextColor
               onTap: () => _launchUrl('https://www.dappr.com/privacy-policy'), // Replace with your actual privacy policy
             ),
             ListTile(
               leading: Icon(Icons.description, color: colorScheme.primary), // Use theme primary color
-              title: Text('Terms of Service', style: textTheme.bodyLarge!.copyWith(color: textColor, fontFamily: 'Montserrat')), // Use dynamic textColor
+              title: Text('Terms of Service', style: textTheme.bodyLarge!.copyWith(color: bodyTextColor, fontFamily: 'Montserrat')), // Use dynamic bodyTextColor
               onTap: () => _launchUrl('https://www.dappr.com/terms-of-service'), // Replace with your actual terms
             ),
             const SizedBox(height: 30),
@@ -162,17 +175,17 @@ class AboutPage extends StatelessWidget {
                     ),
                   );
                 },
-                icon: Icon(Icons.star, color: colorScheme.onPrimary), // Use onPrimary for icon
+                icon: const Icon(Icons.star, color: Colors.white), // Icon color white for contrast
                 label: Text(
                   'Rate Us',
-                  style: textTheme.labelLarge!.copyWith( // Use labelLarge from theme for buttons
+                  style: textTheme.labelLarge!.copyWith(
                     fontSize: 18,
-                    color: colorScheme.onPrimary, // Use onPrimary for text
+                    color: Colors.white, // Text color white for contrast
                     fontFamily: 'Montserrat',
                   ),
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: colorScheme.primary, // Use theme primary color
+                  backgroundColor: colorScheme.primary, // Button color primary (deepOrange)
                   padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
@@ -185,8 +198,8 @@ class AboutPage extends StatelessWidget {
             Center(
               child: Text(
                 '© 2025 Dappr. All rights reserved.',
-                style: textTheme.bodySmall!.copyWith( // Use bodySmall from theme
-                  color: subtitleColor, // Use dynamic subtitleColor
+                style: textTheme.bodySmall!.copyWith(
+                  color: bodySubtitleColor, // Use dynamic bodySubtitleColor
                   fontFamily: 'Montserrat',
                 ),
               ),
@@ -206,16 +219,16 @@ class AboutPage extends StatelessWidget {
         children: [
           Text(
             label,
-            style: Theme.of(context).textTheme.bodyLarge!.copyWith( // Use bodyLarge from theme
+            style: Theme.of(context).textTheme.bodyLarge!.copyWith(
               fontWeight: FontWeight.w500,
               fontFamily: 'Montserrat',
-              color: labelColor, // Use passed color
+              color: labelColor,
             ),
           ),
           Text(
             value,
-            style: Theme.of(context).textTheme.bodyLarge!.copyWith( // Use bodyLarge from theme
-              color: valueColor, // Use passed color
+            style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+              color: valueColor,
               fontFamily: 'Montserrat',
             ),
           ),
