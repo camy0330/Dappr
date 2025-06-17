@@ -1,36 +1,31 @@
+// dappr/providers/shopping_list_provider.dart
 import 'package:flutter/material.dart';
-
-class GroceryItem {
-  String name;
-  int quantity;
-  bool isBought;
-
-  GroceryItem({
-    required this.name,
-    required this.quantity,
-    this.isBought = false,
-  });
-}
+import 'package:dappr/models/item.dart'; // Import your Item model
 
 class ShoppingListProvider extends ChangeNotifier {
-  final Map<String, List<GroceryItem>> _storeItems = {};
-  String? _selectedStore;
+  // Map to store items: { 'Store Name': [Item1, Item2, ...] }
+  final Map<String, List<Item>> _storeItems = {};
+  Map<String, List<Item>> get storeItems => _storeItems;
 
-  Map<String, List<GroceryItem>> get storeItems => _storeItems;
+  String? _selectedStore;
   String? get selectedStore => _selectedStore;
 
   void addStore(String storeName) {
-    if (storeName.isNotEmpty && !_storeItems.containsKey(storeName)) {
+    if (!_storeItems.containsKey(storeName)) {
       _storeItems[storeName] = [];
-      _selectedStore = storeName;
+      _selectedStore = storeName; // Automatically select the new store
       notifyListeners();
     }
   }
 
   void removeStore(String storeName) {
-    _storeItems.remove(storeName);
-    if (_selectedStore == storeName) _selectedStore = null;
-    notifyListeners();
+    if (_storeItems.containsKey(storeName)) {
+      _storeItems.remove(storeName);
+      if (_selectedStore == storeName) {
+        _selectedStore = null; // Deselect if the current store is removed
+      }
+      notifyListeners();
+    }
   }
 
   void selectStore(String storeName) {
@@ -38,25 +33,52 @@ class ShoppingListProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void addItemToSelectedStore(String name, int qty) {
-    if (_selectedStore == null || name.isEmpty) return;
-    _storeItems[_selectedStore]!.add(GroceryItem(name: name, quantity: qty));
-    notifyListeners();
+  void addItemToSelectedStore(String itemName, String quantity) {
+    if (_selectedStore != null) {
+      _storeItems[_selectedStore]!
+          .add(Item(name: itemName, quantity: quantity));
+      notifyListeners();
+    }
   }
 
-  void toggleBought(String store, int index) {
-    _storeItems[store]![index].isBought = !_storeItems[store]![index].isBought;
-    notifyListeners();
+  void removeItem(String storeName, int itemIndex) {
+    if (_storeItems.containsKey(storeName)) {
+      if (itemIndex >= 0 && itemIndex < _storeItems[storeName]!.length) {
+        _storeItems[storeName]!.removeAt(itemIndex);
+        notifyListeners();
+      }
+    }
   }
 
-  void removeItem(String store, int index) {
-    _storeItems[store]!.removeAt(index);
-    notifyListeners();
+  void toggleBought(String storeName, int itemIndex) {
+    if (_storeItems.containsKey(storeName)) {
+      if (itemIndex >= 0 && itemIndex < _storeItems[storeName]!.length) {
+        _storeItems[storeName]![itemIndex].isBought =
+            !_storeItems[storeName]![itemIndex].isBought;
+        notifyListeners();
+      }
+    }
   }
 
+  // Method to update an existing item
+  void updateItem(
+      String storeName, int itemIndex, String newName, String newQuantity) {
+    if (_storeItems.containsKey(storeName)) {
+      if (itemIndex >= 0 && itemIndex < _storeItems[storeName]!.length) {
+        _storeItems[storeName]![itemIndex] =
+            _storeItems[storeName]![itemIndex].copyWith(
+          name: newName,
+          quantity: newQuantity,
+        );
+        notifyListeners();
+      }
+    }
+  }
+
+  // --- START OF FIX: Add clearAll method ---
   void clearAll() {
-    _storeItems.clear();
-    _selectedStore = null;
-    notifyListeners();
+    _storeItems.clear(); // Clears all stores and their items
+    _selectedStore = null; // Deselect any selected store
+    notifyListeners(); // Notify all listening widgets of the change
   }
 }
