@@ -47,7 +47,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
       backgroundColor: lightBackground,
       appBar: AppBar(
         title: const Text(
-          'Grocery List',
+          'Shopping List',
           style: TextStyle(
             fontFamily: 'Montserrat',
             color: Colors.white,
