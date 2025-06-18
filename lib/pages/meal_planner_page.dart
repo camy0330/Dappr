@@ -735,9 +735,23 @@ class _MealPlannerPageState extends State<MealPlannerPage>
             fontSize: 26, // Slightly larger title
           ),
         ),
-        backgroundColor: Colors.deepOrange, // Solid deep orange background
         elevation: 0,
         centerTitle: true,
+        iconTheme: const IconThemeData(
+            color: Colors.white), //Ensure any icon are white
+        // *** Add flexibleSpace for the gradient background ***
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Colors.deepOrange,
+                Colors.orangeAccent
+              ], // Your desired gradient colors
+              begin: Alignment.topLeft, // Start of the gradient
+              end: Alignment.bottomRight, // End of the gradient
+            ),
+          ),
+        ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(kToolbarHeight),
           child: Container(
