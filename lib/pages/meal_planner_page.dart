@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 class MealPlannerPage extends StatefulWidget {
   const MealPlannerPage({super.key});
@@ -239,6 +239,7 @@ class _MealPlannerPageState extends State<MealPlannerPage>
             color: Colors.teal.shade400, // Softer teal
             boxShadow: [
               BoxShadow(
+                // ignore: deprecated_member_use
                 color: Colors.teal.shade200.withOpacity(0.5),
                 blurRadius: 3,
                 spreadRadius: 1,
@@ -554,10 +555,6 @@ class _MealPlannerPageState extends State<MealPlannerPage>
   }
 
   Widget _buildMonthlyView() {
-    final bool hasNotesForSelectedDay = _selectedDay != null &&
-        _mealNotes.containsKey(_selectedDay!) &&
-        _mealNotes[_selectedDay!]!.values.any((note) => note.trim().isNotEmpty);
-
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(16), // Consistent padding
@@ -748,6 +745,7 @@ class _MealPlannerPageState extends State<MealPlannerPage>
                 horizontal: 10, vertical: 5), // Adds some margin
             decoration: BoxDecoration(
               color: Colors.deepOrange.shade700
+                  // ignore: deprecated_member_use
                   .withOpacity(0.2), // Subtle background for tabs
               borderRadius: BorderRadius.circular(12),
             ),
@@ -766,6 +764,7 @@ class _MealPlannerPageState extends State<MealPlannerPage>
                 color: Colors.deepOrange, // Solid deep orange for selected tab
                 boxShadow: [
                   BoxShadow(
+                    // ignore: deprecated_member_use
                     color: Colors.deepOrange.shade900.withOpacity(0.4),
                     blurRadius: 6,
                     offset: const Offset(0, 3),
