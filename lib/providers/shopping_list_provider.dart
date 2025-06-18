@@ -1,6 +1,6 @@
 // dappr/providers/shopping_list_provider.dart
-import 'package:flutter/material.dart';
 import 'package:dappr/models/item.dart'; // Import your Item model
+import 'package:flutter/material.dart';
 
 class ShoppingListProvider extends ChangeNotifier {
   // Map to store items: { 'Store Name': [Item1, Item2, ...] }
@@ -75,7 +75,6 @@ class ShoppingListProvider extends ChangeNotifier {
     }
   }
 
-  // --- START OF FIX: Add clearAll method ---
   void clearAll() {
     _storeItems.clear(); // Clears all stores and their items
     _selectedStore = null; // Deselect any selected store

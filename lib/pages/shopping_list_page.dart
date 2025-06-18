@@ -87,6 +87,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
                       labelStyle: TextStyle(
                           color: mediumText, fontFamily: 'Montserrat'),
                       hintText: 'e.g., Tesco, AEON',
+                      // ignore: deprecated_member_use
                       hintStyle: TextStyle(color: mediumText.withOpacity(0.6)),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -172,6 +173,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
                       borderRadius: BorderRadius.circular(15),
                     ),
                     elevation: 8,
+                    // ignore: deprecated_member_use
                     shadowColor: primaryOrange.withOpacity(0.15),
                     color: cardColor,
                     child: Padding(
@@ -229,6 +231,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
                                           hintText: 'e.g., Apple',
                                           hintStyle: TextStyle(
                                               color:
+                                                  // ignore: deprecated_member_use
                                                   mediumText.withOpacity(0.6)),
                                           border: OutlineInputBorder(
                                             borderRadius:
@@ -271,6 +274,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
                                           hintText: 'e.g., 1 kg, 5 pcs',
                                           hintStyle: TextStyle(
                                               color:
+                                                  // ignore: deprecated_member_use
                                                   mediumText.withOpacity(0.6)),
                                           border: OutlineInputBorder(
                                             borderRadius:
