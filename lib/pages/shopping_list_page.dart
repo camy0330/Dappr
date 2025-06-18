@@ -55,11 +55,23 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
             fontSize: 24,
           ),
         ),
-        backgroundColor: primaryOrange,
         centerTitle: true,
         elevation: 4,
-        // ignore: deprecated_member_use
-        shadowColor: primaryOrange.withOpacity(0.4),
+        // Ensure icons are white for better visibility on the gradient
+        iconTheme: const IconThemeData(color: Colors.white),
+        // Add flexibleSpace for the gradient
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Colors.deepOrange,
+                Colors.orangeAccent
+              ], // Your desired gradient colors
+              begin: Alignment.topLeft, // Start of the gradient
+              end: Alignment.bottomRight, // End of the gradient
+            ),
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
