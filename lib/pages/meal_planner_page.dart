@@ -54,7 +54,6 @@ class _MealPlannerPageState extends State<MealPlannerPage>
     _showMealNoteDialog(selectedDay);
   }
 
-  // Helper to get an icon for each meal type
   IconData _getMealIcon(String mealType) {
     switch (mealType) {
       case 'Breakfast':
@@ -64,13 +63,16 @@ class _MealPlannerPageState extends State<MealPlannerPage>
       case 'Dinner':
         return Icons.dinner_dining_outlined;
       case 'Additional Meal':
-        return Icons.restaurant_menu; // Updated icon
+        return Icons.restaurant_menu;
       default:
         return Icons.restaurant_menu;
     }
   }
 
   void _showMealNoteDialog(DateTime day) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     _mealNotes.putIfAbsent(day, () => {});
 
     Map<String, TextEditingController> controllers = {
@@ -81,12 +83,12 @@ class _MealPlannerPageState extends State<MealPlannerPage>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20)), // More rounded
+        backgroundColor: theme.dialogBackgroundColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text(
           'Add Meal Notes (${_formatDate(day, 'EEE, MMM d,yyyy')})',
-          style: const TextStyle(
-              fontWeight: FontWeight.bold, color: Colors.deepOrange),
+          style: TextStyle(
+              fontWeight: FontWeight.bold, color: colorScheme.primary),
         ),
         content: SingleChildScrollView(
           child: Column(
@@ -96,33 +98,35 @@ class _MealPlannerPageState extends State<MealPlannerPage>
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: TextField(
                   controller: controllers[meal],
-                  style: const TextStyle(color: Colors.black87),
+                  style: TextStyle(color: colorScheme.onSurface),
                   decoration: InputDecoration(
                     labelText: meal,
-                    labelStyle: TextStyle(color: Colors.grey.shade600),
-                    floatingLabelStyle: const TextStyle(
-                        color: Colors.deepOrange, fontWeight: FontWeight.bold),
+                    labelStyle: TextStyle(color: theme.hintColor),
+                    floatingLabelStyle: TextStyle(
+                        color: colorScheme.primary,
+                        fontWeight: FontWeight.bold),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15), // Softer corners
-                      borderSide: BorderSide.none, // Remove default border
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide: BorderSide.none,
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15),
-                      borderSide: BorderSide(
-                          color: Colors.grey.shade200), // Subtle border
+                      borderSide: BorderSide(color: theme.dividerColor),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15),
                       borderSide:
-                          const BorderSide(color: Colors.deepOrange, width: 2),
+                          BorderSide(color: colorScheme.primary, width: 2),
                     ),
                     filled: true,
-                    fillColor: Colors.grey.shade100, // Light fill color
+                    fillColor: theme.inputDecorationTheme.fillColor ??
+                        (theme.brightness == Brightness.dark
+                            ? colorScheme.surface
+                            : Colors.grey.shade100),
                     contentPadding: const EdgeInsets.symmetric(
                         vertical: 12, horizontal: 16),
                   ),
-                  maxLines:
-                      2, // Adjusted: Reduced maxLines to make the boxes shorter
+                  maxLines: 2,
                   textCapitalization: TextCapitalization.sentences,
                 ),
               );
@@ -138,7 +142,7 @@ class _MealPlannerPageState extends State<MealPlannerPage>
               Navigator.of(context).pop();
             },
             style: TextButton.styleFrom(
-              foregroundColor: Colors.blueGrey.shade600,
+              foregroundColor: theme.textTheme.bodyLarge?.color,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10)),
@@ -162,16 +166,16 @@ class _MealPlannerPageState extends State<MealPlannerPage>
               Navigator.of(context).pop();
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.deepOrange,
+              backgroundColor: colorScheme.primary,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15), // Matches input field
+                borderRadius: BorderRadius.circular(15),
               ),
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               elevation: 3,
             ),
-            child: const Text(
+            child: Text(
               'Save',
-              style: TextStyle(color: Colors.white, fontSize: 16),
+              style: TextStyle(color: colorScheme.onPrimary, fontSize: 16),
             ),
           ),
         ],
@@ -180,19 +184,23 @@ class _MealPlannerPageState extends State<MealPlannerPage>
   }
 
   void _deleteMealNote(DateTime day, String mealType) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        backgroundColor: theme.dialogBackgroundColor,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text('Delete Meal Note',
-            style: TextStyle(color: Colors.deepOrange)),
+        title: Text('Delete Meal Note',
+            style: TextStyle(color: colorScheme.primary)),
         content: Text(
             'Are you sure you want to delete the $mealType note for ${_formatDate(day, 'EEE, MMM d,yyyy')}?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            style:
-                TextButton.styleFrom(foregroundColor: Colors.blueGrey.shade600),
+            style: TextButton.styleFrom(
+                foregroundColor: theme.textTheme.bodyLarge?.color),
             child: const Text('Cancel'),
           ),
           ElevatedButton(
@@ -223,24 +231,26 @@ class _MealPlannerPageState extends State<MealPlannerPage>
   }
 
   Widget _buildEventsMarker(DateTime day, List events) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     if (_mealNotes[day] == null ||
         _mealNotes[day]!.values.every((note) => note.trim().isEmpty)) {
       return const SizedBox.shrink();
     }
     return Positioned(
-      bottom: 2, // Adjust position
+      bottom: 2,
       child: GestureDetector(
         onTap: () => _showMealSummary(day),
         child: Container(
-          width: 7, // Slightly smaller
+          width: 7,
           height: 7,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: Colors.teal.shade400, // Softer teal
+            color: colorScheme.secondary,
             boxShadow: [
               BoxShadow(
-                // ignore: deprecated_member_use
-                color: Colors.teal.shade200.withOpacity(0.5),
+                color: colorScheme.secondary.withOpacity(0.5),
                 blurRadius: 3,
                 spreadRadius: 1,
               ),
@@ -252,28 +262,35 @@ class _MealPlannerPageState extends State<MealPlannerPage>
   }
 
   void _showMealSummary(DateTime day) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final notes = _mealNotes[day];
     if (notes == null || notes.values.every((note) => note.trim().isEmpty)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No meal notes for this day.')),
+        SnackBar(
+          content: const Text('No meal notes for this day.'),
+          backgroundColor: colorScheme.surface,
+          behavior: SnackBarBehavior.floating,
+        ),
       );
       return;
     }
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      backgroundColor:
+          theme.bottomSheetTheme.backgroundColor ?? colorScheme.surface,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-            top: Radius.circular(30)), // More pronounced curve
+        borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
       ),
       builder: (context) => DraggableScrollableSheet(
         expand: false,
         initialChildSize: 0.4,
         minChildSize: 0.2,
-        maxChildSize: 0.8, // Allow it to expand more
+        maxChildSize: 0.8,
         builder: (context, scrollController) {
           return Padding(
-            padding: const EdgeInsets.all(25), // Increased padding
+            padding: const EdgeInsets.all(25),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -281,26 +298,23 @@ class _MealPlannerPageState extends State<MealPlannerPage>
                 Align(
                   alignment: Alignment.center,
                   child: Container(
-                    width: 50, // Wider drag handle
-                    height: 6, // Thicker drag handle
+                    width: 50,
+                    height: 6,
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade300,
+                      color: theme.dividerColor,
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
                 ),
-                const SizedBox(height: 20), // Increased spacing
+                const SizedBox(height: 20),
                 Text(
                   'Meal Summary for ${_formatDate(day, 'EEEE, MMM d,yyyy')}',
-                  style: const TextStyle(
+                  style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 22,
-                      color: Colors.deepOrange),
+                      color: colorScheme.primary),
                 ),
-                const Divider(
-                    height: 30,
-                    thickness: 1.2,
-                    color: Colors.grey), // Thicker divider
+                Divider(height: 30, thickness: 1.2, color: theme.dividerColor),
                 Expanded(
                   child: ListView(
                     controller: scrollController,
@@ -310,30 +324,29 @@ class _MealPlannerPageState extends State<MealPlannerPage>
                         return const SizedBox.shrink();
                       }
                       return Card(
-                        margin:
-                            const EdgeInsets.only(bottom: 15), // More spacing
-                        elevation: 2, // Subtle elevation
+                        margin: const EdgeInsets.only(bottom: 15),
+                        elevation: 2,
+                        color: theme.cardColor,
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                                15)), // Matching card radius
+                            borderRadius: BorderRadius.circular(15)),
                         child: Padding(
-                          padding:
-                              const EdgeInsets.all(15), // Increased padding
+                          padding: const EdgeInsets.all(15),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 '$meal:',
-                                style: const TextStyle(
+                                style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 17,
-                                    color: Colors.black87),
+                                    color: colorScheme.onSurface),
                               ),
-                              const SizedBox(height: 6), // More spacing
+                              const SizedBox(height: 6),
                               Text(
                                 text,
-                                style: const TextStyle(
-                                    fontSize: 15.5, color: Colors.black54),
+                                style: TextStyle(
+                                    fontSize: 15.5,
+                                    color: theme.textTheme.bodyMedium?.color),
                               ),
                             ],
                           ),
@@ -342,13 +355,13 @@ class _MealPlannerPageState extends State<MealPlannerPage>
                     }).toList(),
                   ),
                 ),
-                const SizedBox(height: 10), // Spacing before close button
+                const SizedBox(height: 10),
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
                     onPressed: () => Navigator.of(context).pop(),
                     style: TextButton.styleFrom(
-                        foregroundColor: Colors.deepOrange,
+                        foregroundColor: colorScheme.primary,
                         padding: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 10)),
                     child: const Text('Close', style: TextStyle(fontSize: 16)),
@@ -373,9 +386,11 @@ class _MealPlannerPageState extends State<MealPlannerPage>
   }
 
   Widget _buildWeeklyView() {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final weekDates = _getCurrentWeekDates(_selectedDay ?? DateTime.now());
     return ListView.builder(
-      padding: const EdgeInsets.all(16), // Increased padding
+      padding: const EdgeInsets.all(16),
       itemCount: weekDates.length,
       itemBuilder: (context, index) {
         final day = weekDates[index];
@@ -386,33 +401,32 @@ class _MealPlannerPageState extends State<MealPlannerPage>
             notes.values.any((note) => note.trim().isNotEmpty);
 
         return Card(
-          elevation: 5, // Increased elevation for a floating effect
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20)), // More rounded
-          margin: const EdgeInsets.symmetric(
-              vertical: 10, horizontal: 4), // More vertical margin
-          color: Colors.white,
+          elevation: 5,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
+          color: theme.cardColor,
           child: InkWell(
             borderRadius: BorderRadius.circular(20),
             onTap: () => _showMealNoteDialog(day),
             child: Padding(
-              padding: const EdgeInsets.all(20.0), // Increased padding
+              padding: const EdgeInsets.all(20.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     _formatDate(day, 'EEEE, MMMM d,yyyy'),
-                    style: const TextStyle(
+                    style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 20, // Slightly larger
-                        color: Colors.deepOrange),
+                        fontSize: 20,
+                        color: colorScheme.primary),
                   ),
-                  const Divider(height: 20, thickness: 1.2), // Thicker divider
+                  Divider(
+                      height: 20, thickness: 1.2, color: theme.dividerColor),
                   ..._meals.map((meal) {
                     final text = notes[meal]?.trim();
                     return Padding(
-                      padding:
-                          const EdgeInsets.only(bottom: 8.0), // More spacing
+                      padding: const EdgeInsets.only(bottom: 8.0),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -420,10 +434,10 @@ class _MealPlannerPageState extends State<MealPlannerPage>
                             width: 120,
                             child: Text(
                               '$meal: ',
-                              style: const TextStyle(
+                              style: TextStyle(
                                   fontWeight: FontWeight.w600,
                                   fontSize: 16,
-                                  color: Colors.black87),
+                                  color: colorScheme.onSurface),
                             ),
                           ),
                           Expanded(
@@ -434,8 +448,8 @@ class _MealPlannerPageState extends State<MealPlannerPage>
                                       ? FontStyle.italic
                                       : FontStyle.normal,
                                   color: text?.isEmpty ?? true
-                                      ? Colors.grey.shade600
-                                      : Colors.black54), // Softer text color
+                                      ? theme.hintColor
+                                      : theme.textTheme.bodyMedium?.color),
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -451,7 +465,7 @@ class _MealPlannerPageState extends State<MealPlannerPage>
                         'Tap to add meals for this day!',
                         style: TextStyle(
                             fontStyle: FontStyle.italic,
-                            color: Colors.blueGrey.shade300),
+                            color: theme.hintColor),
                       ),
                     ),
                 ],
@@ -464,49 +478,48 @@ class _MealPlannerPageState extends State<MealPlannerPage>
   }
 
   Widget _buildDailyView() {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final day = _selectedDay ?? DateTime.now();
     _mealNotes.putIfAbsent(day, () => {});
     final notes = _mealNotes[day]!;
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(25), // Increased padding
+      padding: const EdgeInsets.all(25),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            // Corrected date format here for the Daily View
             'Meal Plan for ${_formatDate(day, 'EEEE, MMMM d,yyyy')}',
-            style: const TextStyle(
-                fontSize: 24, // Larger title
+            style: TextStyle(
+                fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Colors.deepOrange),
+                color: colorScheme.primary),
           ),
-          const Divider(
-              height: 30, thickness: 1.8), // Thicker, more prominent divider
+          Divider(height: 30, thickness: 1.8, color: theme.dividerColor),
           ..._meals.map((meal) {
             final text = notes[meal]?.trim();
             return Padding(
-              padding: const EdgeInsets.symmetric(
-                  vertical: 12.0), // More vertical spacing
+              padding: const EdgeInsets.symmetric(vertical: 12.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
                       Icon(_getMealIcon(meal),
-                          color: Colors.deepOrange, size: 26), // Larger icon
+                          color: colorScheme.primary, size: 26),
                       const SizedBox(width: 10),
                       Text(
                         '$meal:',
-                        style: const TextStyle(
+                        style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            fontSize: 19, // Slightly larger meal title
-                            color: Colors.black87),
+                            fontSize: 19,
+                            color: colorScheme.onSurface),
                       ),
                       const Spacer(),
                       IconButton(
-                        icon: const Icon(Icons.edit_outlined,
-                            color: Colors.blueGrey, size: 22),
+                        icon: Icon(Icons.edit_outlined,
+                            color: theme.iconTheme.color, size: 22),
                         onPressed: () => _showMealNoteDialog(day),
                         tooltip: 'Edit all meals',
                       ),
@@ -521,28 +534,26 @@ class _MealPlannerPageState extends State<MealPlannerPage>
                   const SizedBox(height: 6),
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.all(15), // More padding
+                    padding: const EdgeInsets.all(15),
                     decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius:
-                          BorderRadius.circular(15), // Matching border radius
+                      color: theme.cardColor,
+                      borderRadius: BorderRadius.circular(15),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.grey.shade200,
+                          color: theme.shadowColor.withOpacity(0.05),
                           blurRadius: 8,
-                          offset: const Offset(0, 4), // Subtle shadow
+                          offset: const Offset(0, 4),
                         ),
                       ],
-                      border: Border.all(
-                          color: Colors.grey.shade200), // Subtle border
+                      border: Border.all(color: theme.dividerColor),
                     ),
                     child: Text(
                       text?.isEmpty ?? true ? 'No notes for $meal.' : text!,
                       style: TextStyle(
                           color: text?.isEmpty ?? true
-                              ? Colors.grey.shade500
-                              : Colors.black54, // Softer color for notes
-                          fontSize: 16), // Slightly larger note text
+                              ? theme.hintColor
+                              : theme.textTheme.bodyMedium?.color,
+                          fontSize: 16),
                     ),
                   ),
                 ],
@@ -555,9 +566,11 @@ class _MealPlannerPageState extends State<MealPlannerPage>
   }
 
   Widget _buildMonthlyView() {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.all(16), // Consistent padding
+        padding: const EdgeInsets.all(16),
         child: Column(
           children: [
             TableCalendar(
@@ -570,33 +583,32 @@ class _MealPlannerPageState extends State<MealPlannerPage>
               startingDayOfWeek: StartingDayOfWeek.monday,
               calendarStyle: CalendarStyle(
                 todayDecoration: BoxDecoration(
-                  color:
-                      Colors.deepOrange.shade400, // Slightly darker today color
+                  color: colorScheme.primary.withOpacity(0.7),
                   shape: BoxShape.circle,
                 ),
-                selectedDecoration: const BoxDecoration(
-                  color: Colors.deepOrange,
+                selectedDecoration: BoxDecoration(
+                  color: colorScheme.primary,
                   shape: BoxShape.circle,
                 ),
-                defaultTextStyle: const TextStyle(color: Colors.black87),
-                weekendTextStyle: const TextStyle(color: Colors.redAccent),
+                defaultTextStyle: TextStyle(color: colorScheme.onSurface),
+                weekendTextStyle: TextStyle(color: colorScheme.error),
                 outsideDaysVisible: false,
                 markerDecoration: BoxDecoration(
-                  color: Colors.teal.shade400, // Matching marker color
+                  color: colorScheme.secondary,
                   shape: BoxShape.circle,
                 ),
               ),
               headerStyle: HeaderStyle(
                 formatButtonVisible: false,
                 titleCentered: true,
-                titleTextStyle: const TextStyle(
+                titleTextStyle: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Colors.deepOrange),
-                leftChevronIcon: const Icon(Icons.chevron_left,
-                    color: Colors.deepOrange, size: 28), // Larger chevrons
-                rightChevronIcon: const Icon(Icons.chevron_right,
-                    color: Colors.deepOrange, size: 28),
+                    color: colorScheme.primary),
+                leftChevronIcon: Icon(Icons.chevron_left,
+                    color: colorScheme.primary, size: 28),
+                rightChevronIcon: Icon(Icons.chevron_right,
+                    color: colorScheme.primary, size: 28),
               ),
               calendarBuilders: CalendarBuilders(
                 markerBuilder: (context, day, events) {
@@ -606,14 +618,15 @@ class _MealPlannerPageState extends State<MealPlannerPage>
                   return Container(
                     margin: const EdgeInsets.all(6.0),
                     alignment: Alignment.center,
-                    decoration: const BoxDecoration(
-                      color: Colors.deepOrange,
+                    decoration: BoxDecoration(
+                      color: colorScheme.primary,
                       shape: BoxShape.circle,
                     ),
                     child: Text(
                       '${date.day}',
-                      style: const TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          color: colorScheme.onPrimary,
+                          fontWeight: FontWeight.bold),
                     ),
                   );
                 },
@@ -622,42 +635,43 @@ class _MealPlannerPageState extends State<MealPlannerPage>
                     margin: const EdgeInsets.all(6.0),
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: Colors.deepOrange.shade400,
+                      color: colorScheme.primary.withOpacity(0.7),
                       shape: BoxShape.circle,
                     ),
                     child: Text(
                       '${date.day}',
-                      style: const TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          color: colorScheme.onPrimary,
+                          fontWeight: FontWeight.bold),
                     ),
                   );
                 },
               ),
             ),
-            const SizedBox(height: 25), // More spacing
+            const SizedBox(height: 25),
             if (_selectedDay != null)
               Card(
-                elevation: 5, // Consistent elevation with weekly view
-                margin: const EdgeInsets.symmetric(
-                    horizontal: 4), // Aligns with calendar width
+                elevation: 5,
+                margin: const EdgeInsets.symmetric(horizontal: 4),
                 shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(20)), // Consistent border radius
-                color: Colors.white,
+                    borderRadius: BorderRadius.circular(20)),
+                color: theme.cardColor,
                 child: Padding(
-                  padding: const EdgeInsets.all(20.0), // Consistent padding
+                  padding: const EdgeInsets.all(20.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        // Fixed the date format here:
                         'Notes for ${_formatDate(_selectedDay!, 'EEE, MMMM d,yyyy')}',
-                        style: const TextStyle(
+                        style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 20,
-                            color: Colors.deepOrange),
+                            color: colorScheme.primary),
                       ),
-                      const Divider(height: 20, thickness: 1.2),
+                      Divider(
+                          height: 20,
+                          thickness: 1.2,
+                          color: theme.dividerColor),
                       ..._meals.map((meal) {
                         _mealNotes.putIfAbsent(_selectedDay!, () => {});
                         final text = _mealNotes[_selectedDay!]![meal]?.trim();
@@ -670,10 +684,10 @@ class _MealPlannerPageState extends State<MealPlannerPage>
                                 width: 120,
                                 child: Text(
                                   '$meal: ',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                       fontWeight: FontWeight.w600,
                                       fontSize: 16,
-                                      color: Colors.black87),
+                                      color: colorScheme.onSurface),
                                 ),
                               ),
                               Expanded(
@@ -684,8 +698,8 @@ class _MealPlannerPageState extends State<MealPlannerPage>
                                           ? FontStyle.italic
                                           : FontStyle.normal,
                                       color: text?.isEmpty ?? true
-                                          ? Colors.grey.shade600
-                                          : Colors.black54),
+                                          ? theme.hintColor
+                                          : theme.textTheme.bodyMedium?.color),
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -699,7 +713,7 @@ class _MealPlannerPageState extends State<MealPlannerPage>
                         child: ElevatedButton(
                           onPressed: () => _showMealNoteDialog(_selectedDay!),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.deepOrange,
+                            backgroundColor: colorScheme.primary,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15),
                             ),
@@ -707,9 +721,9 @@ class _MealPlannerPageState extends State<MealPlannerPage>
                                 horizontal: 20, vertical: 12),
                             elevation: 3,
                           ),
-                          child: const Text('Edit Notes',
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 16)),
+                          child: Text('Edit Notes',
+                              style: TextStyle(
+                                  color: colorScheme.onPrimary, fontSize: 16)),
                         ),
                       ),
                     ],
@@ -724,43 +738,44 @@ class _MealPlannerPageState extends State<MealPlannerPage>
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: Colors.grey.shade50, // Very light grey background
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text(
           'Meal Planner',
           style: TextStyle(
-            color: Colors.white,
             fontWeight: FontWeight.bold,
-            fontSize: 26, // Slightly larger title
+            fontSize: 26,
           ),
         ),
         elevation: 0,
         centerTitle: true,
-        iconTheme: const IconThemeData(
-            color: Colors.white), //Ensure any icon are white
-        // *** Add flexibleSpace for the gradient background ***
+        iconTheme: IconThemeData(
+          color: colorScheme.onPrimary,
+        ),
         flexibleSpace: Container(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [
-                Colors.deepOrange,
-                Colors.orangeAccent
-              ], // Your desired gradient colors
-              begin: Alignment.topLeft, // Start of the gradient
-              end: Alignment.bottomRight, // End of the gradient
+              colors: isDark
+                  ? [colorScheme.primary, colorScheme.secondary]
+                  : [Colors.deepOrange, Colors.orangeAccent],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
           ),
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(kToolbarHeight),
           child: Container(
-            margin: const EdgeInsets.symmetric(
-                horizontal: 10, vertical: 5), // Adds some margin
+            margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             decoration: BoxDecoration(
-              color: Colors.deepOrange.shade700
-                  // ignore: deprecated_member_use
-                  .withOpacity(0.2), // Subtle background for tabs
+              color: isDark
+                  ? colorScheme.surface.withOpacity(0.2)
+                  : Colors.deepOrange.shade700.withOpacity(0.2),
               borderRadius: BorderRadius.circular(12),
             ),
             child: TabBar(
@@ -769,17 +784,17 @@ class _MealPlannerPageState extends State<MealPlannerPage>
                   const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               unselectedLabelStyle:
                   const TextStyle(fontWeight: FontWeight.normal, fontSize: 15),
-              labelColor: Colors.white,
-              unselectedLabelColor: Colors.deepOrange.shade100,
+              labelColor: colorScheme.onPrimary,
+              unselectedLabelColor: isDark
+                  ? colorScheme.onSurface.withOpacity(0.7)
+                  : Colors.deepOrange.shade100,
               indicatorSize: TabBarIndicatorSize.tab,
               indicator: BoxDecoration(
-                borderRadius:
-                    BorderRadius.circular(10), // More rounded indicator
-                color: Colors.deepOrange, // Solid deep orange for selected tab
+                borderRadius: BorderRadius.circular(10),
+                color: colorScheme.primary,
                 boxShadow: [
                   BoxShadow(
-                    // ignore: deprecated_member_use
-                    color: Colors.deepOrange.shade900.withOpacity(0.4),
+                    color: colorScheme.primary.withOpacity(0.4),
                     blurRadius: 6,
                     offset: const Offset(0, 3),
                   ),

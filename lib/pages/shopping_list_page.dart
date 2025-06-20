@@ -1,5 +1,7 @@
-import 'package:dappr/models/item.dart'; // IMPORTANT: Make sure this path is correct and the file exists!
-import 'package:dappr/providers/shopping_list_provider.dart'; // Make sure this path is correct
+// ignore_for_file: deprecated_member_use
+
+import 'package:dappr/models/item.dart';
+import 'package:dappr/providers/shopping_list_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -13,19 +15,7 @@ class ShoppingListPage extends StatefulWidget {
 class _ShoppingListPageState extends State<ShoppingListPage> {
   final TextEditingController _storeController = TextEditingController();
   final TextEditingController _itemNameController = TextEditingController();
-  final TextEditingController _itemQtyController =
-      TextEditingController(); // This will now accept any text
-
-  // --- Modern and Elegant Color Scheme (Accessible by all methods) ---
-  static const Color primaryOrange = Color(0xFFE65100);
-  static const Color darkText = Color(0xFF212121);
-  static const Color mediumText = Color(0xFF616161);
-  static const Color lightBackground = Color(0xFFF5F5F5);
-  static const Color cardColor = Colors.white;
-  static const Color dividerColor = Color(0xFFE0E0E0);
-  static const Color errorColor = Color(0xFFD32F2F);
-  static const Color successColor =
-      Color(0xFF388E3C); // Green for success feedback
+  final TextEditingController _itemQtyController = TextEditingController();
 
   @override
   void dispose() {
@@ -37,38 +27,34 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
 
   @override
   Widget build(BuildContext context) {
-    // This line uses Provider.of without `listen: false`. This is correct here
-    // because this `build` method needs to re-run and redraw the UI whenever
-    // the ShoppingListProvider's state changes (e.g., a new store is added,
-    // an item is checked, etc.).
     final shoppingListProvider = Provider.of<ShoppingListProvider>(context);
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
 
     return Scaffold(
-      backgroundColor: lightBackground,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Shopping List',
-          style: TextStyle(
-            fontFamily: 'Montserrat',
-            color: Colors.white,
+          style: textTheme.titleLarge?.copyWith(
+            color: colorScheme.onPrimary,
             fontWeight: FontWeight.bold,
-            fontSize: 24,
+            fontFamily: 'Montserrat',
           ),
         ),
+        iconTheme: IconThemeData(color: colorScheme.onPrimary),
         centerTitle: true,
         elevation: 4,
-        // Ensure icons are white for better visibility on the gradient
-        iconTheme: const IconThemeData(color: Colors.white),
-        // Add flexibleSpace for the gradient
         flexibleSpace: Container(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                Colors.deepOrange,
-                Colors.orangeAccent
-              ], // Your desired gradient colors
-              begin: Alignment.topLeft, // Start of the gradient
-              end: Alignment.bottomRight, // End of the gradient
+                colorScheme.primary,
+                colorScheme.secondary,
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
           ),
         ),
@@ -78,14 +64,12 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // --- Add Store Section ---
             Text(
               'Add New Store',
-              style: TextStyle(
-                fontSize: 20,
+              style: textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
                 fontFamily: 'Montserrat',
-                color: darkText,
+                color: colorScheme.onBackground,
               ),
             ),
             const SizedBox(height: 15),
@@ -97,65 +81,69 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
                     decoration: InputDecoration(
                       labelText: 'Store Name',
                       labelStyle: TextStyle(
-                          color: mediumText, fontFamily: 'Montserrat'),
+                        color: colorScheme.onSurface.withOpacity(0.7),
+                        fontFamily: 'Montserrat',
+                      ),
                       hintText: 'e.g., Tesco, AEON',
-                      // ignore: deprecated_member_use
-                      hintStyle: TextStyle(color: mediumText.withOpacity(0.6)),
+                      hintStyle: TextStyle(
+                        color: colorScheme.onSurface.withOpacity(0.5),
+                      ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: dividerColor),
+                        borderSide: BorderSide(color: theme.dividerColor),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(color: primaryOrange, width: 2),
+                        borderSide: BorderSide(
+                          color: colorScheme.primary,
+                          width: 2,
+                        ),
                       ),
-                      prefixIcon: Icon(Icons.store, color: primaryOrange),
+                      prefixIcon: Icon(Icons.store, color: colorScheme.primary),
                       filled: true,
-                      fillColor: cardColor,
+                      fillColor: theme.cardColor,
                       contentPadding: const EdgeInsets.symmetric(
-                          vertical: 15, horizontal: 15),
+                        vertical: 15,
+                        horizontal: 15,
+                      ),
                     ),
-                    style: TextStyle(fontFamily: 'Montserrat', color: darkText),
-                    // Use context.read for state modification calls
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      color: colorScheme.onSurface,
+                    ),
                     onSubmitted: (_) =>
                         _addStore(context.read<ShoppingListProvider>()),
                   ),
                 ),
                 const SizedBox(width: 12),
                 ElevatedButton(
-                  // Use context.read for state modification calls
                   onPressed: () =>
                       _addStore(context.read<ShoppingListProvider>()),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: primaryOrange,
-                    foregroundColor: Colors.white,
+                    backgroundColor: colorScheme.primary,
+                    foregroundColor: colorScheme.onPrimary,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                     padding: const EdgeInsets.all(15),
                     elevation: 3,
                   ),
-                  child: const Icon(Icons.add, color: Colors.white),
+                  child: const Icon(Icons.add),
                 ),
               ],
             ),
-
             const SizedBox(height: 30),
-            Divider(color: dividerColor, thickness: 1.0, height: 1),
+            Divider(color: theme.dividerColor, thickness: 1.0, height: 1),
             const SizedBox(height: 20),
-
-            // --- List of Stores and Items Section ---
             Text(
               'Your Shopping Lists',
-              style: TextStyle(
-                fontSize: 20,
+              style: textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
                 fontFamily: 'Montserrat',
-                color: darkText,
+                color: colorScheme.onBackground,
               ),
             ),
             const SizedBox(height: 15),
-
             if (shoppingListProvider.storeItems.isEmpty)
               Center(
                 child: Padding(
@@ -163,11 +151,10 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
                   child: Text(
                     'No stores added yet. Start by adding a new grocery store!',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: mediumText,
-                      fontFamily: 'Montserrat',
+                    style: textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.onSurface.withOpacity(0.7),
                       fontStyle: FontStyle.italic,
+                      fontFamily: 'Montserrat',
                     ),
                   ),
                 ),
@@ -185,9 +172,8 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
                       borderRadius: BorderRadius.circular(15),
                     ),
                     elevation: 8,
-                    // ignore: deprecated_member_use
-                    shadowColor: primaryOrange.withOpacity(0.15),
-                    color: cardColor,
+                    shadowColor: colorScheme.primary.withOpacity(0.15),
+                    color: theme.cardColor,
                     child: Padding(
                       padding: const EdgeInsets.all(20.0),
                       child: Column(
@@ -200,20 +186,18 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
                               Expanded(
                                 child: Text(
                                   storeName,
-                                  style: TextStyle(
-                                    fontSize: 24,
+                                  style: textTheme.titleLarge?.copyWith(
                                     fontWeight: FontWeight.bold,
                                     fontFamily: 'Montserrat',
-                                    color: primaryOrange,
+                                    color: colorScheme.primary,
                                   ),
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                               IconButton(
                                 icon: Icon(Icons.delete_forever,
-                                    color: errorColor, size: 28),
+                                    color: colorScheme.error, size: 28),
                                 onPressed: () {
-                                  // Use context.read for state modification calls
                                   _showDeleteStoreConfirmation(
                                       context,
                                       context.read<ShoppingListProvider>(),
@@ -224,7 +208,6 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
                             ],
                           ),
                           const SizedBox(height: 15),
-
                           // Add item form/button for this store
                           if (shoppingListProvider.selectedStore == storeName)
                             Column(
@@ -238,35 +221,39 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
                                         decoration: InputDecoration(
                                           labelText: 'Item Name',
                                           labelStyle: TextStyle(
-                                              color: mediumText,
-                                              fontFamily: 'Montserrat'),
+                                            color: colorScheme.onSurface
+                                                .withOpacity(0.7),
+                                            fontFamily: 'Montserrat',
+                                          ),
                                           hintText: 'e.g., Apple',
                                           hintStyle: TextStyle(
-                                              color:
-                                                  // ignore: deprecated_member_use
-                                                  mediumText.withOpacity(0.6)),
+                                            color: colorScheme.onSurface
+                                                .withOpacity(0.5),
+                                          ),
                                           border: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(10),
-                                            borderSide:
-                                                BorderSide(color: dividerColor),
+                                            borderSide: BorderSide(
+                                                color: theme.dividerColor),
                                           ),
                                           focusedBorder: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(10),
                                             borderSide: BorderSide(
-                                                color: primaryOrange, width: 2),
+                                              color: colorScheme.primary,
+                                              width: 2,
+                                            ),
                                           ),
                                           filled: true,
-                                          fillColor: lightBackground,
+                                          fillColor: theme.colorScheme.surface,
                                           contentPadding:
                                               const EdgeInsets.symmetric(
                                                   vertical: 12, horizontal: 12),
                                         ),
                                         style: TextStyle(
-                                            fontFamily: 'Montserrat',
-                                            color: darkText),
-                                        // Use context.read for state modification calls
+                                          fontFamily: 'Montserrat',
+                                          color: colorScheme.onSurface,
+                                        ),
                                         onSubmitted: (_) => _addItem(context
                                             .read<ShoppingListProvider>()),
                                       ),
@@ -276,52 +263,54 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
                                       flex: 2,
                                       child: TextField(
                                         controller: _itemQtyController,
-                                        // Keyboard type to text to allow units like "1 kilo"
                                         keyboardType: TextInputType.text,
                                         decoration: InputDecoration(
                                           labelText: 'Qty/Unit',
                                           labelStyle: TextStyle(
-                                              color: mediumText,
-                                              fontFamily: 'Montserrat'),
+                                            color: colorScheme.onSurface
+                                                .withOpacity(0.7),
+                                            fontFamily: 'Montserrat',
+                                          ),
                                           hintText: 'e.g., 1 kg, 5 pcs',
                                           hintStyle: TextStyle(
-                                              color:
-                                                  // ignore: deprecated_member_use
-                                                  mediumText.withOpacity(0.6)),
+                                            color: colorScheme.onSurface
+                                                .withOpacity(0.5),
+                                          ),
                                           border: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(10),
-                                            borderSide:
-                                                BorderSide(color: dividerColor),
+                                            borderSide: BorderSide(
+                                                color: theme.dividerColor),
                                           ),
                                           focusedBorder: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(10),
                                             borderSide: BorderSide(
-                                                color: primaryOrange, width: 2),
+                                              color: colorScheme.primary,
+                                              width: 2,
+                                            ),
                                           ),
                                           filled: true,
-                                          fillColor: lightBackground,
+                                          fillColor: theme.colorScheme.surface,
                                           contentPadding:
                                               const EdgeInsets.symmetric(
                                                   vertical: 12, horizontal: 12),
                                         ),
                                         style: TextStyle(
-                                            fontFamily: 'Montserrat',
-                                            color: darkText),
-                                        // Use context.read for state modification calls
+                                          fontFamily: 'Montserrat',
+                                          color: colorScheme.onSurface,
+                                        ),
                                         onSubmitted: (_) => _addItem(context
                                             .read<ShoppingListProvider>()),
                                       ),
                                     ),
                                     const SizedBox(width: 10),
                                     ElevatedButton(
-                                      // Use context.read for state modification calls
                                       onPressed: () => _addItem(
                                           context.read<ShoppingListProvider>()),
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor: primaryOrange,
-                                        foregroundColor: Colors.white,
+                                        backgroundColor: colorScheme.primary,
+                                        foregroundColor: colorScheme.onPrimary,
                                         shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(10),
@@ -329,8 +318,8 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
                                         padding: const EdgeInsets.all(12),
                                         elevation: 3,
                                       ),
-                                      child: const Icon(Icons.add_shopping_cart,
-                                          color: Colors.white),
+                                      child:
+                                          const Icon(Icons.add_shopping_cart),
                                     ),
                                   ],
                                 ),
@@ -342,7 +331,6 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
                               alignment: Alignment.centerLeft,
                               child: TextButton.icon(
                                 onPressed: () {
-                                  // Use context.read for state modification calls
                                   context
                                       .read<ShoppingListProvider>()
                                       .selectStore(storeName);
@@ -350,21 +338,20 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
                                   _itemQtyController.clear();
                                 },
                                 icon: Icon(Icons.add_shopping_cart,
-                                    color: primaryOrange),
+                                    color: colorScheme.primary),
                                 label: Text(
                                   'Add Items to this List',
-                                  style: TextStyle(
-                                      fontFamily: 'Montserrat',
-                                      color: primaryOrange,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16),
+                                  style: textTheme.bodyMedium?.copyWith(
+                                    color: colorScheme.primary,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'Montserrat',
+                                  ),
                                 ),
                                 style: TextButton.styleFrom(
                                   padding: EdgeInsets.zero,
                                 ),
                               ),
                             ),
-
                           // List of items for this store
                           if (items.isEmpty)
                             Padding(
@@ -372,10 +359,11 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
                                   const EdgeInsets.symmetric(vertical: 10.0),
                               child: Text(
                                 'No items added to this store yet.',
-                                style: TextStyle(
-                                    color: mediumText,
-                                    fontFamily: 'Montserrat',
-                                    fontStyle: FontStyle.italic),
+                                style: textTheme.bodyMedium?.copyWith(
+                                  color: colorScheme.onSurface.withOpacity(0.7),
+                                  fontStyle: FontStyle.italic,
+                                  fontFamily: 'Montserrat',
+                                ),
                               ),
                             )
                           else
@@ -387,60 +375,59 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
                                 final item = items[index];
                                 return Column(
                                   children: [
-                                    Divider(height: 1, color: dividerColor),
+                                    Divider(
+                                        height: 1, color: theme.dividerColor),
                                     ListTile(
                                       contentPadding:
                                           const EdgeInsets.symmetric(
                                               horizontal: 0, vertical: 4),
                                       leading: Checkbox(
                                         value: item.isBought,
-                                        // Use context.read for state modification calls
                                         onChanged: (_) => context
                                             .read<ShoppingListProvider>()
                                             .toggleBought(storeName, index),
-                                        activeColor: primaryOrange,
-                                        checkColor: Colors.white,
+                                        activeColor: colorScheme.primary,
+                                        checkColor: colorScheme.onPrimary,
                                         side: BorderSide(
-                                            color: mediumText, width: 1.5),
+                                            color: colorScheme.onSurface,
+                                            width: 1.5),
                                         shape: RoundedRectangleBorder(
                                             borderRadius:
                                                 BorderRadius.circular(4)),
                                       ),
                                       title: Text(
                                         item.name,
-                                        style: TextStyle(
+                                        style: textTheme.bodyLarge?.copyWith(
                                           decoration: item.isBought
                                               ? TextDecoration.lineThrough
                                               : null,
                                           decorationColor:
-                                              darkText, // For better visibility
-                                          decorationThickness:
-                                              2.0, // For better visibility
+                                              colorScheme.onSurface,
+                                          decorationThickness: 2.0,
                                           fontFamily: 'Montserrat',
                                           color: item.isBought
-                                              ? mediumText
-                                              : darkText,
+                                              ? colorScheme.onSurface
+                                                  .withOpacity(0.5)
+                                              : colorScheme.onSurface,
                                           fontWeight: FontWeight.w500,
-                                          fontSize: 16,
                                         ),
                                       ),
                                       subtitle: Text(
                                         'Qty: ${item.quantity}',
-                                        style: TextStyle(
-                                            fontFamily: 'Montserrat',
-                                            color: mediumText,
-                                            fontSize: 14),
+                                        style: textTheme.bodySmall?.copyWith(
+                                          fontFamily: 'Montserrat',
+                                          color: colorScheme.onSurface
+                                              .withOpacity(0.7),
+                                        ),
                                       ),
-                                      // *** START OF CHANGES FOR EDITING: Replaced single trailing button with a Row ***
                                       trailing: Row(
-                                        mainAxisSize: MainAxisSize
-                                            .min, // Important to keep row compact
+                                        mainAxisSize: MainAxisSize.min,
                                         children: [
                                           IconButton(
                                             icon: Icon(Icons.edit,
-                                                color: primaryOrange, size: 24),
+                                                color: colorScheme.primary,
+                                                size: 24),
                                             onPressed: () {
-                                              // Call the dialog to edit the item
                                               _showEditItemDialog(
                                                   context,
                                                   context.read<
@@ -454,7 +441,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
                                           IconButton(
                                             icon: Icon(
                                                 Icons.remove_circle_outline,
-                                                color: errorColor,
+                                                color: colorScheme.error,
                                                 size: 24),
                                             onPressed: () =>
                                                 _showDeleteItemConfirmation(
@@ -467,7 +454,6 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
                                           ),
                                         ],
                                       ),
-                                      // *** END OF CHANGES FOR EDITING ***
                                     ),
                                   ],
                                 );
@@ -492,26 +478,27 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
       provider.addStore(_storeController.text.trim());
       _storeController.clear();
     } else {
-      _showSnackBar('Please enter a store name.', errorColor);
+      _showSnackBar(
+          'Please enter a store name.', Theme.of(context).colorScheme.error);
     }
   }
 
   void _addItem(ShoppingListProvider provider) {
     if (provider.selectedStore == null) {
-      _showSnackBar('Please select a store first.', errorColor);
+      _showSnackBar(
+          'Please select a store first.', Theme.of(context).colorScheme.error);
       return;
     }
     if (_itemNameController.text.trim().isEmpty) {
-      _showSnackBar('Please enter an item name.', errorColor);
+      _showSnackBar(
+          'Please enter an item name.', Theme.of(context).colorScheme.error);
       return;
     }
 
     final String quantityText = _itemQtyController.text.trim();
     provider.addItemToSelectedStore(
       _itemNameController.text.trim(),
-      quantityText.isNotEmpty
-          ? quantityText
-          : '1', // Default to '1' if quantity field is empty
+      quantityText.isNotEmpty ? quantityText : '1',
     );
     _itemNameController.clear();
     _itemQtyController.clear();
@@ -530,6 +517,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
   // Confirmation dialog for deleting a store
   Future<void> _showDeleteStoreConfirmation(BuildContext context,
       ShoppingListProvider provider, String storeName) async {
+    final colorScheme = Theme.of(context).colorScheme;
     return showDialog<void>(
       context: context,
       barrierDismissible: false,
@@ -554,14 +542,14 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                  backgroundColor: errorColor,
+                  backgroundColor: colorScheme.error,
+                  foregroundColor: colorScheme.onError,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10))),
               child: const Text('Delete',
-                  style:
-                      TextStyle(fontFamily: 'Montserrat', color: Colors.white)),
+                  style: TextStyle(fontFamily: 'Montserrat')),
               onPressed: () {
-                provider.removeStore(storeName); // Provider method call
+                provider.removeStore(storeName);
                 Navigator.of(dialogContext).pop();
               },
             ),
@@ -575,6 +563,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
   Future<void> _showDeleteItemConfirmation(BuildContext context,
       ShoppingListProvider provider, String storeName, int index) async {
     final item = provider.storeItems[storeName]![index];
+    final colorScheme = Theme.of(context).colorScheme;
     return showDialog<void>(
       context: context,
       barrierDismissible: false,
@@ -599,14 +588,14 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                  backgroundColor: errorColor,
+                  backgroundColor: colorScheme.error,
+                  foregroundColor: colorScheme.onError,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10))),
               child: const Text('Delete',
-                  style:
-                      TextStyle(fontFamily: 'Montserrat', color: Colors.white)),
+                  style: TextStyle(fontFamily: 'Montserrat')),
               onPressed: () {
-                provider.removeItem(storeName, index); // Provider method call
+                provider.removeItem(storeName, index);
                 Navigator.of(dialogContext).pop();
               },
             ),
@@ -616,7 +605,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
     );
   }
 
-  // *** START OF NEW METHOD: Dialog for editing an item ***
+  // Dialog for editing an item
   Future<void> _showEditItemDialog(
       BuildContext context,
       ShoppingListProvider provider,
@@ -627,6 +616,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
         TextEditingController(text: currentItem.name);
     final TextEditingController _editItemQtyController =
         TextEditingController(text: currentItem.quantity);
+    final colorScheme = Theme.of(context).colorScheme;
 
     return showDialog<void>(
       context: context,
@@ -645,41 +635,49 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
                 controller: _editItemNameController,
                 decoration: InputDecoration(
                   labelText: 'Item Name',
-                  labelStyle:
-                      TextStyle(color: mediumText, fontFamily: 'Montserrat'),
+                  labelStyle: TextStyle(
+                      color: colorScheme.onSurface.withOpacity(0.7),
+                      fontFamily: 'Montserrat'),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(color: dividerColor),
+                    borderSide:
+                        BorderSide(color: Theme.of(context).dividerColor),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(color: primaryOrange, width: 2),
+                    borderSide:
+                        BorderSide(color: colorScheme.primary, width: 2),
                   ),
                   filled: true,
-                  fillColor: lightBackground,
+                  fillColor: Theme.of(context).colorScheme.surface,
                 ),
-                style: TextStyle(fontFamily: 'Montserrat', color: darkText),
+                style: TextStyle(
+                    fontFamily: 'Montserrat', color: colorScheme.onSurface),
               ),
               const SizedBox(height: 15),
               TextField(
                 controller: _editItemQtyController,
-                keyboardType: TextInputType.text, // Allow any text for quantity
+                keyboardType: TextInputType.text,
                 decoration: InputDecoration(
                   labelText: 'Quantity/Unit',
-                  labelStyle:
-                      TextStyle(color: mediumText, fontFamily: 'Montserrat'),
+                  labelStyle: TextStyle(
+                      color: colorScheme.onSurface.withOpacity(0.7),
+                      fontFamily: 'Montserrat'),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(color: dividerColor),
+                    borderSide:
+                        BorderSide(color: Theme.of(context).dividerColor),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(color: primaryOrange, width: 2),
+                    borderSide:
+                        BorderSide(color: colorScheme.primary, width: 2),
                   ),
                   filled: true,
-                  fillColor: lightBackground,
+                  fillColor: Theme.of(context).colorScheme.surface,
                 ),
-                style: TextStyle(fontFamily: 'Montserrat', color: darkText),
+                style: TextStyle(
+                    fontFamily: 'Montserrat', color: colorScheme.onSurface),
               ),
             ],
           ),
@@ -696,26 +694,27 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                  backgroundColor: primaryOrange,
+                  backgroundColor: colorScheme.primary,
+                  foregroundColor: colorScheme.onPrimary,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10))),
               child: const Text('Update',
-                  style:
-                      TextStyle(fontFamily: 'Montserrat', color: Colors.white)),
+                  style: TextStyle(fontFamily: 'Montserrat')),
               onPressed: () {
                 final String newName = _editItemNameController.text.trim();
                 final String newQuantity = _editItemQtyController.text.trim();
 
                 if (newName.isEmpty) {
-                  _showSnackBar('Item name cannot be empty.', errorColor);
+                  _showSnackBar(
+                      'Item name cannot be empty.', colorScheme.error);
                   return;
                 }
 
-                // Call the updateItem method on the provider
                 provider.updateItem(storeName, index, newName,
                     newQuantity.isNotEmpty ? newQuantity : '1');
                 Navigator.of(dialogContext).pop();
-                _showSnackBar('Item updated successfully!', successColor);
+                _showSnackBar(
+                    'Item updated successfully!', colorScheme.secondary);
                 _editItemNameController.dispose();
                 _editItemQtyController.dispose();
               },
