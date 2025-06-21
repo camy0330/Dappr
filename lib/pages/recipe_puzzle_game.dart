@@ -120,7 +120,16 @@ class _RecipePuzzleGameState extends State<RecipePuzzleGame> {
           '${widget.useSteps ? "Steps" : "Ingredients"} Puzzle',
           style: const TextStyle(fontFamily: 'Montserrat', color: Colors.white), // AppBar title remains white
         ),
-        backgroundColor: Colors.deepOrange, // AppBar remains deepOrange
+        // REMOVE backgroundColor: Colors.deepOrange,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.deepOrange, Colors.orangeAccent], // Your desired gradient colors
+              begin: Alignment.topLeft, // Start of the gradient (adjust as needed)
+              end: Alignment.bottomRight, // End of the gradient (adjust as needed)
+            ),
+          ),
+        ),
         iconTheme: const IconThemeData(color: Colors.white), // AppBar icons remain white
         elevation: 4, // Add a subtle shadow to the app bar
       ),
