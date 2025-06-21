@@ -179,29 +179,33 @@ class RecipeDetailPage extends StatelessWidget {
                   ),
                   // The new puzzle game button
                   const SizedBox(height: 24),
-                  ElevatedButton.icon(
-                    icon: const Icon(Icons.extension),
-                    label: const Text('🧩 Play Puzzle Game'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.deepOrange,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                      textStyle: const TextStyle(fontFamily: 'Montserrat', fontSize: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => RecipePuzzleGame(
-                            recipe: recipe, // This uses your current recipe
-                            useSteps: true, // Change to false if you want ingredient puzzle
-                          ),
+                  // New button positioning
+                  Align( // Use Align to center the button horizontally
+                    alignment: Alignment.center,
+                    child: ElevatedButton.icon(
+                      icon: const Icon(Icons.extension),
+                      label: const Text('🧩 Play Puzzle Game'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.deepOrange,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        textStyle: const TextStyle(fontFamily: 'Montserrat', fontSize: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                      );
-                    },
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => RecipePuzzleGame(
+                              recipe: recipe, // This uses your current recipe
+                              useSteps: true, // Change to false if you want ingredient puzzle
+                            ),
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ],
               ),
