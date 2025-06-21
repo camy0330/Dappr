@@ -1,19 +1,10 @@
 // lib/pages/favourite_page.dart
 
-// Important: This import makes the FavoriteProvider class and its associated
-// enums (RecipeSortType, RecipeFilterType) accessible within this file.
 import 'package:dappr/providers/favorite_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'recipe_detail_page.dart'; // Import for navigating to recipe details.
-
-/// ===========================================================================
-/// HELPER DEFINITIONS FOR COMBINED SORT/FILTER MENU
-/// These classes and enums are specifically designed to enable a single
-/// dropdown menu button to handle both sorting and filtering options.
-/// They are defined locally within this file as their usage is confined here.
-/// ===========================================================================
+import 'recipe_detail_page.dart';
 
 /// Defines the category of action for a menu item: either a sorting action
 /// or a filtering action. This helps in distinguishing selection logic.
@@ -24,11 +15,10 @@ enum FavoriteMenuActionType { sort, filter }
 /// the actual enum value (e.g., RecipeSortType.titleAsc), and the
 /// display label for the menu item.
 class FavoriteMenuItem {
-  final FavoriteMenuActionType type; // Specifies if it's a sort or filter option.
-  final dynamic value; // Holds the specific RecipeSortType or RecipeFilterType enum value.
-  final String label; // The text string displayed in the menu.
+  final FavoriteMenuActionType type;
+  final dynamic value;
+  final String label;
 
-  /// Constructor for [FavoriteMenuItem].
   FavoriteMenuItem({
     required this.type,
     required this.value,
@@ -36,35 +26,30 @@ class FavoriteMenuItem {
   });
 }
 
-/// ===========================================================================
-/// FavouritePage Class
-/// This widget displays a grid of favorite recipes. It interacts with the
-/// [FavoriteProvider] to fetch the list of recipes and to allow users to
-/// sort, filter, and toggle favorite status. It uses the [Consumer] widget
-/// from the `provider` package to efficiently rebuild only when the
-/// [FavoriteProvider]'s state changes.
-/// ===========================================================================
 class FavouritePage extends StatelessWidget {
   const FavouritePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // [Consumer<FavoriteProvider>] listens for changes in [FavoriteProvider].
-    // When `notifyListeners()` is called in `FavoriteProvider`, this builder
-    // function will re-execute, updating the UI with the latest data.
     return Consumer<FavoriteProvider>(
       builder: (context, favoriteProvider, child) {
-        // Retrieve the list of favorite recipes, which is already
-        // filtered and sorted according to the provider's current state.
-        final favoriteRecipes = favoriteProvider.favoriteRecipes; 
-        
-        // Checks if there are any recipes marked as favorite at all,
-        // regardless of current filters. Used to determine initial empty state.
-        final bool hasAnyFavorites = favoriteProvider.hasRawFavorites; 
-        
-        // Checks if any sorting or filtering is currently active.
-        // Used to provide a specific message when the filtered list is empty.
-        final bool isFilteredOrSorted = favoriteProvider.currentSortType != RecipeSortType.none || favoriteProvider.currentFilterType != RecipeFilterType.none;
+        final favoriteRecipes = favoriteProvider.favoriteRecipes;
+        final bool hasAnyFavorites = favoriteProvider.hasRawFavorites;
+        final bool isFilteredOrSorted = favoriteProvider.currentSortType !=
+                RecipeSortType.none ||
+            favoriteProvider.currentFilterType != RecipeFilterType.none;
+
+        // --- Responsive Grid Size Calculation ---
+        // Define a target aspect ratio for your cards (width / height).
+        // A value of 0.65 means height is ~1.54 times the width, making it portrait.
+        // If you want more square-like cards, increase this value closer to 1.0.
+        // If you want even taller cards, decrease it.
+        const double targetAspectRatio = 0.65; // Your desired aspect ratio (width / height)
+
+        // Define the maximum width a card should take.
+        // This helps in preventing items from becoming too wide on large screens.
+        const double maxCardWidth = 250.0; // Keep your original max width
+
 
         return Scaffold(
           appBar: AppBar(
@@ -72,45 +57,43 @@ class FavouritePage extends StatelessWidget {
               'Favorite Recipes',
               style: TextStyle(fontFamily: 'Montserrat', color: Colors.white),
             ),
-            iconTheme: const IconThemeData(color: Colors.white), // Ensures icons are white
+            iconTheme:
+                const IconThemeData(color: Colors.white), // Ensures icons are white
             leading: IconButton(
               icon: const Icon(Icons.arrow_back), // Back button for navigation
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
-            // ADD flexibleSpace for the gradient
             flexibleSpace: Container(
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Colors.deepOrange, Colors.orangeAccent], // Your desired gradient colors
+                  colors: [
+                    Colors.deepOrange,
+                    Colors.orangeAccent
+                  ], // Your desired gradient colors
                   begin: Alignment.topLeft, // Start of the gradient (adjust as needed)
                   end: Alignment.bottomRight, // End of the gradient (adjust as needed)
                 ),
               ),
             ),
-            // Actions list for the AppBar. Contains only one button for combined functionality.
             actions: [
-              // [PopupMenuButton] provides a dropdown menu for sorting and filtering options.
               PopupMenuButton<FavoriteMenuItem>(
-                icon: const Icon(Icons.filter_list, color: Colors.white), // A single filter icon representing both functions.
+                icon: const Icon(Icons.filter_list,
+                    color:
+                        Colors.white), // A single filter icon representing both functions.
                 onSelected: (FavoriteMenuItem selectedItem) {
-                  // This callback is triggered when a menu item is selected.
-                  // It determines whether the selected item is a sort or filter action
-                  // and calls the appropriate method on the FavoriteProvider.
                   if (selectedItem.type == FavoriteMenuActionType.sort) {
-                    // Cast `selectedItem.value` to `RecipeSortType` as it's a sort action.
-                    favoriteProvider.setSortType(selectedItem.value as RecipeSortType);
-                  } else if (selectedItem.type == FavoriteMenuActionType.filter) {
-                    // Cast `selectedItem.value` to `RecipeFilterType` as it's a filter action.
-                    favoriteProvider.setFilterType(selectedItem.value as RecipeFilterType);
+                    favoriteProvider
+                        .setSortType(selectedItem.value as RecipeSortType);
+                  } else if (selectedItem.type ==
+                      FavoriteMenuActionType.filter) {
+                    favoriteProvider
+                        .setFilterType(selectedItem.value as RecipeFilterType);
                   }
                 },
-                // [itemBuilder] constructs the list of menu items displayed in the dropdown.
-                itemBuilder: (BuildContext context) => <PopupMenuEntry<FavoriteMenuItem>>[
-                  // --- SORTING OPTIONS ---
-                  // Each PopupMenuItem is an instance of [FavoriteMenuItem]
-                  // categorizing it as a sort action and providing its specific sort type.
+                itemBuilder: (BuildContext context) =>
+                    <PopupMenuEntry<FavoriteMenuItem>>[
                   PopupMenuItem<FavoriteMenuItem>(
                     value: FavoriteMenuItem(
                       type: FavoriteMenuActionType.sort,
@@ -167,12 +150,7 @@ class FavouritePage extends StatelessWidget {
                     ),
                     child: const Text('Cook Time (Longest)'),
                   ),
-
-                  const PopupMenuDivider(), // A visual separator to distinguish sorting from filtering options.
-
-                  // --- FILTERING OPTIONS ---
-                  // Each PopupMenuItem here is an instance of [FavoriteMenuItem]
-                  // categorizing it as a filter action and providing its specific filter type.
+                  const PopupMenuDivider(),
                   PopupMenuItem<FavoriteMenuItem>(
                     value: FavoriteMenuItem(
                       type: FavoriteMenuActionType.filter,
@@ -197,48 +175,51 @@ class FavouritePage extends StatelessWidget {
                     ),
                     child: const Text('Prep Time < 1 Hour'),
                   ),
-                  // Add more filter menu items here if new filter types are defined in `RecipeFilterType`.
                 ],
               ),
             ],
           ),
-          // Conditional body content based on the availability of favorite recipes.
-          body: hasAnyFavorites 
-              ? (favoriteRecipes.isEmpty // If there are favorites, but the filtered/sorted list is empty.
+          body: hasAnyFavorites
+              ? (favoriteRecipes.isEmpty
                   ? Center(
                       child: Padding(
                         padding: const EdgeInsets.all(20.0),
                         child: Text(
-                          isFilteredOrSorted // Message tailored if filters/sorts are active.
+                          isFilteredOrSorted
                               ? "No recipes match your current filter and sort criteria. Try adjusting them!"
-                              : "This should not happen: No favorite recipes found with no active filters/sort.", 
+                              : "This should not happen: No favorite recipes found with no active filters/sort.",
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 16,
-                            color: Theme.of(context).textTheme.bodyMedium?.color ?? Colors.grey,
+                            color: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.color ??
+                                Colors.grey,
                             fontFamily: 'Montserrat',
                           ),
                         ),
                       ),
                     )
-                  : GridView.builder( // Displays the favorite recipes in a grid layout.
+                  : GridView.builder(
                       padding: const EdgeInsets.all(16.0),
-                      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                        maxCrossAxisExtent: 250.0, // Maximum width of each grid item.
-                        crossAxisSpacing: 16.0,     // Horizontal spacing between items.
-                        mainAxisSpacing: 16.0,      // Vertical spacing between items.
-                        childAspectRatio: 0.65,     // Aspect ratio of each item (width / height).
+                      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                        maxCrossAxisExtent: maxCardWidth, // Max width of each grid item
+                        crossAxisSpacing: 16.0, // Horizontal spacing
+                        mainAxisSpacing: 16.0, // Vertical spacing
+                        childAspectRatio:
+                            targetAspectRatio, // Use the fixed target aspect ratio
                       ),
                       itemCount: favoriteRecipes.length,
                       itemBuilder: (context, index) {
                         final recipe = favoriteRecipes[index];
                         return GestureDetector(
                           onTap: () {
-                            // Navigates to the [RecipeDetailPage] when a recipe card is tapped.
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => RecipeDetailPage(recipe: recipe),
+                                builder: (context) =>
+                                    RecipeDetailPage(recipe: recipe),
                               ),
                             );
                           },
@@ -254,27 +235,33 @@ class FavouritePage extends StatelessWidget {
                                 Expanded(
                                   flex: 3,
                                   child: ClipRRect(
-                                    borderRadius: const BorderRadius.vertical(top: Radius.circular(15.0)),
+                                    borderRadius: const BorderRadius.vertical(
+                                        top: Radius.circular(15.0)),
                                     child: Hero(
-                                      tag: 'recipe-image-${recipe.id}', // Unique tag for Hero animation.
+                                      tag: 'recipe-image-${recipe.id}',
                                       child: recipe.imageUrl.isNotEmpty
                                           ? Image.network(
                                               recipe.imageUrl,
                                               fit: BoxFit.cover,
-                                              // Error builder for network images.
-                                              errorBuilder: (context, error, stackTrace) =>
-                                                  Container( 
-                                                    color: Theme.of(context).hoverColor,
-                                                    child: Icon(
-                                                      Icons.broken_image,
-                                                      size: 60,
-                                                      color: Theme.of(context).hintColor,
-                                                    ),
-                                                  ),
+                                              errorBuilder:
+                                                  (context, error, stackTrace) =>
+                                                      Container(
+                                                color: Theme.of(context)
+                                                    .hoverColor,
+                                                child: Icon(
+                                                  Icons.broken_image,
+                                                  size: 60,
+                                                  color: Theme.of(context)
+                                                      .hintColor,
+                                                ),
+                                              ),
                                             )
-                                          : Container( // Placeholder if image URL is empty.
-                                              color: Theme.of(context).hoverColor,
-                                              child: const Icon(Icons.fastfood, size: 60, color: Colors.deepOrange),
+                                          : Container(
+                                              color: Theme.of(context)
+                                                  .hoverColor,
+                                              child: const Icon(Icons.fastfood,
+                                                  size: 60,
+                                                  color: Colors.deepOrange),
                                             ),
                                     ),
                                   ),
@@ -284,14 +271,18 @@ class FavouritePage extends StatelessWidget {
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           recipe.title,
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 16,
-                                            color: Theme.of(context).textTheme.bodyLarge?.color,
+                                            color: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge
+                                                ?.color,
                                             fontFamily: 'Montserrat',
                                           ),
                                           maxLines: 2,
@@ -302,26 +293,33 @@ class FavouritePage extends StatelessWidget {
                                           'Prep: ${recipe.prepTime} | Cook: ${recipe.cookTime}',
                                           style: TextStyle(
                                             fontSize: 12,
-                                            color: Theme.of(context).textTheme.bodySmall?.color,
+                                            color: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall
+                                                ?.color,
                                             fontFamily: 'Montserrat',
                                           ),
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                         ),
-                                        const Spacer(), // Pushes the IconButton to the bottom-right.
+                                        const Spacer(),
                                         Align(
                                           alignment: Alignment.bottomRight,
                                           child: IconButton(
                                             icon: Icon(
-                                              favoriteProvider.isFavorite(recipe.id) // Checks current favorite status.
+                                              favoriteProvider
+                                                      .isFavorite(recipe.id)
                                                   ? Icons.favorite
                                                   : Icons.favorite_border,
-                                              color: favoriteProvider.isFavorite(recipe.id)
+                                              color: favoriteProvider
+                                                      .isFavorite(recipe.id)
                                                   ? Colors.red
-                                                  : Theme.of(context).hintColor,
+                                                  : Theme.of(context)
+                                                      .hintColor,
                                             ),
                                             onPressed: () {
-                                              favoriteProvider.toggleFavorite(recipe.id); // Toggles favorite status on tap.
+                                              favoriteProvider
+                                                  .toggleFavorite(recipe.id);
                                             },
                                           ),
                                         ),
@@ -335,7 +333,7 @@ class FavouritePage extends StatelessWidget {
                         );
                       },
                     ))
-              : Center( // Displays this message if no recipes have ever been favorited.
+              : Center(
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),
                     child: Text(
@@ -343,7 +341,8 @@ class FavouritePage extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 16,
-                        color: Theme.of(context).textTheme.bodyMedium?.color ?? Colors.grey,
+                        color: Theme.of(context).textTheme.bodyMedium?.color ??
+                            Colors.grey,
                         fontFamily: 'Montserrat',
                       ),
                     ),
