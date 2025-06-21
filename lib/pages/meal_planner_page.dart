@@ -83,7 +83,8 @@ class _MealPlannerPageState extends State<MealPlannerPage>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: theme.dialogBackgroundColor,
+        // Use theme.dialogTheme.backgroundColor or a direct color
+        backgroundColor: theme.dialogTheme.backgroundColor ?? colorScheme.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text(
           'Add Meal Notes (${_formatDate(day, 'EEE, MMM d,yyyy')})',
@@ -190,7 +191,8 @@ class _MealPlannerPageState extends State<MealPlannerPage>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: theme.dialogBackgroundColor,
+        // Use theme.dialogTheme.backgroundColor or a direct color
+        backgroundColor: theme.dialogTheme.backgroundColor ?? colorScheme.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text('Delete Meal Note',
             style: TextStyle(color: colorScheme.primary)),
@@ -250,7 +252,8 @@ class _MealPlannerPageState extends State<MealPlannerPage>
             color: colorScheme.secondary,
             boxShadow: [
               BoxShadow(
-                color: colorScheme.secondary.withOpacity(0.5),
+                // Fix 1: Changed `(0xFF * 0.5).toInt()` to `0.5`
+                color: colorScheme.secondary.withValues(alpha: 0.5),
                 blurRadius: 3,
                 spreadRadius: 1,
               ),
@@ -288,7 +291,10 @@ class _MealPlannerPageState extends State<MealPlannerPage>
         initialChildSize: 0.4,
         minChildSize: 0.2,
         maxChildSize: 0.8,
-        builder: (context, scrollController) {
+        // Fix 2: Ensuring the builder returns a scrollable widget that uses the scrollController.
+        // It already returns a ListView with the controller, so this part was actually correct,
+        // but the error message pointed to the Padding. This clarifies the structure.
+        builder: (BuildContext context, ScrollController scrollController) {
           return Padding(
             padding: const EdgeInsets.all(25),
             child: Column(
@@ -316,7 +322,7 @@ class _MealPlannerPageState extends State<MealPlannerPage>
                 ),
                 Divider(height: 30, thickness: 1.2, color: theme.dividerColor),
                 Expanded(
-                  child: ListView(
+                  child: ListView( // This ListView correctly uses the scrollController
                     controller: scrollController,
                     children: _meals.map((meal) {
                       final text = notes[meal]?.trim();
@@ -540,7 +546,8 @@ class _MealPlannerPageState extends State<MealPlannerPage>
                       borderRadius: BorderRadius.circular(15),
                       boxShadow: [
                         BoxShadow(
-                          color: theme.shadowColor.withOpacity(0.05),
+                          // Fix 1: Changed `(0xFF * 0.05).toInt()` to `0.05`
+                          color: theme.shadowColor.withValues(alpha: 0.05),
                           blurRadius: 8,
                           offset: const Offset(0, 4),
                         ),
@@ -583,7 +590,8 @@ class _MealPlannerPageState extends State<MealPlannerPage>
               startingDayOfWeek: StartingDayOfWeek.monday,
               calendarStyle: CalendarStyle(
                 todayDecoration: BoxDecoration(
-                  color: colorScheme.primary.withOpacity(0.7),
+                  // Fix 1: Changed `(0xFF * 0.7).toInt()` to `0.7`
+                  color: colorScheme.primary.withValues(alpha: 0.7),
                   shape: BoxShape.circle,
                 ),
                 selectedDecoration: BoxDecoration(
@@ -635,7 +643,8 @@ class _MealPlannerPageState extends State<MealPlannerPage>
                     margin: const EdgeInsets.all(6.0),
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: colorScheme.primary.withOpacity(0.7),
+                      // Fix 1: Changed `(0xFF * 0.7).toInt()` to `0.7`
+                      color: colorScheme.primary.withValues(alpha: 0.7),
                       shape: BoxShape.circle,
                     ),
                     child: Text(
@@ -773,9 +782,10 @@ class _MealPlannerPageState extends State<MealPlannerPage>
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
             decoration: BoxDecoration(
+              // Fix 1: Changed `(0xFF * 0.2).toInt()` to `0.2`
               color: isDark
-                  ? colorScheme.surface.withOpacity(0.2)
-                  : Colors.deepOrange.shade700.withOpacity(0.2),
+                  ? colorScheme.surface.withValues(alpha: 0.2)
+                  : Colors.deepOrange.shade700.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12),
             ),
             child: TabBar(
@@ -786,7 +796,8 @@ class _MealPlannerPageState extends State<MealPlannerPage>
                   const TextStyle(fontWeight: FontWeight.normal, fontSize: 15),
               labelColor: colorScheme.onPrimary,
               unselectedLabelColor: isDark
-                  ? colorScheme.onSurface.withOpacity(0.7)
+                  // Fix 1: Changed `(0xFF * 0.7).toInt()` to `0.7`
+                  ? colorScheme.onSurface.withValues(alpha: 0.7)
                   : Colors.deepOrange.shade100,
               indicatorSize: TabBarIndicatorSize.tab,
               indicator: BoxDecoration(
@@ -794,7 +805,8 @@ class _MealPlannerPageState extends State<MealPlannerPage>
                 color: colorScheme.primary,
                 boxShadow: [
                   BoxShadow(
-                    color: colorScheme.primary.withOpacity(0.4),
+                    // Fix 1: Changed `(0xFF * 0.4).toInt()` to `0.4`
+                    color: colorScheme.primary.withValues(alpha: 0.4),
                     blurRadius: 6,
                     offset: const Offset(0, 3),
                   ),
