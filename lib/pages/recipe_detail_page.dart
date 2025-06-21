@@ -154,6 +154,16 @@ class RecipeDetailPage extends StatelessWidget {
                       color: Colors.deepOrange, // Sets text color.
                     ),
                   ),
+                  Text(
+                    'Submitted by: ${recipe.submittedBy}',
+                    style: const TextStyle(
+                      fontSize: 20,
+                      color: Colors.grey,
+                      fontFamily: 'Montserrat',
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
                   const SizedBox(height: 8), // Adds vertical space.
                   // Displays the recipe description.
                   Text(
