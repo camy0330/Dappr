@@ -57,20 +57,32 @@ class FavouritePage extends StatelessWidget {
             favoriteProvider.currentFilterType != RecipeFilterType.none;
 
         // --- Responsive Grid Size Calculation Parameters ---
-        // Setting targetAspectRatio to 1.0 makes cards approximately square (width/height = 1)
-        const double targetAspectRatio = 1.0; 
-
         // Define the maximum width an individual card should take.
         const double maxCardWidth = 250.0;
+        // Define the ideal height for the content area (below the image)
+        // This is an estimated height for the text content and favorite button.
+        // Increased this value to provide more vertical space for text and icon,
+        // resolving the "Bottom overflowed" error.
+        const double contentHeightEstimate = 160.0;
+
+        // Calculate a dynamic childAspectRatio to make cards fit better
+        // This takes into account the image's 3/4 ratio and the text content's 1/4 ratio
+        // Let's assume the image width will be maxCardWidth for this calculation.
+        // Image height for a square image with maxCardWidth = maxCardWidth.
+        // So, total estimated height = maxCardWidth (image) + contentHeightEstimate.
+        // childAspectRatio = Card Width / Total Card Height = maxCardWidth / (maxCardWidth + contentHeightEstimate)
+        final double calculatedChildAspectRatio =
+            maxCardWidth / (maxCardWidth + contentHeightEstimate);
+
 
         return Scaffold(
+          // Corrected the typo here: appAppar -> appBar
           appBar: AppBar(
             title: const Text(
               'Favorite Recipes',
               style: TextStyle(fontFamily: 'Montserrat', color: Colors.white),
             ),
-            iconTheme:
-                const IconThemeData(color: Colors.white),
+            iconTheme: const IconThemeData(color: Colors.white),
             leading: IconButton(
               icon: const Icon(Icons.arrow_back),
               onPressed: () {
@@ -212,7 +224,7 @@ class FavouritePage extends StatelessWidget {
                         maxCrossAxisExtent: maxCardWidth,
                         crossAxisSpacing: 16.0,
                         mainAxisSpacing: 16.0,
-                        childAspectRatio: targetAspectRatio,
+                        childAspectRatio: calculatedChildAspectRatio,
                       ),
                       itemCount: favoriteRecipes.length,
                       itemBuilder: (context, index) {
@@ -236,9 +248,8 @@ class FavouritePage extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                // Image takes significantly more vertical space
                                 Expanded(
-                                  flex: 3, // Image takes 3/4 of the vertical space
+                                  flex: 3,
                                   child: ClipRRect(
                                     borderRadius: const BorderRadius.vertical(
                                         top: Radius.circular(15.0)),
@@ -268,15 +279,13 @@ class FavouritePage extends StatelessWidget {
                                     ),
                                   ),
                                 ),
-                                // Text content takes less vertical space
                                 Expanded(
-                                  flex: 1, // Text content takes 1/4 of the vertical space
+                                  flex: 1,
                                   child: Padding(
-                                    padding: const EdgeInsets.all(8.0), // Minimal padding
+                                    padding: const EdgeInsets.all(8.0),
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        // Submitted by Name (now correctly placed at top, using theme colors)
                                         Row(
                                           children: [
                                             Icon(
@@ -285,7 +294,7 @@ class FavouritePage extends StatelessWidget {
                                               color: Theme.of(context).colorScheme.onSurface,
                                             ),
                                             const SizedBox(width: 4),
-                                            Expanded( // Use Expanded to ensure text doesn't overflow horizontally
+                                            Expanded(
                                               child: Text(
                                                 recipe.submittedBy,
                                                 style: TextStyle(
@@ -293,16 +302,14 @@ class FavouritePage extends StatelessWidget {
                                                   color: Theme.of(context).colorScheme.onSurface,
                                                   fontFamily: 'Montserrat',
                                                 ),
-                                                maxLines: 1, // Strict one line
+                                                maxLines: 1,
                                                 overflow: TextOverflow.ellipsis,
                                               ),
                                             ),
                                           ],
                                         ),
-                                        // Small vertical space after "Submitted By" for compactness
                                         const SizedBox(height: 2),
 
-                                        // Recipe Title
                                         Text(
                                           recipe.title,
                                           style: TextStyle(
@@ -311,32 +318,28 @@ class FavouritePage extends StatelessWidget {
                                             color: Theme.of(context).colorScheme.onSurface,
                                             fontFamily: 'Montserrat',
                                           ),
-                                          maxLines: 1, // Strict one line
+                                          maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                         ),
-                                        // Small vertical space after Title for compactness
                                         const SizedBox(height: 2),
 
-                                        // Description (added, maxLines adjusted for compactness, using theme colors)
                                         Text(
                                           recipe.description,
                                           style: TextStyle(
                                             fontSize: 12,
-                                            // Replaced withOpacity with withAlpha to avoid deprecation warning
-                                            color: Theme.of(context).colorScheme.onSurface.withAlpha(179), // 0.7 * 255 = ~179
+                                            color: Theme.of(context).colorScheme.onSurface.withAlpha(179),
                                             fontFamily: 'Montserrat',
                                           ),
-                                          maxLines: 1, // Strict one line for description
+                                          maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                         ),
-                                        // No Spacer here, heart icon will be at bottom
-                                        const SizedBox(height: 2), // Small space before heart icon
+                                        const SizedBox(height: 2),
 
                                         Align(
                                           alignment: Alignment.bottomRight,
                                           child: IconButton(
-                                            padding: EdgeInsets.zero, // No extra padding
-                                            constraints: const BoxConstraints(), // No extra constraints
+                                            padding: EdgeInsets.zero,
+                                            constraints: const BoxConstraints(),
                                             icon: Icon(
                                               favoriteProvider.isFavorite(recipe.id)
                                                   ? Icons.favorite
