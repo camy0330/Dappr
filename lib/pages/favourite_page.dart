@@ -4,29 +4,23 @@ import 'package:dappr/providers/favorite_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'recipe_detail_page.dart'; // Import for navigating to recipe details.
+import 'recipe_detail_page.dart'; // Ensure this path is correct for your project
+
+// You might need to import your recipe_data.dart if you are using static
+// asset paths that are defined there. However, the Image.network/asset
+// fallback should cover most cases.
 
 /// ===========================================================================
-/// HELPER DEFINITIONS FOR COMBINED SORT/FILTER MENU
-/// These classes and enums are specifically designed to enable a single
-/// dropdown menu button to handle both sorting and filtering options.
-/// Their usage is confined to this file.
+/// HELPER DEFINITIONS FOR COMBINED SORT/FILTER MENU (from previous response)
 /// ===========================================================================
 
-/// Defines the category of action for a menu item: either a sorting action
-/// or a filtering action. This helps in distinguishing selection logic.
 enum FavoriteMenuActionType { sort, filter }
 
-/// A custom data structure to represent a single item in the combined
-/// sort/filter dropdown menu. Each item carries its type (sort/filter),
-/// the actual enum value (e.g., RecipeSortType.titleAsc), and the
-/// display label for the menu item.
 class FavoriteMenuItem {
-  final FavoriteMenuActionType type; // Specifies if it's a sort or filter option.
-  final dynamic value; // Holds the specific RecipeSortType or RecipeFilterType enum value.
-  final String label; // The text string displayed in the menu.
+  final FavoriteMenuActionType type;
+  final dynamic value;
+  final String label;
 
-  /// Constructor for [FavoriteMenuItem].
   FavoriteMenuItem({
     required this.type,
     required this.value,
@@ -36,18 +30,14 @@ class FavoriteMenuItem {
 
 /// ===========================================================================
 /// FavouritePage Class
-/// This widget displays a grid of favorite recipes. It interacts with the
-/// [FavoriteProvider] to fetch the list of recipes and to allow users to
-/// sort, filter, and toggle favorite status. It uses the [Consumer] widget
-/// from the `provider` package to efficiently rebuild only when the
-/// [FavoriteProvider]'s state changes.
+/// This widget displays a grid of favorite recipes, mirroring the list page's
+/// visual structure and behavior.
 /// ===========================================================================
 class FavouritePage extends StatelessWidget {
   const FavouritePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // [Consumer<FavoriteProvider>] listens for changes in [FavoriteProvider].
     return Consumer<FavoriteProvider>(
       builder: (context, favoriteProvider, child) {
         final favoriteRecipes = favoriteProvider.favoriteRecipes;
@@ -56,27 +46,13 @@ class FavouritePage extends StatelessWidget {
                 RecipeSortType.none ||
             favoriteProvider.currentFilterType != RecipeFilterType.none;
 
-        // --- Responsive Grid Size Calculation Parameters ---
-        // Define the maximum width an individual card should take.
-        const double maxCardWidth = 250.0;
-        // Define the ideal height for the content area (below the image)
-        // This is an estimated height for the text content and favorite button.
-        // Increased this value to provide more vertical space for text and icon,
-        // resolving the "Bottom overflowed" error.
-        const double contentHeightEstimate = 160.0;
-
-        // Calculate a dynamic childAspectRatio to make cards fit better
-        // This takes into account the image's 3/4 ratio and the text content's 1/4 ratio
-        // Let's assume the image width will be maxCardWidth for this calculation.
-        // Image height for a square image with maxCardWidth = maxCardWidth.
-        // So, total estimated height = maxCardWidth (image) + contentHeightEstimate.
-        // childAspectRatio = Card Width / Total Card Height = maxCardWidth / (maxCardWidth + contentHeightEstimate)
-        final double calculatedChildAspectRatio =
-            maxCardWidth / (maxCardWidth + contentHeightEstimate);
-
+        // Determine text color based on theme brightness, exactly like your list page
+        final brightness = Theme.of(context).brightness;
+        final Color textColor = brightness == Brightness.dark
+            ? Colors.white70
+            : Colors.black87;
 
         return Scaffold(
-          // Corrected the typo here: appAppar -> appBar
           appBar: AppBar(
             title: const Text(
               'Favorite Recipes',
@@ -92,10 +68,7 @@ class FavouritePage extends StatelessWidget {
             flexibleSpace: Container(
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [
-                    Colors.deepOrange,
-                    Colors.orangeAccent
-                  ],
+                  colors: [Colors.deepOrange, Colors.orangeAccent],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -202,168 +175,177 @@ class FavouritePage extends StatelessWidget {
           ),
           body: hasAnyFavorites
               ? (favoriteRecipes.isEmpty
-                  ? Center(
-                      child: Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Text(
-                          isFilteredOrSorted
-                              ? "No recipes match your current filter and sort criteria. Try adjusting them!"
-                              : "This should not happen: No favorite recipes found with no active filters/sort.",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Theme.of(context).textTheme.bodyMedium?.color ?? Colors.grey,
-                            fontFamily: 'Montserrat',
+                      ? Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Text(
+                              isFilteredOrSorted
+                                  ? "No recipes match your current filter and sort criteria. Try adjusting them!"
+                                  : "You haven't added any recipes to your favorites yet. Tap the heart icon on a recipe to add it here!",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Theme.of(context).textTheme.bodyMedium?.color ?? Colors.grey,
+                                fontFamily: 'Montserrat',
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    )
-                  : GridView.builder(
-                      padding: const EdgeInsets.all(16.0),
-                      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                        maxCrossAxisExtent: maxCardWidth,
-                        crossAxisSpacing: 16.0,
-                        mainAxisSpacing: 16.0,
-                        childAspectRatio: calculatedChildAspectRatio,
-                      ),
-                      itemCount: favoriteRecipes.length,
-                      itemBuilder: (context, index) {
-                        final recipe = favoriteRecipes[index];
-                        return GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    RecipeDetailPage(recipe: recipe),
+                        )
+                      : GridView.builder(
+                          padding: const EdgeInsets.all(8.0), // Match list page
+                          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: MediaQuery.of(context).size.width < 600 ? 2 : 3, // Match list page
+                            crossAxisSpacing: 10.0, // Match list page
+                            mainAxisSpacing: 10.0, // Match list page
+                            childAspectRatio: 0.8, // Match list page
+                          ),
+                          itemCount: favoriteRecipes.length,
+                          itemBuilder: (context, index) {
+                            final recipe = favoriteRecipes[index];
+                            final bool isFavorite = favoriteProvider.isFavorite(recipe.id);
+
+                            return Card(
+                              elevation: 4, // Match list page
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15)), // Match list page
+                              clipBehavior: Clip.antiAlias, // Match list page
+                              child: InkWell( // Match list page
+                                onTap: () {
+                                  try {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            RecipeDetailPage(recipe: recipe),
+                                      ),
+                                    );
+                                  } catch (e) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content: Text('Unable to open recipe.')),
+                                    );
+                                  }
+                                },
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  children: [
+                                    Expanded( // Match list page
+                                      child: ClipRRect(
+                                        borderRadius: const BorderRadius.vertical(
+                                            top: Radius.circular(15)), // Match list page
+                                        child: Image.network( // Match list page
+                                          recipe.imageUrl,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (context, error, stackTrace) {
+                                            // Fallback for asset images, exactly like your list page
+                                            return Image.asset(
+                                              recipe.imageUrl,
+                                              fit: BoxFit.cover,
+                                              errorBuilder: (context, error, stackTrace) {
+                                                return Container(
+                                                  color: Colors.grey[300],
+                                                  child: const Icon(Icons.broken_image,
+                                                      color: Colors.grey, size: 50),
+                                                );
+                                              },
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 10), // Match list page
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8, vertical: 6), // Match list page
+                                      child: Row(
+                                        children: [
+                                          CircleAvatar( // Match list page
+                                            radius: 16,
+                                            backgroundColor: Colors.grey.shade300,
+                                            child: Icon(Icons.person,
+                                                color: Colors.grey.shade700, size: 20), // Match list page
+                                          ),
+                                          const SizedBox(width: 8), // Match list page
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  recipe.submittedBy,
+                                                  style: const TextStyle(
+                                                    fontSize: 13, // Match list page
+                                                    fontWeight: FontWeight.w600, // Match list page
+                                                    fontFamily: 'Montserrat', // Match list page
+                                                  ),
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
+                                                Text(
+                                                  recipe.title,
+                                                  style: TextStyle(
+                                                    fontSize: 15, // Match list page
+                                                    fontWeight: FontWeight.bold, // Match list page
+                                                    fontFamily: 'Montserrat', // Match list page
+                                                    color: textColor, // Use theme-aware color
+                                                  ),
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.symmetric(horizontal: 8), // Match list page
+                                      child: Text(
+                                        recipe.description,
+                                        style: TextStyle(
+                                          fontSize: 12, // Match list page
+                                          color: brightness == Brightness.dark
+                                              ? Colors.grey[400]
+                                              : Colors.grey, // Match list page
+                                          fontFamily: 'Montserrat', // Match list page
+                                        ),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    Align( // Match list page
+                                      alignment: Alignment.bottomRight,
+                                      child: IconButton(
+                                        icon: Icon(
+                                          isFavorite
+                                              ? Icons.favorite
+                                              : Icons.favorite_border,
+                                          color:
+                                              isFavorite ? Colors.red : Colors.grey, // Match list page
+                                          size: 28, // Match list page
+                                        ),
+                                        onPressed: () {
+                                          try {
+                                            favoriteProvider
+                                                .toggleFavorite(recipe.id);
+                                          } catch (e) {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(
+                                                  const SnackBar(
+                                                      content: Text(
+                                                          'Failed to update favorite.')),
+                                                );
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             );
                           },
-                          child: Card(
-                            color: Theme.of(context).colorScheme.surface,
-                            elevation: 5,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15.0),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Expanded(
-                                  flex: 3,
-                                  child: ClipRRect(
-                                    borderRadius: const BorderRadius.vertical(
-                                        top: Radius.circular(15.0)),
-                                    child: Hero(
-                                      tag: 'recipe-image-${recipe.id}',
-                                      child: recipe.imageUrl.isNotEmpty
-                                          ? Image.network(
-                                              recipe.imageUrl,
-                                              fit: BoxFit.cover,
-                                              errorBuilder:
-                                                  (context, error, stackTrace) =>
-                                                      Container(
-                                                color: Theme.of(context).hoverColor,
-                                                child: Icon(
-                                                  Icons.broken_image,
-                                                  size: 60,
-                                                  color: Theme.of(context).hintColor,
-                                                ),
-                                              ),
-                                            )
-                                          : Container(
-                                              color: Theme.of(context).hoverColor,
-                                              child: const Icon(Icons.fastfood,
-                                                  size: 60,
-                                                  color: Colors.deepOrange),
-                                            ),
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 1,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Icon(
-                                              Icons.person,
-                                              size: 16,
-                                              color: Theme.of(context).colorScheme.onSurface,
-                                            ),
-                                            const SizedBox(width: 4),
-                                            Expanded(
-                                              child: Text(
-                                                recipe.submittedBy,
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  color: Theme.of(context).colorScheme.onSurface,
-                                                  fontFamily: 'Montserrat',
-                                                ),
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(height: 2),
-
-                                        Text(
-                                          recipe.title,
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 18,
-                                            color: Theme.of(context).colorScheme.onSurface,
-                                            fontFamily: 'Montserrat',
-                                          ),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                        const SizedBox(height: 2),
-
-                                        Text(
-                                          recipe.description,
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            color: Theme.of(context).colorScheme.onSurface.withAlpha(179),
-                                            fontFamily: 'Montserrat',
-                                          ),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                        const SizedBox(height: 2),
-
-                                        Align(
-                                          alignment: Alignment.bottomRight,
-                                          child: IconButton(
-                                            padding: EdgeInsets.zero,
-                                            constraints: const BoxConstraints(),
-                                            icon: Icon(
-                                              favoriteProvider.isFavorite(recipe.id)
-                                                  ? Icons.favorite
-                                                  : Icons.favorite_border,
-                                              color: favoriteProvider.isFavorite(recipe.id)
-                                                  ? Colors.red
-                                                  : Theme.of(context).colorScheme.onSurface,
-                                              size: 24,
-                                            ),
-                                            onPressed: () {
-                                              favoriteProvider.toggleFavorite(recipe.id);
-                                            },
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ))
+                        ))
               : Center(
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),
