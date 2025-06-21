@@ -4,7 +4,14 @@ import 'package:dappr/providers/favorite_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'recipe_detail_page.dart';
+import 'recipe_detail_page.dart'; // Import for navigating to recipe details.
+
+/// ===========================================================================
+/// HELPER DEFINITIONS FOR COMBINED SORT/FILTER MENU
+/// These classes and enums are specifically designed to enable a single
+/// dropdown menu button to handle both sorting and filtering options.
+/// Their usage is confined to this file.
+/// ===========================================================================
 
 /// Defines the category of action for a menu item: either a sorting action
 /// or a filtering action. This helps in distinguishing selection logic.
@@ -15,10 +22,11 @@ enum FavoriteMenuActionType { sort, filter }
 /// the actual enum value (e.g., RecipeSortType.titleAsc), and the
 /// display label for the menu item.
 class FavoriteMenuItem {
-  final FavoriteMenuActionType type;
-  final dynamic value;
-  final String label;
+  final FavoriteMenuActionType type; // Specifies if it's a sort or filter option.
+  final dynamic value; // Holds the specific RecipeSortType or RecipeFilterType enum value.
+  final String label; // The text string displayed in the menu.
 
+  /// Constructor for [FavoriteMenuItem].
   FavoriteMenuItem({
     required this.type,
     required this.value,
@@ -26,11 +34,20 @@ class FavoriteMenuItem {
   });
 }
 
+/// ===========================================================================
+/// FavouritePage Class
+/// This widget displays a grid of favorite recipes. It interacts with the
+/// [FavoriteProvider] to fetch the list of recipes and to allow users to
+/// sort, filter, and toggle favorite status. It uses the [Consumer] widget
+/// from the `provider` package to efficiently rebuild only when the
+/// [FavoriteProvider]'s state changes.
+/// ===========================================================================
 class FavouritePage extends StatelessWidget {
   const FavouritePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // [Consumer<FavoriteProvider>] listens for changes in [FavoriteProvider].
     return Consumer<FavoriteProvider>(
       builder: (context, favoriteProvider, child) {
         final favoriteRecipes = favoriteProvider.favoriteRecipes;
@@ -39,17 +56,12 @@ class FavouritePage extends StatelessWidget {
                 RecipeSortType.none ||
             favoriteProvider.currentFilterType != RecipeFilterType.none;
 
-        // --- Responsive Grid Size Calculation ---
-        // Define a target aspect ratio for your cards (width / height).
-        // A value of 0.65 means height is ~1.54 times the width, making it portrait.
-        // If you want more square-like cards, increase this value closer to 1.0.
-        // If you want even taller cards, decrease it.
-        const double targetAspectRatio = 0.65; // Your desired aspect ratio (width / height)
+        // --- Responsive Grid Size Calculation Parameters ---
+        // Setting targetAspectRatio to 1.0 makes cards approximately square (width/height = 1)
+        const double targetAspectRatio = 1.0; 
 
-        // Define the maximum width a card should take.
-        // This helps in preventing items from becoming too wide on large screens.
-        const double maxCardWidth = 250.0; // Keep your original max width
-
+        // Define the maximum width an individual card should take.
+        const double maxCardWidth = 250.0;
 
         return Scaffold(
           appBar: AppBar(
@@ -58,9 +70,9 @@ class FavouritePage extends StatelessWidget {
               style: TextStyle(fontFamily: 'Montserrat', color: Colors.white),
             ),
             iconTheme:
-                const IconThemeData(color: Colors.white), // Ensures icons are white
+                const IconThemeData(color: Colors.white),
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back), // Back button for navigation
+              icon: const Icon(Icons.arrow_back),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -71,23 +83,20 @@ class FavouritePage extends StatelessWidget {
                   colors: [
                     Colors.deepOrange,
                     Colors.orangeAccent
-                  ], // Your desired gradient colors
-                  begin: Alignment.topLeft, // Start of the gradient (adjust as needed)
-                  end: Alignment.bottomRight, // End of the gradient (adjust as needed)
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
               ),
             ),
             actions: [
               PopupMenuButton<FavoriteMenuItem>(
-                icon: const Icon(Icons.filter_list,
-                    color:
-                        Colors.white), // A single filter icon representing both functions.
+                icon: const Icon(Icons.filter_list, color: Colors.white),
                 onSelected: (FavoriteMenuItem selectedItem) {
                   if (selectedItem.type == FavoriteMenuActionType.sort) {
                     favoriteProvider
                         .setSortType(selectedItem.value as RecipeSortType);
-                  } else if (selectedItem.type ==
-                      FavoriteMenuActionType.filter) {
+                  } else if (selectedItem.type == FavoriteMenuActionType.filter) {
                     favoriteProvider
                         .setFilterType(selectedItem.value as RecipeFilterType);
                   }
@@ -191,11 +200,7 @@ class FavouritePage extends StatelessWidget {
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 16,
-                            color: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium
-                                    ?.color ??
-                                Colors.grey,
+                            color: Theme.of(context).textTheme.bodyMedium?.color ?? Colors.grey,
                             fontFamily: 'Montserrat',
                           ),
                         ),
@@ -204,11 +209,10 @@ class FavouritePage extends StatelessWidget {
                   : GridView.builder(
                       padding: const EdgeInsets.all(16.0),
                       gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                        maxCrossAxisExtent: maxCardWidth, // Max width of each grid item
-                        crossAxisSpacing: 16.0, // Horizontal spacing
-                        mainAxisSpacing: 16.0, // Vertical spacing
-                        childAspectRatio:
-                            targetAspectRatio, // Use the fixed target aspect ratio
+                        maxCrossAxisExtent: maxCardWidth,
+                        crossAxisSpacing: 16.0,
+                        mainAxisSpacing: 16.0,
+                        childAspectRatio: targetAspectRatio,
                       ),
                       itemCount: favoriteRecipes.length,
                       itemBuilder: (context, index) {
@@ -224,7 +228,7 @@ class FavouritePage extends StatelessWidget {
                             );
                           },
                           child: Card(
-                            color: Theme.of(context).cardColor,
+                            color: Theme.of(context).colorScheme.surface,
                             elevation: 5,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(15.0),
@@ -232,8 +236,9 @@ class FavouritePage extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
+                                // Image takes significantly more vertical space
                                 Expanded(
-                                  flex: 3,
+                                  flex: 3, // Image takes 3/4 of the vertical space
                                   child: ClipRRect(
                                     borderRadius: const BorderRadius.vertical(
                                         top: Radius.circular(15.0)),
@@ -246,19 +251,16 @@ class FavouritePage extends StatelessWidget {
                                               errorBuilder:
                                                   (context, error, stackTrace) =>
                                                       Container(
-                                                color: Theme.of(context)
-                                                    .hoverColor,
+                                                color: Theme.of(context).hoverColor,
                                                 child: Icon(
                                                   Icons.broken_image,
                                                   size: 60,
-                                                  color: Theme.of(context)
-                                                      .hintColor,
+                                                  color: Theme.of(context).hintColor,
                                                 ),
                                               ),
                                             )
                                           : Container(
-                                              color: Theme.of(context)
-                                                  .hoverColor,
+                                              color: Theme.of(context).hoverColor,
                                               child: const Icon(Icons.fastfood,
                                                   size: 60,
                                                   color: Colors.deepOrange),
@@ -266,60 +268,86 @@ class FavouritePage extends StatelessWidget {
                                     ),
                                   ),
                                 ),
+                                // Text content takes less vertical space
                                 Expanded(
-                                  flex: 2,
+                                  flex: 1, // Text content takes 1/4 of the vertical space
                                   child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
+                                    padding: const EdgeInsets.all(8.0), // Minimal padding
                                     child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
+                                        // Submitted by Name (now correctly placed at top, using theme colors)
+                                        Row(
+                                          children: [
+                                            Icon(
+                                              Icons.person,
+                                              size: 16,
+                                              color: Theme.of(context).colorScheme.onSurface,
+                                            ),
+                                            const SizedBox(width: 4),
+                                            Expanded( // Use Expanded to ensure text doesn't overflow horizontally
+                                              child: Text(
+                                                recipe.submittedBy,
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: Theme.of(context).colorScheme.onSurface,
+                                                  fontFamily: 'Montserrat',
+                                                ),
+                                                maxLines: 1, // Strict one line
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        // Small vertical space after "Submitted By" for compactness
+                                        const SizedBox(height: 2),
+
+                                        // Recipe Title
                                         Text(
                                           recipe.title,
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
-                                            fontSize: 16,
-                                            color: Theme.of(context)
-                                                .textTheme
-                                                .bodyLarge
-                                                ?.color,
+                                            fontSize: 18,
+                                            color: Theme.of(context).colorScheme.onSurface,
                                             fontFamily: 'Montserrat',
                                           ),
-                                          maxLines: 2,
+                                          maxLines: 1, // Strict one line
                                           overflow: TextOverflow.ellipsis,
                                         ),
-                                        const SizedBox(height: 4),
+                                        // Small vertical space after Title for compactness
+                                        const SizedBox(height: 2),
+
+                                        // Description (added, maxLines adjusted for compactness, using theme colors)
                                         Text(
-                                          'Prep: ${recipe.prepTime} | Cook: ${recipe.cookTime}',
+                                          recipe.description,
                                           style: TextStyle(
                                             fontSize: 12,
-                                            color: Theme.of(context)
-                                                .textTheme
-                                                .bodySmall
-                                                ?.color,
+                                            // Replaced withOpacity with withAlpha to avoid deprecation warning
+                                            color: Theme.of(context).colorScheme.onSurface.withAlpha(179), // 0.7 * 255 = ~179
                                             fontFamily: 'Montserrat',
                                           ),
-                                          maxLines: 1,
+                                          maxLines: 1, // Strict one line for description
                                           overflow: TextOverflow.ellipsis,
                                         ),
-                                        const Spacer(),
+                                        // No Spacer here, heart icon will be at bottom
+                                        const SizedBox(height: 2), // Small space before heart icon
+
                                         Align(
                                           alignment: Alignment.bottomRight,
                                           child: IconButton(
+                                            padding: EdgeInsets.zero, // No extra padding
+                                            constraints: const BoxConstraints(), // No extra constraints
                                             icon: Icon(
-                                              favoriteProvider
-                                                      .isFavorite(recipe.id)
+                                              favoriteProvider.isFavorite(recipe.id)
                                                   ? Icons.favorite
                                                   : Icons.favorite_border,
-                                              color: favoriteProvider
-                                                      .isFavorite(recipe.id)
+                                              color: favoriteProvider.isFavorite(recipe.id)
                                                   ? Colors.red
-                                                  : Theme.of(context)
-                                                      .hintColor,
+                                                  : Theme.of(context).colorScheme.onSurface,
+                                              size: 24,
                                             ),
                                             onPressed: () {
-                                              favoriteProvider
-                                                  .toggleFavorite(recipe.id);
+                                              favoriteProvider.toggleFavorite(recipe.id);
                                             },
                                           ),
                                         ),
@@ -341,8 +369,7 @@ class FavouritePage extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 16,
-                        color: Theme.of(context).textTheme.bodyMedium?.color ??
-                            Colors.grey,
+                        color: Theme.of(context).textTheme.bodyMedium?.color ?? Colors.grey,
                         fontFamily: 'Montserrat',
                       ),
                     ),
