@@ -3,9 +3,12 @@ import 'package:dappr/data/ratings-data.dart'; // Imports predefined rating data
 import 'package:dappr/data/recipes_data.dart'; // Imports predefined recipe data.
 import 'package:dappr/models/rating.dart'; // Imports the 'Rating' data model definition.
 import 'package:dappr/models/recipe.dart'; // Imports the 'Recipe' data model definition.
+// >>> TAMBAH IMPORT INI UNTUK NAVIGASI KE DETAIL PAGE
+import 'package:dappr/pages/recipe_detail_page.dart';
 import 'package:dappr/providers/rating_provider.dart'; // Imports the 'RatingProvider' for state management of ratings.
 import 'package:flutter/material.dart'; // Imports the core Flutter Material Design library.
 import 'package:provider/provider.dart'; // Imports the 'provider' package for state management.
+
 
 /// A StatefulWidget that displays a list of recipes along with their ratings and allows users to add or edit reviews.
 class RatingPage extends StatefulWidget {
@@ -212,7 +215,7 @@ class _RatingPageState extends State<RatingPage> {
               ? recipeReviews
                       .map((r) => r.ratingValue) // Extracts rating values.
                       .reduce((a, b) => a + b) / // Sums up all rating values.
-                  recipeReviews.length // Divides by the number of reviews to get average.
+                    recipeReviews.length // Divides by the number of reviews to get average.
               : 0.0; // Defaults to 0.0 if no reviews exist.
 
           /// Returns a Card widget for each recipe, displaying its details and reviews.
@@ -232,13 +235,26 @@ class _RatingPageState extends State<RatingPage> {
                     children: [
                       // Conditionally displays the recipe image if the URL is not empty.
                       if (recipe.imageUrl.isNotEmpty)
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(12), // Applies rounded corners to the image.
-                          child: Image.asset(
-                            recipe.imageUrl, // Loads the image from assets.
-                            height: 90, // Sets the height of the image.
-                            width: 90, // Sets the width of the image.
-                            fit: BoxFit.cover, // Ensures the image covers its box.
+                        // >>> PERUBAHAN: BUNGKUS IMEJ DENGAN INKWELL
+                        InkWell(
+                          onTap: () {
+                            // Navigasi ke RecipeDetailPage apabila imej ditekan
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (ctx) => RecipeDetailPage(recipe: recipe), // Hantar objek resipi
+                              ),
+                            );
+                          },
+                          borderRadius: BorderRadius.circular(12), // Pastikan ia sama dengan ClipRRect
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12), // Applies rounded corners to the image.
+                            child: Image.asset(
+                              recipe.imageUrl, // Loads the image from assets.
+                              height: 90, // Sets the height of the image.
+                              width: 90, // Sets the width of the image.
+                              fit: BoxFit.cover, // Ensures the image covers its box.
+                            ),
                           ),
                         ),
                       const SizedBox(width: 14), // Adds horizontal spacing.
@@ -366,88 +382,88 @@ class _RatingPageState extends State<RatingPage> {
                           children: recipeReviews
                               .reversed // Displays most recent reviews first.
                               .map((review) => Container(
-                                    margin:
-                                        const EdgeInsets.symmetric(vertical: 3), // Adds vertical margin.
-                                    decoration: BoxDecoration(
-                                      color: reviewBoxColor, // Background color for the review box.
-                                      borderRadius: BorderRadius.circular(8), // Applies rounded corners.
+                                  margin:
+                                      const EdgeInsets.symmetric(vertical: 3), // Adds vertical margin.
+                                  decoration: BoxDecoration(
+                                    color: reviewBoxColor, // Background color for the review box.
+                                    borderRadius: BorderRadius.circular(8), // Applies rounded corners.
+                                  ),
+                                  child: ListTile(
+                                    dense: true, // Makes the list tile smaller.
+                                    contentPadding:
+                                        const EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 2), // Adds padding to content.
+                                    leading: CircleAvatar(
+                                      radius: 14, // Radius of the circular avatar.
+                                      backgroundColor:
+                                          randomAvatarColor(review.userName), // Background color based on username.
+                                      child: Text(
+                                        review.userName[0].toUpperCase(), // Displays the first letter of the username.
+                                        style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 13), // Text style for the avatar letter.
+                                      ),
                                     ),
-                                    child: ListTile(
-                                      dense: true, // Makes the list tile smaller.
-                                      contentPadding:
-                                          const EdgeInsets.symmetric(
-                                              horizontal: 8, vertical: 2), // Adds padding to content.
-                                      leading: CircleAvatar(
-                                        radius: 14, // Radius of the circular avatar.
-                                        backgroundColor:
-                                            randomAvatarColor(review.userName), // Background color based on username.
-                                        child: Text(
-                                          review.userName[0].toUpperCase(), // Displays the first letter of the username.
+                                    title: Text(
+                                      review.userName, // Displays the username.
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold, // Makes text bold.
+                                        fontSize: 13, // Sets font size.
+                                        color: userNameColor, // Text color based on theme.
+                                      ),
+                                    ),
+                                    subtitle: Text(
+                                      review.comment, // Displays the review comment.
+                                      style: TextStyle(
+                                          fontSize: 12,
+                                          color: commentTextColor), // Text style for the comment.
+                                      maxLines: 2, // Limits comment to two lines.
+                                      overflow: TextOverflow.ellipsis, // Truncates with ellipsis if overflows.
+                                    ),
+                                    trailing: Row(
+                                      mainAxisSize: MainAxisSize.min, // Shrinks row to minimum size.
+                                      children: [
+                                        // Conditionally displays an edit button if the review was user-added.
+                                        if (userRatings.contains(review))
+                                          IconButton(
+                                            icon: const Icon(Icons.edit,
+                                                size: 16,
+                                                color: Colors.deepOrange), // Edit icon.
+                                            tooltip: 'Edit Review', // Tooltip text.
+                                            onPressed: () =>
+                                                _showAddRatingDialog(
+                                                    context, recipe.id,
+                                                    existingReview:
+                                                        review), // Calls dialog to edit.
+                                          ),
+                                        // Row to display star rating for the individual review.
+                                        Row(
+                                          children:
+                                              List.generate(5, (i) {
+                                            // Generates 5 star icons.
+                                            return Icon(
+                                              i < review.ratingValue // Checks if star should be filled.
+                                                  ? Icons.star
+                                                  : Icons.star_border,
+                                              size: 13, // Star size.
+                                              color: Colors.orange, // Star color.
+                                            );
+                                          }),
+                                        ),
+                                        const SizedBox(width: 3), // Adds horizontal spacing.
+                                        // Displays the numerical rating for the individual review.
+                                        Text(
+                                          "${review.ratingValue}/5", // Rating value out of 5.
                                           style: const TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 13), // Text style for the avatar letter.
-                                        ),
-                                      ),
-                                      title: Text(
-                                        review.userName, // Displays the username.
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold, // Makes text bold.
-                                          fontSize: 13, // Sets font size.
-                                          color: userNameColor, // Text color based on theme.
-                                        ),
-                                      ),
-                                      subtitle: Text(
-                                        review.comment, // Displays the review comment.
-                                        style: TextStyle(
-                                            fontSize: 12,
-                                            color: commentTextColor), // Text style for the comment.
-                                        maxLines: 2, // Limits comment to two lines.
-                                        overflow: TextOverflow.ellipsis, // Truncates with ellipsis if overflows.
-                                      ),
-                                      trailing: Row(
-                                        mainAxisSize: MainAxisSize.min, // Shrinks row to minimum size.
-                                        children: [
-                                          // Conditionally displays an edit button if the review was user-added.
-                                          if (userRatings.contains(review))
-                                            IconButton(
-                                              icon: const Icon(Icons.edit,
-                                                  size: 16,
-                                                  color: Colors.deepOrange), // Edit icon.
-                                              tooltip: 'Edit Review', // Tooltip text.
-                                              onPressed: () =>
-                                                  _showAddRatingDialog(
-                                                      context, recipe.id,
-                                                      existingReview:
-                                                          review), // Calls dialog to edit.
-                                            ),
-                                          // Row to display star rating for the individual review.
-                                          Row(
-                                            children:
-                                                List.generate(5, (i) {
-                                              // Generates 5 star icons.
-                                              return Icon(
-                                                i < review.ratingValue // Checks if star should be filled.
-                                                    ? Icons.star
-                                                    : Icons.star_border,
-                                                size: 13, // Star size.
-                                                color: Colors.orange, // Star color.
-                                              );
-                                            }),
+                                            fontWeight: FontWeight.bold, // Makes text bold.
+                                            fontSize: 12, // Sets font size.
+                                            color: Colors.orange, // Text color.
                                           ),
-                                          const SizedBox(width: 3), // Adds horizontal spacing.
-                                          // Displays the numerical rating for the individual review.
-                                          Text(
-                                            "${review.ratingValue}/5", // Rating value out of 5.
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.bold, // Makes text bold.
-                                              fontSize: 12, // Sets font size.
-                                              color: Colors.orange, // Text color.
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
                                     ),
-                                  ))
+                                  ),
+                                ))
                               .toList(), // Converts iterable to list of widgets.
                         ),
                 ],

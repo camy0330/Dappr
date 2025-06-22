@@ -2,7 +2,6 @@ import '../models/rating.dart';
 
 final List<Rating> allRatings = [
   Rating(userName: 'Ali', comment: 'Delicious and easy to follow!', ratingValue: 4.5, recipeId: 'R1'),
-  Rating(userName: 'Siti', comment: 'Could use more flavor.', ratingValue: 3.0, recipeId: 'R2'),
   Rating(userName: 'Muthu', comment: 'Amazing recipe!', ratingValue: 5.0, recipeId: 'R1'),
   Rating(userName: 'Zara', comment: 'My kids loved it.', ratingValue: 4.0, recipeId: 'R3'),
   Rating(userName: 'Daniel', comment: 'Too salty for me.', ratingValue: 2.5, recipeId: 'R4'),
