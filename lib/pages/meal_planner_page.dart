@@ -1,9 +1,10 @@
-// ignore_for_file: unused_element, deprecated_member_use
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
+/// MealPlannerPage is a stateful widget that provides a meal planning interface
+/// with three tabs: Monthly, Weekly, and Daily. Users can add, edit, and view
+/// meal notes for each day and meal type. The UI adapts to light/dark mode.
 class MealPlannerPage extends StatefulWidget {
   const MealPlannerPage({super.key});
 
@@ -13,15 +14,20 @@ class MealPlannerPage extends StatefulWidget {
 
 class _MealPlannerPageState extends State<MealPlannerPage>
     with SingleTickerProviderStateMixin {
+  // The currently focused day in the calendar
   DateTime _focusedDay = DateTime.now();
+  // The currently selected day for editing/viewing notes
   DateTime? _selectedDay;
+  // List of meal types for each day
   final List<String> _meals = [
     'Breakfast',
     'Lunch',
     'Dinner',
     'Additional Meal'
   ];
+  // Stores meal notes for each day and meal type
   Map<DateTime, Map<String, String>> _mealNotes = {};
+  // Tab controller for switching between Monthly, Weekly, and Daily views
   late TabController _tabController;
 
   @override
@@ -30,6 +36,7 @@ class _MealPlannerPageState extends State<MealPlannerPage>
     _tabController = TabController(length: 3, vsync: this);
     _selectedDay = _focusedDay;
 
+    // When switching tabs, update the selected day if needed
     _tabController.addListener(() {
       if (_tabController.indexIsChanging) {
         setState(() {
@@ -47,15 +54,18 @@ class _MealPlannerPageState extends State<MealPlannerPage>
     super.dispose();
   }
 
+  /// Called when a day is selected in the calendar.
+  /// Updates the selected and focused day, switches to Daily tab, and opens the note dialog.
   void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
     setState(() {
       _selectedDay = selectedDay;
       _focusedDay = focusedDay;
     });
-    _tabController.animateTo(2); // Index 2 is the 'Daily' tab
+    _tabController.animateTo(2); // Switch to Daily tab
     _showMealNoteDialog(selectedDay);
   }
 
+  /// Returns an icon for each meal type.
   IconData _getMealIcon(String mealType) {
     switch (mealType) {
       case 'Breakfast':
@@ -71,12 +81,14 @@ class _MealPlannerPageState extends State<MealPlannerPage>
     }
   }
 
+  /// Shows a dialog to add or edit meal notes for a specific day.
   void _showMealNoteDialog(DateTime day) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
     _mealNotes.putIfAbsent(day, () => {});
 
+    // Create controllers for each meal's note input
     Map<String, TextEditingController> controllers = {
       for (var meal in _meals)
         meal: TextEditingController(text: _mealNotes[day]![meal] ?? '')
@@ -97,6 +109,7 @@ class _MealPlannerPageState extends State<MealPlannerPage>
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: _meals.map((meal) {
+              // Input for each meal note
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: TextField(
@@ -142,6 +155,7 @@ class _MealPlannerPageState extends State<MealPlannerPage>
           ),
         ),
         actions: [
+          // Cancel button
           TextButton(
             onPressed: () {
               for (var controller in controllers.values) {
@@ -157,6 +171,7 @@ class _MealPlannerPageState extends State<MealPlannerPage>
             ),
             child: const Text('Cancel'),
           ),
+          // Save button
           ElevatedButton(
             onPressed: () {
               setState(() {
@@ -164,6 +179,7 @@ class _MealPlannerPageState extends State<MealPlannerPage>
                 for (var meal in _meals) {
                   _mealNotes[day]![meal] = controllers[meal]!.text.trim();
                 }
+                // Remove the day if all notes are empty
                 if (_mealNotes[day]!.values.every((note) => note.isEmpty)) {
                   _mealNotes.remove(day);
                 }
@@ -191,6 +207,7 @@ class _MealPlannerPageState extends State<MealPlannerPage>
     );
   }
 
+  /// Shows a dialog to confirm and delete a meal note for a specific meal and day.
   void _deleteMealNote(DateTime day, String mealType) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
@@ -239,6 +256,7 @@ class _MealPlannerPageState extends State<MealPlannerPage>
     );
   }
 
+  /// Builds a small marker on the calendar for days that have meal notes.
   Widget _buildEventsMarker(DateTime day, List events) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
@@ -270,6 +288,7 @@ class _MealPlannerPageState extends State<MealPlannerPage>
     );
   }
 
+  /// Shows a bottom sheet with a summary of all meal notes for a given day.
   void _showMealSummary(DateTime day) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
@@ -304,6 +323,7 @@ class _MealPlannerPageState extends State<MealPlannerPage>
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Drag handle
                 Align(
                   alignment: Alignment.center,
                   child: Container(
@@ -316,6 +336,7 @@ class _MealPlannerPageState extends State<MealPlannerPage>
                   ),
                 ),
                 const SizedBox(height: 20),
+                // Title
                 Text(
                   'Meal Summary for ${_formatDate(day, 'EEEE, MMM d,yyyy')}',
                   style: TextStyle(
@@ -324,6 +345,7 @@ class _MealPlannerPageState extends State<MealPlannerPage>
                       color: colorScheme.primary),
                 ),
                 Divider(height: 30, thickness: 1.2, color: theme.dividerColor),
+                // List of meal notes
                 Expanded(
                   child: ListView(
                     controller: scrollController,
@@ -365,6 +387,7 @@ class _MealPlannerPageState extends State<MealPlannerPage>
                   ),
                 ),
                 const SizedBox(height: 10),
+                // Close button
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
@@ -384,16 +407,19 @@ class _MealPlannerPageState extends State<MealPlannerPage>
     );
   }
 
+  /// Formats a DateTime object to a string using the given format.
   String _formatDate(DateTime date, String format) {
     return DateFormat(format).format(date);
   }
 
+  /// Returns a list of DateTime objects representing the current week.
   List<DateTime> _getCurrentWeekDates(DateTime selectedDay) {
     final weekday = selectedDay.weekday;
     final startOfWeek = selectedDay.subtract(Duration(days: weekday - 1));
     return List.generate(7, (index) => startOfWeek.add(Duration(days: index)));
   }
 
+  /// Builds the Weekly view tab, showing cards for each day of the week.
   Widget _buildWeeklyView() {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
@@ -424,6 +450,7 @@ class _MealPlannerPageState extends State<MealPlannerPage>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Day title
                   Text(
                     _formatDate(day, 'EEEE, MMMM d,yyyy'),
                     style: TextStyle(
@@ -433,6 +460,7 @@ class _MealPlannerPageState extends State<MealPlannerPage>
                   ),
                   Divider(
                       height: 20, thickness: 1.2, color: theme.dividerColor),
+                  // List of meals for the day
                   ..._meals.map((meal) {
                     final text = notes[meal]?.trim();
                     final bool isEmpty = text?.isEmpty ?? true;
@@ -441,6 +469,7 @@ class _MealPlannerPageState extends State<MealPlannerPage>
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // Meal name
                           SizedBox(
                             width: 120,
                             child: Text(
@@ -460,6 +489,7 @@ class _MealPlannerPageState extends State<MealPlannerPage>
                               ),
                             ),
                           ),
+                          // Meal note or "No notes"
                           Expanded(
                             child: Text(
                               isEmpty ? 'No notes' : text!,
@@ -485,6 +515,7 @@ class _MealPlannerPageState extends State<MealPlannerPage>
                       ),
                     );
                   }).toList(),
+                  // If no notes at all, show a prompt
                   if (!hasAnyNotes)
                     Padding(
                       padding: const EdgeInsets.only(top: 10.0),
@@ -507,6 +538,7 @@ class _MealPlannerPageState extends State<MealPlannerPage>
     );
   }
 
+  /// Builds the Daily view tab, showing meal notes for the selected day.
   Widget _buildDailyView() {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
@@ -519,6 +551,7 @@ class _MealPlannerPageState extends State<MealPlannerPage>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Day title
           Text(
             'Meal Plan for ${_formatDate(day, 'EEEE, MMMM d,yyyy')}',
             style: TextStyle(
@@ -527,6 +560,7 @@ class _MealPlannerPageState extends State<MealPlannerPage>
                 color: colorScheme.primary),
           ),
           Divider(height: 30, thickness: 1.8, color: theme.dividerColor),
+          // List of meals for the day
           ..._meals.map((meal) {
             final text = notes[meal]?.trim();
             return Padding(
@@ -597,6 +631,7 @@ class _MealPlannerPageState extends State<MealPlannerPage>
     );
   }
 
+  /// Builds the Monthly view tab, showing a calendar and notes for the selected day.
   Widget _buildMonthlyView() {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
@@ -605,6 +640,7 @@ class _MealPlannerPageState extends State<MealPlannerPage>
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
+            // Calendar widget
             TableCalendar(
               firstDay: DateTime.utc(2020, 1, 1),
               lastDay: DateTime.utc(2030, 12, 31),
@@ -681,6 +717,7 @@ class _MealPlannerPageState extends State<MealPlannerPage>
               ),
             ),
             const SizedBox(height: 25),
+            // Notes for the selected day
             if (_selectedDay != null)
               Card(
                 elevation: 5,
@@ -770,6 +807,13 @@ class _MealPlannerPageState extends State<MealPlannerPage>
     );
   }
 
+  /// Helper to check if two DateTime objects are the same day.
+  bool isSameDay(DateTime? a, DateTime? b) {
+    if (a == null || b == null) return false;
+    return a.year == b.year && a.month == b.month && a.day == b.day;
+  }
+
+  /// Main build method for the Meal Planner page.
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);

@@ -1,10 +1,14 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:dappr/models/item.dart';
 import 'package:dappr/providers/shopping_list_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+/// ShoppingListPage is a stateful widget that allows users to:
+/// - Add new grocery stores
+/// - Add, edit, and remove items for each store
+/// - Mark items as bought
+/// - Delete entire stores or individual items
+/// - All data is managed via ShoppingListProvider (using Provider package)
 class ShoppingListPage extends StatefulWidget {
   const ShoppingListPage({super.key});
 
@@ -13,12 +17,14 @@ class ShoppingListPage extends StatefulWidget {
 }
 
 class _ShoppingListPageState extends State<ShoppingListPage> {
+  // Controllers for input fields
   final TextEditingController _storeController = TextEditingController();
   final TextEditingController _itemNameController = TextEditingController();
   final TextEditingController _itemQtyController = TextEditingController();
 
   @override
   void dispose() {
+    // Dispose controllers to free resources
     _storeController.dispose();
     _itemNameController.dispose();
     _itemQtyController.dispose();
@@ -27,6 +33,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Access the shopping list provider and theme
     final shoppingListProvider = Provider.of<ShoppingListProvider>(context);
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
@@ -35,6 +42,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
+        // App bar with gradient background
         title: Text(
           'Shopping List',
           style: textTheme.titleLarge?.copyWith(
@@ -64,6 +72,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Section: Add New Store
             Text(
               'Add New Store',
               style: textTheme.titleMedium?.copyWith(
@@ -75,6 +84,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
             const SizedBox(height: 15),
             Row(
               children: [
+                // Store name input
                 Expanded(
                   child: TextField(
                     controller: _storeController,
@@ -116,6 +126,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
                   ),
                 ),
                 const SizedBox(width: 12),
+                // Add store button
                 ElevatedButton(
                   onPressed: () =>
                       _addStore(context.read<ShoppingListProvider>()),
@@ -135,6 +146,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
             const SizedBox(height: 30),
             Divider(color: theme.dividerColor, thickness: 1.0, height: 1),
             const SizedBox(height: 20),
+            // Section: Your Shopping Lists
             Text(
               'Your Shopping Lists',
               style: textTheme.titleMedium?.copyWith(
@@ -144,6 +156,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
               ),
             ),
             const SizedBox(height: 15),
+            // If no stores, show a message
             if (shoppingListProvider.storeItems.isEmpty)
               Center(
                 child: Padding(
@@ -159,6 +172,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
                   ),
                 ),
               )
+            // Otherwise, show all stores and their items
             else
               ...shoppingListProvider.storeItems.entries.map((entry) {
                 final storeName = entry.key;
@@ -214,6 +228,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
                               children: [
                                 Row(
                                   children: [
+                                    // Item name input
                                     Expanded(
                                       flex: 5,
                                       child: TextField(
@@ -259,6 +274,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
                                       ),
                                     ),
                                     const SizedBox(width: 10),
+                                    // Item quantity input
                                     Expanded(
                                       flex: 2,
                                       child: TextField(
@@ -305,6 +321,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
                                       ),
                                     ),
                                     const SizedBox(width: 10),
+                                    // Add item button
                                     ElevatedButton(
                                       onPressed: () => _addItem(
                                           context.read<ShoppingListProvider>()),
@@ -327,6 +344,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
                               ],
                             )
                           else
+                            // Show "Add Items to this List" button if not selected
                             Align(
                               alignment: Alignment.centerLeft,
                               child: TextButton.icon(
@@ -381,6 +399,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
                                       contentPadding:
                                           const EdgeInsets.symmetric(
                                               horizontal: 0, vertical: 4),
+                                      // Checkbox to mark item as bought
                                       leading: Checkbox(
                                         value: item.isBought,
                                         onChanged: (_) => context
@@ -395,6 +414,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
                                             borderRadius:
                                                 BorderRadius.circular(4)),
                                       ),
+                                      // Item name
                                       title: Text(
                                         item.name,
                                         style: textTheme.bodyLarge?.copyWith(
@@ -412,6 +432,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
+                                      // Item quantity
                                       subtitle: Text(
                                         'Qty: ${item.quantity}',
                                         style: textTheme.bodySmall?.copyWith(
@@ -420,6 +441,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
                                               .withOpacity(0.7),
                                         ),
                                       ),
+                                      // Edit and remove buttons
                                       trailing: Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
@@ -473,6 +495,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
 
   // --- Helper Methods ---
 
+  /// Add a new store to the provider
   void _addStore(ShoppingListProvider provider) {
     if (_storeController.text.trim().isNotEmpty) {
       provider.addStore(_storeController.text.trim());
@@ -483,6 +506,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
     }
   }
 
+  /// Add a new item to the selected store
   void _addItem(ShoppingListProvider provider) {
     if (provider.selectedStore == null) {
       _showSnackBar(
@@ -504,6 +528,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
     _itemQtyController.clear();
   }
 
+  /// Show a snackbar with a message
   void _showSnackBar(String message, Color color) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -514,7 +539,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
     );
   }
 
-  // Confirmation dialog for deleting a store
+  /// Confirmation dialog for deleting a store and all its items
   Future<void> _showDeleteStoreConfirmation(BuildContext context,
       ShoppingListProvider provider, String storeName) async {
     final colorScheme = Theme.of(context).colorScheme;
@@ -559,7 +584,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
     );
   }
 
-  // Confirmation dialog for deleting an item
+  /// Confirmation dialog for deleting an item from a store
   Future<void> _showDeleteItemConfirmation(BuildContext context,
       ShoppingListProvider provider, String storeName, int index) async {
     final item = provider.storeItems[storeName]![index];
@@ -605,7 +630,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
     );
   }
 
-  // Dialog for editing an item
+  /// Dialog for editing an item in a store
   Future<void> _showEditItemDialog(
       BuildContext context,
       ShoppingListProvider provider,
@@ -631,6 +656,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              // Edit item name
               TextField(
                 controller: _editItemNameController,
                 decoration: InputDecoration(
@@ -655,6 +681,7 @@ class _ShoppingListPageState extends State<ShoppingListPage> {
                     fontFamily: 'Montserrat', color: colorScheme.onSurface),
               ),
               const SizedBox(height: 15),
+              // Edit item quantity
               TextField(
                 controller: _editItemQtyController,
                 keyboardType: TextInputType.text,
